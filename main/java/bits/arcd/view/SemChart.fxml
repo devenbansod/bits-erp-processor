@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="821.0" prefWidth="1161.0" style="-fx-background-color: none;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bits.arcd.view.Deprecated_Class">
+   <children>
+      <Text layoutX="497.0" layoutY="29.0" strokeType="OUTSIDE" strokeWidth="0.0" text="BASE CHART FOR: 2011 ONWARDS" textAlignment="CENTER" AnchorPane.leftAnchor="496.8671875" AnchorPane.rightAnchor="477.1328125" AnchorPane.topAnchor="2.0" />
+      <VBox prefHeight="34.0" prefWidth="100.0" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="1031.0" AnchorPane.topAnchor="2.0">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="BITS PILANI" />
+            <Text fx:id="chartCode" strokeType="OUTSIDE" strokeWidth="0.0" text="CHART CODE: XXXX" />
+         </children>
+      </VBox>
+      <Text fx:id="date" layoutX="1021.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="DATE: DD, MMM, YYYY" textAlignment="CENTER" AnchorPane.leftAnchor="1021.0" AnchorPane.rightAnchor="24.13671875" AnchorPane.topAnchor="2.0" />
+      <Text fx:id="reqCombo" layoutX="491.0" layoutY="32.0" strokeType="OUTSIDE" strokeWidth="0.0" text="REQ GRP: XXXX        REQ NO: YYYY" textAlignment="CENTER" wrappingWidth="197.13671875" />
+      <VBox layoutX="15.0" layoutY="58.0" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="1128.0" AnchorPane.topAnchor="58.0">
+         <children>
+            <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="1128.0" style="-fx-background-color: none;">
+               <children>
+                  <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="564.0" style="-fx-background-color: none;">
+                     <children>
+                        <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="7.0" prefWidth="564.0" style="-fx-background-color: none;">
+                           <children>
+                              <Text layoutX="263.0" layoutY="5.0" strokeType="OUTSIDE" strokeWidth="0.0" text="SEM I" textOrigin="CENTER" AnchorPane.bottomAnchor="0.5" AnchorPane.leftAnchor="263.0" AnchorPane.rightAnchor="271.298828125" AnchorPane.topAnchor="-3.5" />
+                           </children>
+                           <VBox.margin>
+                              <Insets top="4.0" />
+                           </VBox.margin>
+                        </AnchorPane>
+                        <AnchorPane layoutX="10.0" layoutY="14.0" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="564.0" style="-fx-border-style: dashed hidden dashed hidden;">
+                           <children>
+                              <Text layoutY="13.94921875" strokeType="OUTSIDE" strokeWidth="0.0" text="YEAR            CODE           COURSE NO             COURSE TITLE                                        UNITS" wrappingWidth="564.0" AnchorPane.topAnchor="0.0" />
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </VBox>
+                  <VBox layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="564.0" style="-fx-background-color: none;">
+                     <children>
+                        <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="7.0" prefWidth="564.0" style="-fx-background-color: none;">
+                           <children>
+                              <Text layoutX="263.0" layoutY="5.0" strokeType="OUTSIDE" strokeWidth="0.0" text="SEM II" textOrigin="CENTER" AnchorPane.bottomAnchor="0.5" AnchorPane.leftAnchor="263.0" AnchorPane.rightAnchor="271.298828125" AnchorPane.topAnchor="-3.5" />
+                           </children>
+                           <VBox.margin>
+                              <Insets top="4.0" />
+                           </VBox.margin>
+                        </AnchorPane>
+                        <AnchorPane layoutX="10.0" layoutY="14.0" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="564.0" style="-fx-border-style: dashed hidden dashed hidden;">
+                           <children>
+                              <Text layoutY="13.94921875" strokeType="OUTSIDE" strokeWidth="0.0" text="CODE           COURSE NO             COURSE TITLE                                        UNITS" wrappingWidth="564.0" AnchorPane.topAnchor="0.0" />
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <HBox maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="1128.0" style="-fx-border-style: hidden hidden dashed hidden;">
+               <children>
+                  <VBox maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="564.0">
+                     <children>
+                        <AnchorPane maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="564.0">
+                           <children>
+                              <HBox prefHeight="13.0" prefWidth="564.0">
+                                 <children>
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="I" wrappingWidth="64.193359375" />
+                                    <VBox fx:id="y1s1" prefHeight="102.0" prefWidth="564.0" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                     <padding>
+                        <Insets bottom="4.0" top="4.0" />
+                     </padding>
+                  </VBox>
+                  <VBox layoutX="11.0" layoutY="11.0" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="564.0">
+                     <children>
+                        <AnchorPane maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="564.0">
+                           <children>
+                              <HBox prefHeight="13.0" prefWidth="564.0">
+                                 <children>
+                                    <VBox fx:id="y1s2" prefHeight="102.0" prefWidth="564.0" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                     <padding>
+                        <Insets bottom="4.0" top="4.0" />
+                     </padding>
+                  </VBox>
+               </children>
+            </HBox>
+            <HBox layoutX="10.0" layoutY="45.0" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="1128.0" style="-fx-border-style: hidden hidden dashed hidden;">
+               <children>
+                  <VBox maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="564.0">
+                     <children>
+                        <AnchorPane maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="564.0">
+                           <children>
+                              <HBox prefHeight="13.0" prefWidth="564.0">
+                                 <children>
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="II" wrappingWidth="64.193359375" />
+                                    <VBox fx:id="y2s1" prefHeight="102.0" prefWidth="564.0" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                     <padding>
+                        <Insets bottom="4.0" top="4.0" />
+                     </padding>
+                  </VBox>
+                  <VBox layoutX="11.0" layoutY="11.0" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="564.0">
+                     <children>
+                        <AnchorPane maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="564.0">
+                           <children>
+                              <HBox prefHeight="13.0" prefWidth="564.0">
+                                 <children>
+                                    <VBox fx:id="y2s2" prefHeight="102.0" prefWidth="564.0" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                     <padding>
+                        <Insets bottom="4.0" top="4.0" />
+                     </padding>
+                  </VBox>
+               </children>
+            </HBox>
+            <HBox layoutX="10.0" layoutY="64.0" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="1128.0" style="-fx-border-style: hidden hidden dashed hidden;">
+               <children>
+                  <VBox maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="564.0">
+                     <children>
+                        <AnchorPane maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="564.0">
+                           <children>
+                              <HBox prefHeight="13.0" prefWidth="564.0">
+                                 <children>
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="SUMMER" wrappingWidth="64.193359375" />
+                                    <VBox fx:id="summer1" prefHeight="102.0" prefWidth="564.0" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                     <padding>
+                        <Insets bottom="4.0" top="4.0" />
+                     </padding>
+                  </VBox>
+                  <VBox layoutX="11.0" layoutY="11.0" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="564.0">
+                     <children>
+                        <AnchorPane maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="564.0">
+                           <children>
+                              <HBox prefHeight="13.0" prefWidth="564.0">
+                                 <children>
+                                    <VBox fx:id="summer2" prefHeight="102.0" prefWidth="564.0" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                     <padding>
+                        <Insets bottom="4.0" top="4.0" />
+                     </padding>
+                  </VBox>
+               </children>
+            </HBox>
+            <HBox layoutX="10.0" layoutY="83.0" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="1128.0" style="-fx-border-style: hidden hidden dashed hidden;">
+               <children>
+                  <VBox maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="564.0">
+                     <children>
+                        <AnchorPane maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="564.0">
+                           <children>
+                              <HBox prefHeight="13.0" prefWidth="564.0">
+                                 <children>
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="III" wrappingWidth="64.193359375" />
+                                    <VBox fx:id="y3s1" prefHeight="102.0" prefWidth="564.0" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                     <padding>
+                        <Insets bottom="4.0" top="4.0" />
+                     </padding>
+                  </VBox>
+                  <VBox fx:id="y3s2" layoutX="11.0" layoutY="11.0" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="564.0">
+                     <children>
+                        <AnchorPane maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="564.0">
+                           <children>
+                              <HBox prefHeight="13.0" prefWidth="564.0">
+                                 <children>
+                                    <VBox fx:id="summer21" prefHeight="102.0" prefWidth="564.0" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                     <padding>
+                        <Insets bottom="4.0" top="4.0" />
+                     </padding>
+                  </VBox>
+               </children>
+            </HBox>
+            <HBox layoutX="10.0" layoutY="83.0" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="1128.0" style="-fx-border-style: hidden hidden dashed hidden;">
+               <children>
+                  <VBox maxWidth="-Infinity" minWidth="-Infinity" prefHeight="4.0" prefWidth="564.0">
+                     <children>
+                        <AnchorPane maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="564.0">
+                           <children>
+                              <HBox prefHeight="13.0" prefWidth="564.0">
+                                 <children>
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="IV" wrappingWidth="64.193359375" />
+                                    <VBox fx:id="y4s1" prefHeight="102.0" prefWidth="564.0" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                     <padding>
+                        <Insets bottom="4.0" top="4.0" />
+                     </padding>
+                  </VBox>
+                  <VBox layoutX="11.0" layoutY="11.0" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="564.0">
+                     <children>
+                        <AnchorPane maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="564.0">
+                           <children>
+                              <HBox prefHeight="13.0" prefWidth="564.0">
+                                 <children>
+                                    <VBox fx:id="y4s2" prefHeight="0.0" prefWidth="564.0" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                     <padding>
+                        <Insets bottom="4.0" top="4.0" />
+                     </padding>
+                  </VBox>
+               </children>
+            </HBox>
+            <HBox layoutX="10.0" layoutY="102.0" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="1128.0" style="-fx-border-style: hidden hidden dashed hidden;">
+               <children>
+                  <VBox maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="564.0">
+                     <children>
+                        <AnchorPane maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="564.0">
+                           <children>
+                              <HBox prefHeight="13.0" prefWidth="564.0">
+                                 <children>
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="V" wrappingWidth="64.193359375" />
+                                    <VBox fx:id="y5s1" prefHeight="102.0" prefWidth="564.0" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                     <padding>
+                        <Insets bottom="4.0" top="4.0" />
+                     </padding>
+                  </VBox>
+                  <VBox layoutX="11.0" layoutY="11.0" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="564.0">
+                     <children>
+                        <AnchorPane maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="564.0">
+                           <children>
+                              <HBox prefHeight="13.0" prefWidth="564.0">
+                                 <children>
+                                    <VBox fx:id="y5s2" prefHeight="102.0" prefWidth="564.0" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                     <padding>
+                        <Insets bottom="4.0" top="4.0" />
+                     </padding>
+                  </VBox>
+               </children>
+            </HBox>
+            <HBox layoutX="10.0" layoutY="121.0" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="1128.0" style="-fx-border-style: hidden hidden dashed hidden;">
+               <children>
+                  <VBox maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="564.0">
+                     <children>
+                        <AnchorPane maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="564.0">
+                           <children>
+                              <HBox prefHeight="13.0" prefWidth="564.0">
+                                 <children>
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="EXTRAS" wrappingWidth="64.193359375" />
+                                    <VBox fx:id="extras1" prefHeight="102.0" prefWidth="564.0" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                     <padding>
+                        <Insets bottom="4.0" top="4.0" />
+                     </padding>
+                  </VBox>
+                  <VBox layoutX="11.0" layoutY="11.0" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="564.0">
+                     <children>
+                        <AnchorPane maxWidth="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="564.0">
+                           <children>
+                              <HBox prefHeight="13.0" prefWidth="564.0">
+                                 <children>
+                                    <VBox fx:id="extras2" prefHeight="102.0" prefWidth="564.0" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                     <padding>
+                        <Insets bottom="4.0" top="4.0" />
+                     </padding>
+                  </VBox>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

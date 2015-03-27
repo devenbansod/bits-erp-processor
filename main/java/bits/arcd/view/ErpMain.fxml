@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.web.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="anchor1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="602.0" prefWidth="1002.0" stylesheets="@JMetroDarkTheme.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bits.arcd.view.SemChartController">
+   <children>
+      <TabPane fx:id="TabPane1" prefHeight="602.0" prefWidth="979.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <tabs>
+          <Tab fx:id="semChartsTab" text="Semester Charts">
+            <content>
+              <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="573.0" prefWidth="979.0" style="-fx-background-color: #03C9A9;">
+                     <children>
+                        <Pane layoutX="14.0" layoutY="106.0" prefHeight="228.0" prefWidth="200.0" style="-fx-background-color: #0489B1;">
+                           <children>
+                              <TextField fx:id="destFolder" layoutX="12.0" layoutY="93.0" prefHeight="25.0" prefWidth="178.0" promptText="Enter the Destination Folder" />
+                              <Button fx:id="generateAndSave" layoutX="17.0" layoutY="188.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="167.0" text="Generate and Save Charts!" />
+                              <Label layoutX="13.0" layoutY="4.0" prefHeight="20.0" prefWidth="174.0" text="Save Multiple Charts To File" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="sourceFile" layoutX="12.0" layoutY="33.0" prefHeight="25.0" prefWidth="178.0" promptText="Enter the source CSV File" />
+                              <TextField fx:id="reqNumValues" layoutX="12.0" layoutY="154.0" prefHeight="25.0" prefWidth="178.0" promptText="Enter ReqNums (comma-separated)" />
+                              <Button fx:id="sourceBrowse" layoutX="15.0" layoutY="64.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="80.0" text="Browse" />
+                              <Button fx:id="destBrowse" layoutX="15.0" layoutY="126.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="80.0" text="Browse" />
+                           </children>
+                        </Pane>
+                        <Pane layoutX="14.0" layoutY="6.0" prefHeight="93.0" prefWidth="200.0" style="-fx-background-color: #6C7A89;">
+                           <children>
+                              <TextField fx:id="reqNum" layoutX="11.0" layoutY="25.0" prefHeight="25.0" prefWidth="178.0" promptText="Enter the requirement number" />
+                              <Button fx:id="getChart" layoutX="60.0" layoutY="57.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="80.0" text="Get Chart" />
+                              <Label layoutX="39.0" layoutY="4.0" prefHeight="20.0" prefWidth="122.0" text="View A Single Chart" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </Pane>
+                        <TextArea fx:id="consoleOutput" layoutX="14.0" layoutY="431.0" prefHeight="128.0" prefWidth="200.0" promptText="Console Messages!" wrapText="true" AnchorPane.bottomAnchor="14.0" AnchorPane.topAnchor="431.0" />
+                        <WebView fx:id="browser" layoutX="222.0" layoutY="8.0" prefHeight="548.0" prefWidth="746.0" AnchorPane.bottomAnchor="17.0" AnchorPane.leftAnchor="222.0" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="8.0" />
+                        <Pane layoutX="16.0" layoutY="338.0" prefHeight="88.0" prefWidth="196.0" style="-fx-background-color: #0489B1;">
+                           <children>
+                              <TextField fx:id="srcFileRefresh" layoutX="11.0" layoutY="24.0" prefHeight="25.0" prefWidth="178.0" promptText="Enter the source file" />
+                              <Button fx:id="updateAll" layoutX="106.0" layoutY="55.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="80.0" text="Update" />
+                              <Label layoutX="45.0" layoutY="2.0" prefHeight="20.0" prefWidth="110.0" text="Refresh Database" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Button fx:id="sourceFileRefreshButton" layoutX="14.0" layoutY="55.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="80.0" text="Browse" />
+                           </children>
+                        </Pane>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+          <Tab fx:id="tabELSheet" text="Eligibility Sheet">
+            <content>
+                <fx:include fx:id="ELSheet" source="ELSheet.fxml" />
+            </content>
+        </Tab>
+            <Tab text="Student Requirements" />
+        </tabs>
+      </TabPane>
+   </children>
+</AnchorPane>

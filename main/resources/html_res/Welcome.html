@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Welcome Page!</title>
+<link href="../css_res/metro-bootstrap.css" rel="stylesheet"
+	type="text/css" />
+<link href="../css_res/auxiliaries.css" rel="stylesheet" type="text/css" />
+<link href="../css_res/metroloader.css" rel="stylesheet" type="text/css" />
+<script src="../js_res/jquery.min.js"></script>
+<script>
+	window.onload = window.onresize = function() {
+		$("#resizer").width($(window).width() - 15);
+		$("#resizer").height($(window).height() - 15);
+		alert($(window).height() - 15);
+	};
+</script>
+</head>
+
+<body>
+<body class="metro">
+	<div id="resizer">
+
+		<div id="centro">
+			<h2 style="color: #ffffff">Welcome to ERP Processor!</h2>
+			<br>
+			<div id="centro"><img src="../img_res/bits_logo.png" /></div>
+		</div>
+	</div>
+
+</body>
+</html>

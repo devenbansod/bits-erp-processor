@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="573.0" prefWidth="979.0" style="-fx-background-color: #2572EB;" stylesheets="@JMetroDarkTheme.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bits.arcd.view.ELSheetController">
+   <children>
+      <WebView fx:id="browser" layoutX="248.0" layoutY="33.0" prefHeight="533.0" prefWidth="718.0" AnchorPane.bottomAnchor="7.0" AnchorPane.leftAnchor="248.0" AnchorPane.rightAnchor="13.0" AnchorPane.topAnchor="33.0" />
+      <TextArea fx:id="consoleOutput" editable="false" layoutX="14.0" layoutY="422.0" prefHeight="144.0" prefWidth="215.0" promptText="Console Output" wrapText="true" AnchorPane.bottomAnchor="7.0" AnchorPane.topAnchor="422.0">
+         <cursor>
+            <Cursor fx:constant="TEXT" />
+         </cursor></TextArea>
+      <TextField fx:id="inpSemNum" layoutX="387.0" layoutY="2.0" prefHeight="25.0" prefWidth="48.0" text="1131" />
+      <Label layoutX="348.0" layoutY="2.0" prefHeight="25.0" prefWidth="39.0" stylesheets="@JMetroDarkTheme.css" text="Term" textAlignment="CENTER" textFill="#141414">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <Pane layoutX="14.0" layoutY="108.0" prefHeight="186.0" prefWidth="215.0" style="-fx-background-color: black;">
+         <children>
+            <TextField fx:id="sourceIdNosCSV" layoutX="6.0" layoutY="31.0" prefHeight="25.0" prefWidth="115.0" promptText="Specify CSV of Student IDs" />
+            <Label layoutX="50.0" layoutY="2.0" prefHeight="25.0" prefWidth="115.0" stylesheets="@JMetroDarkTheme.css" text="Batch Process:" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <TextField fx:id="destFolder" layoutX="8.0" layoutY="89.0" prefHeight="25.0" prefWidth="115.0" promptText="Specify Folder!" />
+            <Label layoutX="11.0" layoutY="64.0" prefHeight="25.0" prefWidth="133.0" stylesheets="@JMetroDarkTheme.css" text="Destination Folder:" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <Button fx:id="browseSourceFileButton" layoutX="127.0" layoutY="32.0" mnemonicParsing="false" text="Browse" />
+            <Button fx:id="browseDestFolderButton" layoutX="129.0" layoutY="90.0" mnemonicParsing="false" text="Browse" />
+            <Button fx:id="generateButton" layoutX="47.0" layoutY="141.0" mnemonicParsing="false" text="Generate EL Sheets" />
+         </children>
+      </Pane>
+      <Pane layoutX="14.0" layoutY="300.0" prefHeight="116.0" prefWidth="215.0" style="-fx-background-color: #2E8DEF;">
+         <children>
+            <Label layoutX="28.0" layoutY="17.0" prefHeight="10.0" prefWidth="160.0" stylesheets="@JMetroDarkTheme.css" text="Reload CSVs into Table:" textAlignment="CENTER" textFill="#141414">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <Button fx:id="reloadButton" layoutX="75.0" layoutY="86.0" mnemonicParsing="false" text="Reload!" />
+         </children>
+      </Pane>
+      <Pane layoutX="14.0" layoutY="7.0" prefHeight="94.0" prefWidth="215.0" style="-fx-background-color: #008287;">
+         <children>
+            <Button fx:id="getElSheetButton" layoutX="61.0" layoutY="64.0" mnemonicParsing="false" text="Get EL Sheet" />
+            <TextField fx:id="idNum" layoutX="41.0" layoutY="27.0" prefHeight="25.0" prefWidth="133.0" promptText="20XXA8PSXXXP" />
+            <Label layoutX="28.0" layoutY="2.0" prefHeight="25.0" prefWidth="160.0" stylesheets="@JMetroDarkTheme.css" text="Enter Your ID Number:" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+         </children>
+      </Pane>
+      <Button fx:id="refreshBrowseButton" layoutX="153.0" layoutY="353.0" mnemonicParsing="false" text="Browse" />
+      <TextField fx:id="refreshFolder" layoutX="32.0" layoutY="352.0" prefHeight="25.0" prefWidth="115.0" promptText="Specify Folder!" />
+   </children>
+</AnchorPane>
