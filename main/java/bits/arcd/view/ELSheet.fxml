@@ -11,7 +11,7 @@
 
 <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="573.0" prefWidth="979.0" style="-fx-background-color: #2572EB;" stylesheets="@JMetroDarkTheme.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bits.arcd.view.ELSheetController">
    <children>
-      <WebView fx:id="browser" layoutX="248.0" layoutY="33.0" prefHeight="533.0" prefWidth="718.0" AnchorPane.bottomAnchor="7.0" AnchorPane.leftAnchor="248.0" AnchorPane.rightAnchor="13.0" AnchorPane.topAnchor="33.0" />
+      <WebView fx:id="browser" layoutX="231.0" layoutY="33.0" prefHeight="533.0" prefWidth="745.0" AnchorPane.bottomAnchor="7.0" AnchorPane.leftAnchor="231.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="33.0" />
       <TextArea fx:id="consoleOutput" editable="false" layoutX="14.0" layoutY="422.0" prefHeight="144.0" prefWidth="215.0" promptText="Console Output" wrapText="true" AnchorPane.bottomAnchor="7.0" AnchorPane.topAnchor="422.0">
          <cursor>
             <Cursor fx:constant="TEXT" />

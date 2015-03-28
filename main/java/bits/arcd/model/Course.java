@@ -86,7 +86,8 @@ public class Course {
 		setIsProjectTypeCourse();
 
 	}
-
+	
+	
 	public boolean isNamedCourse() {
 		return isNamedCourse;
 	}
@@ -124,7 +125,7 @@ public class Course {
 		// catalog has many spaces
 
 		if (this.getCourseCode() == 0 && this.description == null) {
-			return "   ------------------------------------------------        " + this.getElDescr() + "   ";
+			return "    ------------------------------------------------          " + this.getElDescr() + " ";
 		}
 		else {	
 
@@ -214,7 +215,7 @@ public class Course {
 
 
 			//5
-			String TypeString = "  ";
+			String TypeString = "";
 			if (this.isDel) {
 				TypeString = TypeString + this.getElDescr();
 			}
@@ -234,7 +235,7 @@ public class Course {
 
 
 
-			String retval = infoString + courseCodeString + " " +  courseSubjectString + " "
+			String retval = infoString + " " + courseCodeString + " " +  courseSubjectString + " "
 					+ courseCatalogString + " " + courseDescrString + " "
 					+ UnitsString + " " + gradeString + ExtString + TypeString  ;
 
