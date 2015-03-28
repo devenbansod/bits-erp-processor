@@ -3,6 +3,7 @@ package bits.arcd.model;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class EligibilitySheetQueries {
 
@@ -50,7 +51,6 @@ public class EligibilitySheetQueries {
 			}
 			updatePendingElectives(sem, pendingHuels, pendingDels, pendingOels);	
 			addAllCoursesToSem(sem);
-			System.out.println("Doing!");
 		}
 
 		updateCgpaCupAndUnits();
@@ -151,12 +151,12 @@ public class EligibilitySheetQueries {
 		s = s + returnCenteredString(details) + "\n";
 
 
-		s = s + "\nYEAR     COMP  COURSE NO  COURSE TITLE              GRADES                ";
-		s = s + "COMP  COURSE NO  COURSE TITLE              GRADES                ";
+		s = s + "\nYEAR     COMP  COURSE NO  COURSE TITLE          UNITS  GRADES                ";
+		s = s + "COMP  COURSE NO  COURSE TITLE          UNITS  GRADES                    ";
 
 		s = s + "\n-----------------------------------------"
 				+ "-----------------------------------------"
-				+ "------------------------------------------------------\n";
+				+ "---------------------------------------------------------\n";
 		//		for(Semester sem :this.getCh().getSemsInChart()){
 
 
@@ -243,31 +243,32 @@ public class EligibilitySheetQueries {
 
 					// Add the Hum Electives to be done
 					for (int j = 0; j < first.getNoOfHUEL(); j++){
-						String temp = "   ------------------------------------------------          HUEL  ";
+						String temp = "    ------------------------------------------------          HUEL  ";
 
 						sem1Courses.add(temp);
 
 					}
 
 					for (int j = 0; j < second.getNoOfHUEL(); j++){
-						String temp = "   ------------------------------------------------          HUEL  ";						
+						String temp = "    ------------------------------------------------          HUEL  ";						
 						sem2Courses.add(temp);
 
 					}
 
 					// Add the Open Electives to be done
 					for (int j = 0; j < first.getNoOfOEL(); j++){
-						String temp = "   ------------------------------------------------          EL   ";
+						String temp = "    ------------------------------------------------          EL   ";
 						sem1Courses.add(temp);
 
 					}
 
 					for (int j = 0; j < second.getNoOfOEL(); j++){
-						String temp = "   ------------------------------------------------          EL    ";
+						String temp = "    ------------------------------------------------          EL    ";
 						sem2Courses.add(temp);
 					}
 
 					// Add the Disp Electives to be done
+					/**
 					for (int j = 0; j < first.getNoOfDEL(); j++){
 						String temp = "   ------------------------------------------------          DEL   ";	
 						sem1Courses.add(temp);
@@ -280,7 +281,7 @@ public class EligibilitySheetQueries {
 						sem2Courses.add(temp);
 
 					}
-
+					*/
 
 					// For Optional Courses
 					int t = 0;
@@ -313,7 +314,7 @@ public class EligibilitySheetQueries {
 
 						}
 						else {
-							temp = temp + "      " + "                                                                  ";
+							temp = temp + "      " + "                                                                   ";
 						}
 
 
@@ -321,7 +322,7 @@ public class EligibilitySheetQueries {
 							temp = temp + sem2Courses.get(j);
 						}
 						else {
-							temp = temp + "                                                                  ";
+							temp = temp + "                                                                   ";
 						}
 
 						temp = temp + "\n";
@@ -332,7 +333,7 @@ public class EligibilitySheetQueries {
 
 					s = s + "-----------------------------------------"
 							+ "-----------------------------------------"
-							+ "------------------------------------------------------\n";
+							+ "---------------------------------------------------------\n";
 				}
 			}
 
@@ -344,7 +345,7 @@ public class EligibilitySheetQueries {
 
 				s = s + "-----------------------------------------"
 						+ "-----------------------------------------"
-						+ "------------------------------------------------------\n";
+						+ "---------------------------------------------------------\n";
 
 				rem = 0;
 
@@ -355,10 +356,6 @@ public class EligibilitySheetQueries {
 		//		return "Eligibility Sheet [studentId=" + studentId
 		//				+ ", systemId=" + systemId + ", cgpa=" + cgpa + ", cgpaCup=" + cgpaCup 
 		//				+ ", cgpaUnits=" + cgpaUnits + "]\n\n" + "\n" + s;
-		
-		
-		
-		s = s + "";
 
 		return "\n" + s;
 	}
@@ -550,48 +547,42 @@ public class EligibilitySheetQueries {
 
 		int[] semYear = getSemTerm(term);
 
-		ArrayList<Course> delCourses = sem.getDelCourses();
-
-		for(Course c : delCourses){				
-
-			String query = "Select * from req_course_map where descr_2 like '%Disp%lective%' and sys_id = '" + systemId
-					+ "' and sem_course_decription like '%ear " + yearNo+" %em "+ semNo
-					+ "%'";	
-
-			ResultSet r = dbConnector.queryExecutor(query, false);
-			// Use systemID, yearNO,semNo, course code to get ResultSet
-			// from req_coursemap table
-
-			try {
-				while(r.next()) {
-					c.setGrade(r.getString(12));
-					c.setClassNo(r.getInt(5));
-					c.setEarnCredit(r.getString(6));
-					c.setIncludeInGPA(r.getString(7));
-					c.setInProgress(r.getString(20));
-					c.setLine(r.getInt(16));
-					c.setTerm(r.getInt(4));
-					c.setIsDoneInPrevTerm(this.prevTerm);
-					//					c.setCourseCode(r.);
-				}				
-
-				if (yearNo == semYear[0] && semNo == semYear[1] && c.isInProgress().equals("Y")){
-					c.setOPSC(true);
-				}
-				else {
-					c.setOPSC(false);
+		
+		String query = "Select * from req_course_map where descr_2 like '%Disp%lective%' and sys_id = '" + systemId
+				+ "' and sem_course_decription like '%ear " + yearNo+" %em "+ semNo
+				+ "%'";
+		ResultSet r = dbConnector.queryExecutor(query, false);
+		
+		
+		try {
+			while(r.next()) {
+				for(Course c : sem.getDelCourses()){
+					int counter =0;
+					String s =  r.getString(19).substring(0, 2) + "EL";
+					if(c.getElDescr().equalsIgnoreCase(s) &&
+							c.getDescription()==null){
+						int i = sem.getDelCourses().indexOf(c);
+						Course cNew = new Course(r.getInt(8), r.getString(9), r.getString(10), r.getString(11),
+								r.getInt(13), r.getInt(13), r.getString(12), r.getInt(4), r.getInt(5), r.getString(7),
+								r.getString(6), r.getInt(16), r.getString(20), this.prevTerm);
+						cNew.setIsDel(true);
+						cNew.setElDescr(s);
+						sem.getDelCourses().set(i,cNew);
+					counter++;
+					}
+					if (counter>0)
+					break;
+					
 				}
 
-				this.checkForRepeatAndSetFlag(c);
+		}} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}			
+			
+}
 
 
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}			
-
-		}
-	}		
 
 	private void addOelsToSem(Semester sem, int term){	
 
@@ -673,7 +664,7 @@ public class EligibilitySheetQueries {
 
 	}	
 
-	
+
 	private boolean isSummerTerm(Semester sem) {	//Chart object has already set isSummerTerm	
 		return sem.isSummerTerm;
 	}
