@@ -143,10 +143,14 @@ public class EligibilitySheetQueries {
 
 		s = s + returnCenteredString("BITS Pilani") + "\n";
 
+		s = s + returnCenteredString("ELIGIBLITY SHEET (VIDE A.R. 3.21)") + "\n\n";
+
+		
 		setStudentNameFromDatabase();
 
-		String details = this.systemId + "  "  + this.studentId + "  " + getStudentName() + "\t" + "CGPA : "
-				+ this.getCgpa() + "   PATTERN CODE : " + this.requirementNo;
+		String details = this.systemId + "  "  + this.studentId + "  " + getStudentName() + "  CGPA : "
+				+ this.getCgpa() + "   REQ NUM : " + this.requirementNo + "   REQ GRP : " 
+				+ this.getChart().getRequirementGroup() + "  ADMISSION : " + getAdmissionTerm();
 
 		s = s + returnCenteredString(details) + "\n";
 
@@ -353,10 +357,19 @@ public class EligibilitySheetQueries {
 
 		}
 
-		//		return "Eligibility Sheet [studentId=" + studentId
-		//				+ ", systemId=" + systemId + ", cgpa=" + cgpa + ", cgpaCup=" + cgpaCup 
-		//				+ ", cgpaUnits=" + cgpaUnits + "]\n\n" + "\n" + s;
-
+		
+		s =  s + "LEGEND : * - BACKLOG\t" + "$ - OPSC\t" + "|| - CURRENT SEM\t" 
+				+ "% - PREV SEM PERFORMANCE\t" + "+ - EXEMPTED\t" + "# - DEBARRED TO REGISTER\n\n";
+		
+		s = s + "ACC CUP : " + this.cgpaCup + "  \tCGPA CUP : " 
+				+ this.cgpaCup + "  \tACC UNITS : " + this.cgpaUnits
+				+ "  \tCGPA UNITS : " + this.cgpaUnits + "\n";
+		
+		s = s + "-----------------------------------------"
+				+ "-----------------------------------------"
+				+ "---------------------------------------------------------\n";
+		
+		
 		return "\n" + s;
 	}
 
@@ -823,5 +836,32 @@ public class EligibilitySheetQueries {
 		this.prevTerm = term -1 ;
 
 	}
+	
+	
+	
+	private String getAdmissionTerm(){
+	
+		String s = "";
+		
+		String query = "SELECT DISTINCT sem_description from terms where semester = ("
+				+ "SELECT min(semester) from student_enrollment where sys_id = '" + this.systemId + "'"
+				+ ") LIMIT 1";
+		
+		ResultSet rs = dbConnector.queryExecutor(query, false);
+		
+		try {
+			while (rs.next()){
+				s = rs.getString(1);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return s;
+		
+	
+	}
+	
 
 }
