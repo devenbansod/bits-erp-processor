@@ -2,6 +2,7 @@ package bits.arcd.model;
 
 public class Course {
 
+//temp
 	private int courseCode ; //this is the compcode
 	private String subject; //eg CS
 	private String catalog ; //eg F111
