@@ -286,6 +286,7 @@ public class ELSheetController {
 		Platform.runLater(new Runnable() {
 			public void run() {
 				consoleOutput.setText(consoleOutput.getText() + "" + output);
+				consoleOutput.end();
 			}
 		});
 	}

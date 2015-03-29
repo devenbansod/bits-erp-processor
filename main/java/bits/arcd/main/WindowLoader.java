@@ -34,7 +34,7 @@ public class WindowLoader extends Application {
 			loader.setLocation(WindowLoader.class.getResource("../view/ErpMain.fxml"));
 			rootLayout = (AnchorPane) loader.load();
 			// Show the scene containing the root layout.
-			Scene scene = new Scene(rootLayout);
+			Scene scene = new Scene(rootLayout, 1366, 700);
 			primaryStage.setScene(scene);
 
 			// Give the controller(s) access to the main app.
