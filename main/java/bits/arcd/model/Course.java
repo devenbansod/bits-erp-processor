@@ -49,7 +49,24 @@ public class Course {
 
 	private boolean gradeValid, gradeComplete;
 
-	private boolean isNamedCourse, isHuel, isDel, isOel;
+	private boolean isNamedCourse, isHuel, isDel, isOel, isOptional, isPS1;
+	public boolean isPS1() {
+		return isPS1;
+	}
+
+	public void setIsPS1(boolean isPS1) {
+		this.isPS1 = isPS1;
+	}
+
+	public boolean isOptional() {
+		return isOptional;
+	}
+
+	public void setIsOptional(boolean isOptional) {
+		this.isOptional = isOptional;
+	}
+
+	private boolean PS2orThesis;
 
 	public Course(int courseCode, String subject, String catalog,
 			String description, int minUnits, int maxUnits) {
@@ -435,5 +452,21 @@ public class Course {
 
 	public boolean getIsProjectTypeCourse() {
 		return projectTypeCourse;
+	}
+
+	public boolean isPS2orThesis() {
+		
+		if(this.subject.equalsIgnoreCase("BITS")) {
+			if(this.catalog.equalsIgnoreCase("F412") || this.catalog.equalsIgnoreCase("F421T")
+					|| this.catalog.equalsIgnoreCase("F422T") || this.catalog.equalsIgnoreCase("F422")
+					|| this.catalog.equalsIgnoreCase("F421") || this.catalog.equalsIgnoreCase("F423T")
+					|| this.catalog.equalsIgnoreCase("F423")) {
+				return true;
+			}				
+		}		
+		else {
+			return false;
+		}
+		return false;		
 	}
 }

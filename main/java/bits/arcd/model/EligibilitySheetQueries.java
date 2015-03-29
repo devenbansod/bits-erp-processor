@@ -501,10 +501,8 @@ public class EligibilitySheetQueries {
 					}
 
 					
-				}				
-
-
-	
+				}
+				
 				this.checkForRepeatAndSetFlag(c);
 
 
@@ -598,11 +596,8 @@ public class EligibilitySheetQueries {
 		}} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}			
-			
+		}					
 }
-
-
 
 	private void addOelsToSem(Semester sem, int term){	
 
@@ -674,7 +669,9 @@ public class EligibilitySheetQueries {
 				Course c = new Course(r.getInt(8), r.getString(9), r.getString(10), r.getString(11),
 						r.getInt(13), r.getInt(13), r.getString(12), r.getInt(4), r.getInt(5), r.getString(7),
 						r.getString(6), r.getInt(16), r.getString(20), this.prevTerm);
-
+				
+				c.setIsOptional(true);
+				
 				if (yearNo == semYear[0] && semNo == semYear[1] && c.isInProgress().equals("Y")){
 					c.setOPSC(true);
 				}
@@ -713,13 +710,13 @@ public class EligibilitySheetQueries {
 						r.getInt(13), r.getInt(13), r.getString(12), r.getInt(4), r.getInt(5), r.getString(7),
 						r.getString(6), r.getInt(16), r.getString(20), this.prevTerm);		
 
-	
+				c.setIsPS1(true);				
 				sem.setPS(c);
 				
 				this.checkForRepeatAndSetFlag(c);
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 

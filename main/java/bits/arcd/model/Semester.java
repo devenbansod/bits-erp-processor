@@ -38,9 +38,7 @@ public class Semester {
 
 		ResultSet rs =  chartOps.getCompulsoryCoursesForOneSem(requirementNo, yearNo, semNo);		
 
-		int i = 0;
-		
-		
+		int i = 0;		
 		
 		while(rs.next()) {		
 			Course c = new Course(rs.getInt(22), rs.getString(23), rs.getString(24),

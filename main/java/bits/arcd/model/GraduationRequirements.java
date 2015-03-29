@@ -8,260 +8,151 @@ public class GraduationRequirements {
 
 	private EligibilitySheetQueries elSheet;
 	private String StudentId;
-	private int noOfOELSCompleteOrInProgress,
-	noOfHUELScompleteOrInProgress;
-	private int unitsOfnoOfOELSCompleteOrInProgress,unitsOFnoOfHUELScompleteOrInProgress;
-	private int noOFHUELProjects,noOfELProjects ;
-	private int noOfDelsType1CompleteOrInProgress;
-	private int unitsOfnoOfDelsType1CompleteOrInProgress;
-	private int noOfDelsType2CompleteOrInProgress;
-	private int unitsOfnoOfDelsType2CompleteOrInProgress;
-	private int noOfDelType1Projects;
-	private int noOfDelType2Projects;
-	
+
+	//COIP = Complete Or In Progress
+
+	private int noOfOelsCOIP, noOfHuelsCOIP;
+	private int unitsOfnoOfOelsCOIP, unitsOFnoOfHuelsCOIP;
+	private int noOFHuelProjects,noOfOelProjects ;
+	private int noOfDelsType1COIP;
+	private int unitsOfnoOfDelsType1COIP;
+	private int noOfDelsType2COIP;
+	private int unitsOfnoOfDelsType2COIP;
+	private int noOfDelType1Projects, noOfDelType2Projects;
+
+	private boolean likelyToGraduate;
+	public boolean isLikelyToGraduate() {
+		return likelyToGraduate;
+	}
+
+	private boolean graduated;
+
+	public boolean isGraduated() {
+		return graduated;
+	}
+
 	ArrayList<Course> incompleteNamedCourses = new ArrayList<Course>();
 	private int noOfIncompleteNamedCourses;
+	private int noOfNamedCoursesCOIP;
+	private int unitsOFnoOfNamedCoursesCOIP;
+	private int totalCoursesCOIP;
+	private int totalUnitsCOIP;
+	private int noOfPSTSCOIP;
 
-	public GraduationRequirements(String studentId) {		
-
+	public GraduationRequirements(String studentId) {
 		super();
 		this.elSheet = new EligibilitySheetQueries(studentId, 1131);
-		checkIfLikelyToGraduate(elSheet);	
-
-
+		loopThroughSemesters(elSheet);
+		if(checkForNamedCourses() && checkForHUEL() && checkForDEL() && checkForOEL() 
+				&& checkTotalCoursework() &&checkPSThesisConditions()) {
+			this.likelyToGraduate = true;
+		}		
 	}
 
-	private void checkIfLikelyToGraduate(EligibilitySheetQueries elSheet) {
+	public void loopThroughSemesters(EligibilitySheetQueries elsheet){
 
-		boolean areNamedCoursesDone = checkIfNamedCoursesDone(elSheet);
-		boolean areHuelsDone = checkIfHuelsDone(elSheet);
-		boolean areDelsDone = checkIfDelsDone(elSheet);
+		for(Semester s: elsheet.getChart().getSemsInChart()) {
 
-	}
-
-	private boolean checkIfNamedCoursesDone(EligibilitySheetQueries elSheet) {
-		CourseChartQueries chart = elSheet.getChart();
-		ArrayList<Semester> sems = chart.getSemsInChart();
-
-		for(Semester sem : sems){			
-			for(Course c: sem.getCompulsoryCourses()) {				
-				c.checkAndSetGradeValidAndGradeComplete();
-				if(!(c.isGradeComplete() || (c.isInProgress().equalsIgnoreCase("Y")))){
-					return false;
-				}													
-			}			
-		}
-
-		return true;		
-	}
-
-	private boolean checkIfHuelsDone(EligibilitySheetQueries elSheet) {
-		CourseChartQueries chart = elSheet.getChart();
-		ArrayList<Semester> sems = chart.getSemsInChart();
-
-		int huelsCounted = 0;
-		int unitsHuelsCounted = 0;
-
-		for(Semester sem : sems){						
-			for(Course c: sem.getHumanitiesCourses()) {
-				c.checkAndSetGradeValidAndGradeComplete();
-				if(c.isGradeComplete() || (c.isInProgress().equalsIgnoreCase("Y"))){
-					huelsCounted++;
-					unitsHuelsCounted += c.getMaxUnits();
-				}
-			}
-
-		}
-
-		if(huelsCounted < 3 || unitsHuelsCounted<8) {
-			return false;
-		}
-		else if(huelsCounted>=3 && unitsHuelsCounted>=8) {
-			return true;			
-		}
-
-		return false;
-	}
-
-	private boolean checkIfDelsDone(EligibilitySheetQueries elSheet) {
-		CourseChartQueries chart = elSheet.getChart();
-		ArrayList<Semester> sems = chart.getSemsInChart();
-
-		int delsCounted = 0;
-		int unitsHuelsCounted = 0;
-
-		for(Semester sem : sems){						
-			for(Course c: sem.getHumanitiesCourses()) {
-				c.checkAndSetGradeValidAndGradeComplete();
-				if(c.isGradeComplete() || (c.isInProgress().equalsIgnoreCase("Y"))){
-					delsCounted++;
-					unitsHuelsCounted += c.getMaxUnits();
-				}
-			}
-
-		}
-
-		//		if(huelsCounted < 3 || unitsHuelsCounted<8) {
-		//			return false;
-		//		}
-		//		else if(huelsCounted>=3 && unitsHuelsCounted>=8) {
-		//			return true;			
-		//		}
-
-		return false;
-	}
-
-	//	public int getNoOfCompletedorIsInProgress(EligibilitySheetQueries elsheet){
-	//		int count = 0;
-	//		
-	//		
-	//		int countOfsems = this.elSheet.getChart().getSemsInChart().size();
-	//		for(int i=0;i<countOfsems;i++){
-	//			
-	//			Semester s= elSheet.getChart().getSemsInChart().get(i);
-	//			for(Course c : s.getAllCourses()){
-	//				
-	//				c.checkAndSetGradeValidAndGradeComplete();
-	//				if(c.isGradeComplete() ||c.isInProgress().equalsIgnoreCase("Y")){
-	//					count++;
-	//					if(c.isDel()){
-	//						this.noOfDelsCompleteOrInProgress++;
-	//						this.unitsOfnoOfDelsCompleteOrInProgress+=c.getMaxUnits();
-	//						if(c.getIsProjectTypeCourse()){
-	//							this.noOfDelProjects++;
-	//						}
-	//					}
-	//					
-	//					if(c.isHuel()){
-	//						this.noOfHUELScompleteOrInProgress++;
-	//						this.unitsOFnoOfHUELScompleteOrInProgress+=c.getMaxUnits();
-	//						if(c.getIsProjectTypeCourse()){
-	//							this.noOFHUELProjects++;
-	//						}
-	//					}
-	//					if(c.isOel()){
-	//						this.noOfOELSCompleteOrInProgress++;
-	//						this.unitsOfnoOfOELSCompleteOrInProgress+=c.getMaxUnits();
-	//						if(c.getIsProjectTypeCourse()){
-	//							this.noOfELProjects++;
-	//						}
-	//					}
-	//				}
-	//			}
-
-	public void getNoOfCompletedorIsInProgress(EligibilitySheetQueries elsheet){
-			
-		int countOfsems = this.elSheet.getChart().getSemsInChart().size();
-		for(int i=0;i<countOfsems;i++){
-
-			Semester s= elSheet.getChart().getSemsInChart().get(i);
 			for(Course c : s.getAllCourses()){
-				c.checkAndSetGradeValidAndGradeComplete();
-				if(c.isNamedCourse()) {					
-					
-					if(!(c.isGradeComplete() ||c.isInProgress().equalsIgnoreCase("Y"))){
-						this.noOfIncompleteNamedCourses++;
-						this.incompleteNamedCourses.add(c);
+
+				c.checkAndSetGradeValidAndGradeComplete();			
+
+				if(c.isGradeComplete() || c.isInProgress().equalsIgnoreCase("Y")) {
+
+					if(!(c.isPS2orThesis())) {
+						this.totalCoursesCOIP++;
+						this.totalUnitsCOIP += c.getMaxUnits();						
 					}
-				}
-				
-				if(c.isDel()){
-					
-					if(c.getElDescr().equalsIgnoreCase(elsheet.getChart().getStream1())) {
-						this.noOfDelsType1CompleteOrInProgress++;
-						this.unitsOfnoOfDelsType1CompleteOrInProgress+=c.getMaxUnits();
-						if(c.getIsProjectTypeCourse()){
-							this.noOfDelType1Projects++;
+
+					else if(c.isPS2orThesis()) {
+						this.noOfPSTSCOIP++;
+					}
+
+
+					if(c.isNamedCourse() || c.isOptional() || c.isPS1()) {				
+
+						if(c.isGradeComplete() || c.isInProgress().equalsIgnoreCase("Y")){
+							this.noOfNamedCoursesCOIP++;
+							this.unitsOFnoOfNamedCoursesCOIP+=c.getMaxUnits();
 						}
 					}
-					
-					if(c.getElDescr().equalsIgnoreCase(elsheet.getChart().getStream2())) {
-						this.noOfDelsType2CompleteOrInProgress++;
-						this.unitsOfnoOfDelsType2CompleteOrInProgress+=c.getMaxUnits();
+
+					else if(c.isHuel()){
+						this.noOfHuelsCOIP++;
+						this.unitsOFnoOfHuelsCOIP+=c.getMaxUnits();
 						if(c.getIsProjectTypeCourse()){
-							this.noOfDelType2Projects++;
+							this.noOFHuelProjects++;
+						}
+					}
+
+					else if(c.isDel()){
+
+						if(c.getElDescr().equalsIgnoreCase(elsheet.getChart().getStream1())) {
+							this.noOfDelsType1COIP++;
+							this.unitsOfnoOfDelsType1COIP+=c.getMaxUnits();
+							if(c.getIsProjectTypeCourse()){
+								this.noOfDelType1Projects++;
+							}
+						}
+
+						if(c.getElDescr().equalsIgnoreCase(elsheet.getChart().getStream2())) {
+							this.noOfDelsType2COIP++;
+							this.unitsOfnoOfDelsType2COIP+=c.getMaxUnits();
+							if(c.getIsProjectTypeCourse()){
+								this.noOfDelType2Projects++;
+							}
+						}
+					}			
+
+					else if(c.isOel()){
+						this.noOfOelsCOIP++;
+						this.unitsOfnoOfOelsCOIP+=c.getMaxUnits();
+						if(c.getIsProjectTypeCourse()){
+							this.noOfOelProjects++;
 						}
 					}
 				}
 
-				if(c.isHuel()){
-					this.noOfHUELScompleteOrInProgress++;
-					this.unitsOFnoOfHUELScompleteOrInProgress+=c.getMaxUnits();
-					if(c.getIsProjectTypeCourse()){
-						this.noOFHUELProjects++;
-					}
-				}
-				if(c.isOel()){
-					this.noOfOELSCompleteOrInProgress++;
-					this.unitsOfnoOfOELSCompleteOrInProgress+=c.getMaxUnits();
-					if(c.getIsProjectTypeCourse()){
-						this.noOfELProjects++;
+				else {					
+					//lists the named courses to be completed
+					if(c.isNamedCourse() || c.isOptional() || c.isPS1()) {						
+						this.noOfIncompleteNamedCourses++;
+						this.incompleteNamedCourses.add(c);						
 					}
 				}
 			}
 		}
-
-
-
-
 	}
-	
-	private int[] getNumCoursesAndUnits(String elStream) {
-		
-		int[] cu = {-1, -1};
-		
-		if(elStream.equalsIgnoreCase("C6") || elStream.equalsIgnoreCase("A5") 
-				|| elStream.equalsIgnoreCase("AB") || elStream.equalsIgnoreCase("A4")
-				|| elStream.equalsIgnoreCase("A8") || elStream.equalsIgnoreCase("AA")
-				|| elStream.equalsIgnoreCase("A3") || elStream.equalsIgnoreCase("A7")
-				|| elStream.equalsIgnoreCase("B2") || elStream.equalsIgnoreCase("A2")) {
-			
-			cu[0] = 4;
-			cu[1] = 12;
-			return cu;
+
+	public boolean checkForNamedCourses() {
+		if(noOfIncompleteNamedCourses == 0) {
+			return true;
 		}
-		
-		if(elStream.equalsIgnoreCase("B1")|| elStream.equalsIgnoreCase("B5")
-		|| elStream.equalsIgnoreCase("B4")|| elStream.equalsIgnoreCase("A1")||
-		elStream.equalsIgnoreCase("D2")|| elStream.equalsIgnoreCase("C7")){
-			cu[0] = 5;
-			cu[1] = 15;
-			return cu;
+		else {
+			return true;
 		}
-		
-		if(elStream.equalsIgnoreCase("B3")) {
-			cu[0] = 6;
-			cu[1] = 18;
-			return cu;
-		}
-		
-		if(elStream.equalsIgnoreCase("C2")) {
-			cu[0] = 7;
-			cu[1] = 21;
-			return cu;
-		}
-		
-		return cu;
+
 	}
 
 	public boolean checkForHUEL(){
-		if((this.noOfHUELScompleteOrInProgress< 3) || (this.noOFHUELProjects >1) 
-				|| (this.unitsOFnoOfHUELScompleteOrInProgress<8)){
+		if((this.noOfHuelsCOIP< 3) || (this.noOFHuelProjects >1) 
+				|| (this.unitsOFnoOfHuelsCOIP<8)){
 			return false;
 		}
 		else return true;
 	}
-	
+
 	public boolean checkForDEL(){
-		
+
 		String delStream1 = elSheet.getChart().getStream1();
 		int[] cu = getNumCoursesAndUnits(delStream1);		
 		int noOfDelType1Courses = cu[0];
 		int noOfDelType1Units = cu[1];
-		
+
 		int noOfDelType2Courses=0, noOfDelType2Units=0;
-		
+
 		String delStream2 = elSheet.getChart().getStream2();
+		// Checks if first or dual degree
 		if(delStream2.isEmpty()){
 			noOfDelType2Courses = 0;
 			noOfDelType2Units = 0;
@@ -271,37 +162,92 @@ public class GraduationRequirements {
 			noOfDelType2Courses = cu2[0];
 			noOfDelType2Units = cu2[1];
 		}
-		
-		if((this.noOfDelsType1CompleteOrInProgress< noOfDelType1Courses) || (this.noOfDelType1Projects >3) 
-				|| (this.unitsOfnoOfDelsType1CompleteOrInProgress< noOfDelType1Units)){
+
+		if((this.noOfDelsType1COIP< noOfDelType1Courses) || (this.noOfDelType1Projects >3) 
+				|| (this.unitsOfnoOfDelsType1COIP< noOfDelType1Units)){
 			return false;
 		}
-		if((this.noOfDelsType2CompleteOrInProgress< noOfDelType2Courses) || (this.noOfDelType2Projects >3) 
-				|| (this.unitsOfnoOfDelsType2CompleteOrInProgress< noOfDelType2Units)){
+		if((this.noOfDelsType2COIP< noOfDelType2Courses) || (this.noOfDelType2Projects >3) 
+				|| (this.unitsOfnoOfDelsType2COIP< noOfDelType2Units)){
 			return false;
 		}
-		
+
 		else return true;
 	}
 
-public int getNoOfTotalCourses(EligibilitySheetQueries elsheet){
-	int count = 0;
-	int countOfsems = elSheet.getChart().getSemsInChart().size();
-	for(int i=0;i<countOfsems;i++){
-		Semester s= elSheet.getChart().getSemsInChart().get(i);
-		count += s.getNumOfDelCompleted()+s.getNoOfDEL()+s.getNoOfHUEL()+s.getNumOfHuelCompleted()+s.getNoOfOEL()+s.getNumOfOellCompleted()
-				+s.getCompulsoryCourses().size();
-		if(s.hasOptional || s.isSummerTerm)
-			count++;
+	public boolean checkForOEL(){
+		if((this.noOfOelsCOIP< 5) || (this.noOfOelProjects >3) 
+				|| (this.unitsOFnoOfHuelsCOIP<15)){
+			return false;
+		}
+		else return true;
 	}
-	return count;
-}
 
-public boolean checkForOEL(){
-	if((this.noOfOELSCompleteOrInProgress< 5) || (this.noOfELProjects >3) 
-			|| (this.unitsOFnoOfHUELScompleteOrInProgress<15)){
-		return false;
+	public boolean checkTotalCoursework() {
+
+		if(this.totalCoursesCOIP > 40 && this.totalUnitsCOIP > 126) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
-	else return true;
-}
+
+	public boolean checkPSThesisConditions() {
+		//Change?
+		if(this.elSheet.getChart().getStream2().isEmpty()) {
+			if(this.noOfPSTSCOIP>1) {			
+				return true;
+			}
+			else
+				return false;
+		}
+		else {
+			if(this.noOfPSTSCOIP>2) {			
+				return true;
+			}
+			else
+				return false;
+		}
+	}
+
+	private int[] getNumCoursesAndUnits(String elStream) {
+
+		// Returns the num of required courses and units for a stream passed in as the parameter
+
+		int[] cu = {-1, -1};
+
+		if(elStream.equalsIgnoreCase("C6") || elStream.equalsIgnoreCase("A5") 
+				|| elStream.equalsIgnoreCase("AB") || elStream.equalsIgnoreCase("A4")
+				|| elStream.equalsIgnoreCase("A8") || elStream.equalsIgnoreCase("AA")
+				|| elStream.equalsIgnoreCase("A3") || elStream.equalsIgnoreCase("A7")
+				|| elStream.equalsIgnoreCase("B2") || elStream.equalsIgnoreCase("A2")) {
+
+			cu[0] = 4;
+			cu[1] = 12;
+			return cu;
+		}
+
+		if(elStream.equalsIgnoreCase("B1")|| elStream.equalsIgnoreCase("B5")
+				|| elStream.equalsIgnoreCase("B4")|| elStream.equalsIgnoreCase("A1")||
+				elStream.equalsIgnoreCase("D2")|| elStream.equalsIgnoreCase("C7")){
+			cu[0] = 5;
+			cu[1] = 15;
+			return cu;
+		}
+
+		if(elStream.equalsIgnoreCase("B3")) {
+			cu[0] = 6;
+			cu[1] = 18;
+			return cu;
+		}
+
+		if(elStream.equalsIgnoreCase("C2")) {
+			cu[0] = 7;
+			cu[1] = 21;
+			return cu;
+		}
+
+		return cu;
+	}
 }
