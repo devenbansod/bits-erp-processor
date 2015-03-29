@@ -118,6 +118,15 @@ public class ELSheetController {
 				if (idNum.getText() != null && ! idNum.getText().equals("") && 
 						idNum.getText().length() == 12) {
 
+					threadSafeConsoleOutput("Processing, Please wait.........");
+					Platform.runLater(new Runnable() {
+						public void run() {
+							FileSystem tempfs = FileSystems.getDefault();
+							Path path = tempfs.getPath("src/main/resources/html_res/Wait.html");
+							webEngine.load("file:///"+path.toAbsolutePath().toString());
+						}
+					});
+					
 					Thread temp = new Thread(){
 						public void run(){
 							loadSingleELSheet(idNum.getText());
@@ -133,6 +142,9 @@ public class ELSheetController {
 		});
 
 
+		
+		
+		
 		browseSourceFileButton.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e) {
 
@@ -170,7 +182,7 @@ public class ELSheetController {
 			}
 		});
 
-		// Button for CSV Updates
+		// for CSV Updates
 		refreshBrowseButton.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e) {
 				DirectoryChooser chooser = new DirectoryChooser();
@@ -180,12 +192,12 @@ public class ELSheetController {
 				chooser.setInitialDirectory(defaultDirectory);				
 
 
-				final File selectedFile = chooser.showDialog(new Stage());
+				final File selectedFolder = chooser.showDialog(new Stage());
 
-				if (selectedFile != null)	{
+				if (selectedFolder != null)	{
 					Platform.runLater(new Runnable() {
 						public void run() {
-							refreshFolder.setText(selectedFile.getAbsolutePath());
+							refreshFolder.setText(selectedFolder.getAbsolutePath());
 						}
 					});
 
@@ -213,6 +225,32 @@ public class ELSheetController {
 					threadSafeConsoleOutput("Please choose a valid destination folder!!");
 				}
 
+			}
+		});
+		
+		
+		reloadButton.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent e) {
+				
+				threadSafeConsoleOutput("Processing, Please wait.........");
+				Platform.runLater(new Runnable() {
+					public void run() {
+						FileSystem tempfs = FileSystems.getDefault();
+						Path path = tempfs.getPath("src/main/resources/html_res/Wait.html");
+						webEngine.load("file:///"+path.toAbsolutePath().toString());
+					}
+				});
+				Thread thread = new Thread(){
+					public void run(){
+						
+						
+						threadSafeConsoleOutput(CourseChartQueries.batchCSVChartsLoad(refreshFolder.getText()));
+						putWelcomeHTML();
+					}
+				};
+				thread.start();
+				
+				
 			}
 		});
 
