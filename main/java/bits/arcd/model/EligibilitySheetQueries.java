@@ -247,14 +247,14 @@ public class EligibilitySheetQueries {
 
 					// Add the Hum Electives to be done
 					for (int j = 0; j < first.getNoOfHUEL(); j++){
-						String temp = "    ------------------------------------------------          HUEL  ";
+						String temp = "    ------------------------------------------------          HUEL ";
 
 						sem1Courses.add(temp);
 
 					}
 
 					for (int j = 0; j < second.getNoOfHUEL(); j++){
-						String temp = "    ------------------------------------------------          HUEL  ";						
+						String temp = "    ------------------------------------------------          HUEL ";						
 						sem2Courses.add(temp);
 
 					}

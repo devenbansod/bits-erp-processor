@@ -313,12 +313,8 @@ public class SemChartController {
 				// Do the remaining operations if and only if this check returns true!!
 				// Otherwise you will get File IO Exception, because the Word document will
 				// not be created
-				
-				
-				 Date d = new Date();
-				 
-				 String formattedDate = convertToProperString(d.toString());	
-				 File file = new File("D:" + "\\Output_Charts" + formattedDate + ".txt");
+					
+				 File file = new File(destFolder.getText() + "\\Output_Charts_" + reqNum + ".txt");
 				 
 				 if (!file.exists()) {
 						file.createNewFile();
@@ -336,7 +332,7 @@ public class SemChartController {
 				 threadSafeConsoleOutput("\n\n" + (new Date()).toString() + " : Finished Processing !\n");
 				 
 				 threadSafeConsoleOutput("\n\n" + (new Date()).toString() + " : Exported the Chart Data into " 
-				 + destFolder.getText() + "\\" + formattedDate + ".txt\n");
+				 + file.getAbsolutePath() + ".txt\n");
 				 
 				 
 				 final String contentURL = new URL("file:///" +  file.getAbsolutePath()).toExternalForm();
