@@ -279,8 +279,22 @@ public class ELSheetController {
 		}
 		threadSafeConsoleOutput("Finished!..........");
 
+		putWelcomeHTML();
+		
 	}
 
+	public void putWelcomeHTML(){
+		Platform.runLater(new Runnable() {
+			public void run() {
+
+				FileSystem tempfs = FileSystems.getDefault();
+				Path path = tempfs.getPath("src/main/resources/html_res/Welcome.html");
+				webEngine.load("file:///"+path.toAbsolutePath().toString());
+			}
+		});
+	}
+	
+	
 	private void batchProcessELSheetsHelper(ArrayList<String> idNos, File f){
 
 		FileWriter fw = null;
