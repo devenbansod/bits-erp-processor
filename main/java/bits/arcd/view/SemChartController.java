@@ -38,6 +38,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Dialogs;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.web.WebEngine;
@@ -107,10 +108,24 @@ public class SemChartController {
 						&& strictNumCheck(reqNum.getText().trim()))	{
 					//System.out.println(reqNum.getText());
 					//mainApp.showSemChart(reqNum.getText());
+					threadSafeConsoleOutput("Processing, Please wait.........");
+					Platform.runLater(new Runnable() {
+						public void run() {
+							FileSystem tempfs = FileSystems.getDefault();
+							Path path = tempfs.getPath("src/main/resources/html_res/Wait.html");
+							webEngine.load("file:///"+path.toAbsolutePath().toString());
+						}
+					});
+					
 					Thread temp = new Thread (){
 						@Override
 						public void run() {
-							loadSingleChart(reqNum.getText());
+							try {
+								loadSingleChart(reqNum.getText());
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 						}
 					};
 					temp.start();
@@ -172,24 +187,18 @@ public class SemChartController {
 		
 		sourceFileRefreshButton.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e) {
-//				DirectoryChooser chooser = new DirectoryChooser();
-				FileChooser chooser = new FileChooser();
-				chooser.getExtensionFilters().addAll(new ExtensionFilter("CSV Files", "*.csv"),
-						new ExtensionFilter("txt Files", "*.txt"));
+				DirectoryChooser chooser = new DirectoryChooser();
+//				FileChooser chooser = new FileChooser();
 						
-				chooser.setTitle("Select the CSV File with Charts.csv");
+				chooser.setTitle("Select the folder with all the CSV Files");
 				File defaultDirectory = new File("C://");
 				chooser.setInitialDirectory(defaultDirectory);				
 				
-				if(mainApp == null) {
-					System.out.println("asd11");
-				}
+				File selectedFolder = chooser.showDialog(new Stage());
 				
-				File selectedFile = chooser.showOpenDialog(new Stage());
-				
-				if (selectedFile != null)	{
-					srcFileRefresh.setText(selectedFile.getAbsolutePath());
-				}
+				if (selectedFolder != null)	{
+					srcFileRefresh.setText(selectedFolder.getAbsolutePath());				
+					}
 				else {
 					threadSafeConsoleOutput("Please choose a valid source folder!!");
 				}
@@ -199,7 +208,26 @@ public class SemChartController {
 		
 		updateAll.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e) {
-				threadSafeConsoleOutput(CourseChartQueries.batchCSVChartsLoad(srcFileRefresh.getText()));
+				
+				threadSafeConsoleOutput("Processing, Please wait.........");
+				Platform.runLater(new Runnable() {
+					public void run() {
+						FileSystem tempfs = FileSystems.getDefault();
+						Path path = tempfs.getPath("src/main/resources/html_res/Wait.html");
+						webEngine.load("file:///"+path.toAbsolutePath().toString());
+					}
+				});
+				Thread thread = new Thread(){
+					public void run(){
+						
+						
+						threadSafeConsoleOutput(CourseChartQueries.batchCSVChartsLoad(srcFileRefresh.getText()));
+						putWelcomeHTML();
+					}
+				};
+				thread.start();
+				
+				
 			}
 		});
 
@@ -207,6 +235,15 @@ public class SemChartController {
 			public void handle(ActionEvent e) {
 				// Launch it in a separate thread, so that it doesn't hang the main
 				// window!
+				
+				threadSafeConsoleOutput("Processing, Please wait.........");
+				Platform.runLater(new Runnable() {
+					public void run() {
+						FileSystem tempfs = FileSystems.getDefault();
+						Path path = tempfs.getPath("src/main/resources/html_res/Wait.html");
+						webEngine.load("file:///"+path.toAbsolutePath().toString());
+					}
+				});
 				Thread thread = new Thread(){
 					public void run(){
 						
@@ -226,6 +263,7 @@ public class SemChartController {
 					}
 				};
 				thread.start();
+				
 			}
 		});
 
@@ -235,10 +273,22 @@ public class SemChartController {
 		Platform.runLater(new Runnable() {
 			public void run() {
 				consoleOutput.setText(consoleOutput.getText() + "" + output);
+				consoleOutput.end();
 			}
 		});
 	}
 
+	public void putWelcomeHTML(){
+		Platform.runLater(new Runnable() {
+			public void run() {
+
+				FileSystem tempfs = FileSystems.getDefault();
+				Path path = tempfs.getPath("src/main/resources/html_res/Welcome.html");
+				webEngine.load("file:///"+path.toAbsolutePath().toString());
+			}
+		});
+	}
+	
 	/**
 	 * Is called by the main application to give a reference back to itself.
 	 * 
@@ -257,18 +307,14 @@ public class SemChartController {
 	}
 	
 	
-	public void loadSingleChart(String reqNum)	{
+	public void loadSingleChart(String reqNum)	throws Exception {
 		if (strictNumCheck(reqNum))	{
 			try {
 				// Do the remaining operations if and only if this check returns true!!
 				// Otherwise you will get File IO Exception, because the Word document will
 				// not be created
-				
-				
-				 Date d = new Date();
-				 
-				 String formattedDate = convertToProperString(d.toString());	
-				 File file = new File("D:" + "\\Output_Charts" + formattedDate + ".txt");
+					
+				 File file = new File(destFolder.getText() + "\\Output_Charts_" + reqNum + ".txt");
 				 
 				 if (!file.exists()) {
 						file.createNewFile();
@@ -286,7 +332,7 @@ public class SemChartController {
 				 threadSafeConsoleOutput("\n\n" + (new Date()).toString() + " : Finished Processing !\n");
 				 
 				 threadSafeConsoleOutput("\n\n" + (new Date()).toString() + " : Exported the Chart Data into " 
-				 + destFolder.getText() + "\\" + formattedDate + ".txt\n");
+				 + file.getAbsolutePath() + ".txt\n");
 				 
 				 
 				 final String contentURL = new URL("file:///" +  file.getAbsolutePath()).toExternalForm();
@@ -302,11 +348,13 @@ public class SemChartController {
 			}
 		}
 		else {
-			threadSafeConsoleOutput("The input number: " + reqNum + " is either invalid numeric!");
+			throw new Exception("Please input a proper Integer!");
+//			threadSafeConsoleOutput("The input number: " + reqNum + " is either invalid numeric!");
 		}
 	}
 
 	public void batchProcessCharts (String SourceFile)	{
+			
 			File f = new File(SourceFile);
 			File f2 = new File(destFolder.getText());
 			
@@ -338,7 +386,6 @@ public class SemChartController {
 				String reqNo = "";
 				while(sc.hasNext()){
 					reqNo = sc.nextLine().replace(",", "");
-					System.out.println(reqNo);
 					reqNos.add(reqNo);
 				}
 				
@@ -350,6 +397,8 @@ public class SemChartController {
 				threadSafeConsoleOutput("Invalid directory specified!");
 			}
 			threadSafeConsoleOutput("Finished!..........");
+			
+			putWelcomeHTML();
 		}
 				
 
@@ -364,10 +413,16 @@ public class SemChartController {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		System.out.println(reqNos.size());
+		
 		for(int j = 0; j < reqNos.size(); j++) {
 			
-			CourseChartQueries c = new CourseChartQueries(reqNos.get(j));
+			CourseChartQueries c = null;
+			try {
+				c = new CourseChartQueries(reqNos.get(j));
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			String s = c.toString();
 		
 			

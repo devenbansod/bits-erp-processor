@@ -11,6 +11,8 @@ import java.net.URL;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -115,15 +117,48 @@ public class ELSheetController {
 		getElSheetButton.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e) {
 
-				if (idNum.getText() != null && ! idNum.getText().equals("") && 
-						idNum.getText().length() == 12) {
+				if (idNum.getText() != null && ! idNum.getText().equals("")) {
 
-					Thread temp = new Thread(){
-						public void run(){
-							loadSingleELSheet(idNum.getText());
-						}
-					};
-					temp.start();
+					if (idNum.getText().length() == 12){
+
+						threadSafeConsoleOutput("Processing, Please wait.........");
+						Platform.runLater(new Runnable() {
+							public void run() {
+								FileSystem tempfs = FileSystems.getDefault();
+								Path path = tempfs.getPath("src/main/resources/html_res/Wait.html");
+								webEngine.load("file:///"+path.toAbsolutePath().toString());
+							}
+						});
+
+						Thread temp = new Thread(){
+							public void run(){
+								loadSingleELSheet(idNum.getText());
+							}
+						};
+						temp.start();
+
+					}
+
+					else if (idNum.getText().length() != 12 && idNum.getText().contains("%")) {
+						
+						threadSafeConsoleOutput("Processing, Please wait.........");
+						Platform.runLater(new Runnable() {
+							public void run() {
+								FileSystem tempfs = FileSystems.getDefault();
+								Path path = tempfs.getPath("src/main/resources/html_res/Wait.html");
+								webEngine.load("file:///"+path.toAbsolutePath().toString());
+							}
+						});
+
+						Thread temp = new Thread(){
+							public void run(){
+								loadELSheetsLike(idNum.getText());
+							}
+						};
+						
+						temp.start();
+
+					}
 				}
 
 				else {
@@ -131,6 +166,9 @@ public class ELSheetController {
 				}
 			}
 		});
+
+
+
 
 
 		browseSourceFileButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -170,7 +208,7 @@ public class ELSheetController {
 			}
 		});
 
-		// Button for CSV Updates
+		// for CSV Updates
 		refreshBrowseButton.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e) {
 				DirectoryChooser chooser = new DirectoryChooser();
@@ -180,12 +218,12 @@ public class ELSheetController {
 				chooser.setInitialDirectory(defaultDirectory);				
 
 
-				final File selectedFile = chooser.showDialog(new Stage());
+				final File selectedFolder = chooser.showDialog(new Stage());
 
-				if (selectedFile != null)	{
+				if (selectedFolder != null)	{
 					Platform.runLater(new Runnable() {
 						public void run() {
-							refreshFolder.setText(selectedFile.getAbsolutePath());
+							refreshFolder.setText(selectedFolder.getAbsolutePath());
 						}
 					});
 
@@ -216,12 +254,39 @@ public class ELSheetController {
 			}
 		});
 
+
+		reloadButton.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent e) {
+
+				threadSafeConsoleOutput("Processing, Please wait.........");
+				Platform.runLater(new Runnable() {
+					public void run() {
+						FileSystem tempfs = FileSystems.getDefault();
+						Path path = tempfs.getPath("src/main/resources/html_res/Wait.html");
+						webEngine.load("file:///"+path.toAbsolutePath().toString());
+					}
+				});
+				Thread thread = new Thread(){
+					public void run(){
+
+
+						threadSafeConsoleOutput(CourseChartQueries.batchCSVChartsLoad(refreshFolder.getText()));
+						putWelcomeHTML();
+					}
+				};
+				thread.start();
+
+
+			}
+		});
+
 	}
 
 	public void threadSafeConsoleOutput(final String output)	{
 		Platform.runLater(new Runnable() {
 			public void run() {
 				consoleOutput.setText(consoleOutput.getText() + "" + output);
+				consoleOutput.end();
 			}
 		});
 	}
@@ -279,7 +344,21 @@ public class ELSheetController {
 		}
 		threadSafeConsoleOutput("Finished!..........");
 
+		putWelcomeHTML();
+
 	}
+
+	public void putWelcomeHTML(){
+		Platform.runLater(new Runnable() {
+			public void run() {
+
+				FileSystem tempfs = FileSystems.getDefault();
+				Path path = tempfs.getPath("src/main/resources/html_res/Welcome.html");
+				webEngine.load("file:///"+path.toAbsolutePath().toString());
+			}
+		});
+	}
+
 
 	private void batchProcessELSheetsHelper(ArrayList<String> idNos, File f){
 
@@ -331,10 +410,7 @@ public class ELSheetController {
 	public void loadSingleELSheet(String idNum) {
 		try {
 
-			Date d = new Date();
-
-			String formattedDate = convertToProperString(d.toString());	
-			File file = new File("D:" + "\\EL_SHEETS_" + formattedDate + ".txt");
+			File file = new File(destFolder.getText() + "\\EL_SHEET_" + idNum + ".txt");
 
 			if (!file.exists()) {
 				file.createNewFile();
@@ -976,4 +1052,40 @@ public class ELSheetController {
 		return value;
 	}
 
+
+	private void loadELSheetsLike(String inputString) {
+
+		DBConnector db = new DBConnector();
+
+		String query = "SELECT * FROM STUDENTS WHERE campus_id LIKE '" + inputString + "'";
+		
+		ResultSet rs = db.queryExecutor(query, false);
+
+		String idNo = "";
+
+		ArrayList<String> idNos = new ArrayList<String>();
+
+		try {
+			while ( rs.next() ) {
+				idNo = rs.getString(2);
+				idNos.add(idNo);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		File f2 = new File(destFolder.getText());
+
+		Date d = new Date();
+		String formattedDate = convertToProperString(d.toString());
+		File f_Out = new File(destFolder.getText() + "\\EL_SHEETS_" + formattedDate + ".txt");
+
+		if(f2.isDirectory()) {
+			batchProcessELSheetsHelper(idNos, f_Out);
+		}
+		
+		putWelcomeHTML();
+
+	}
 }

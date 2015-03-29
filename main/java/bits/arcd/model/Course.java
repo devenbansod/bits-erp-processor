@@ -2,7 +2,6 @@ package bits.arcd.model;
 
 public class Course {
 
-//temp
 	private int courseCode ; //this is the compcode
 	private String subject; //eg CS
 	private String catalog ; //eg F111
@@ -201,6 +200,8 @@ public class Course {
 
 			//5
 			String infoString = "";
+			
+			
 			if (this.inProgress != null && this.inProgress.equals("Y"))
 			{
 				infoString = infoString + "||";
@@ -210,6 +211,8 @@ public class Course {
 				infoString = infoString + "$";
 			}
 
+			
+			
 			while (infoString.length() != 3){
 				infoString = infoString + " ";
 			}
