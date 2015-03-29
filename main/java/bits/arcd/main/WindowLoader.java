@@ -13,7 +13,7 @@ public class WindowLoader extends Application {
 
 	private Stage primaryStage;
 	private AnchorPane rootLayout;
-	public static String IPAddress = "jdbc:mysql://"+"localhost:3306"+"/";
+	public static String IPAddress = "jdbc:mysql://"+"localhost:8888"+"/";
 	public static String usernm = "ghazi";
 	public static String passwd = "erp321";
 
