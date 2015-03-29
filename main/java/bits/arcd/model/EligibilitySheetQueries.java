@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import sun.misc.Perf.GetPerfAction;
+
 public class EligibilitySheetQueries {
 
 	private String studentId;
@@ -21,10 +23,13 @@ public class EligibilitySheetQueries {
 	private String cgpa;
 	private int cgpaCup, cgpaUnits;
 
+	private int termProducedIn;
+	
 	public EligibilitySheetQueries(String studentId, int term) {
 
 		dbConnector = new DBConnector();
 
+		this.termProducedIn = term;
 		this.studentId = studentId;
 		setSystemId(this.studentId);
 		setRequirementNo(this.studentId);
@@ -136,13 +141,10 @@ public class EligibilitySheetQueries {
 		String s = "";
 		int i = 0;
 
-		//		s = s + "                                        "
-		//				+ "                       BITS PILANI            "
-		//				+ "                                                     \n";
-		//		
-
 		s = s + returnCenteredString("BITS Pilani") + "\n";
 
+		s = s + returnCenteredString("PRODUCED FOR : " + getPrintingTerm(termProducedIn)) + "\n";
+		
 		s = s + returnCenteredString("ELIGIBLITY SHEET (VIDE A.R. 3.21)") + "\n\n";
 
 		
@@ -155,7 +157,7 @@ public class EligibilitySheetQueries {
 		s = s + returnCenteredString(details) + "\n";
 
 
-		s = s + "\nYEAR     COMP  COURSE NO  COURSE TITLE             UNITS  GRADES                ";
+		s = s + "\nYEAR     COMP  COURSE NO  COURSE TITLE             UNITS  GRADES             ";
 		s = s + "COMP  COURSE NO  COURSE TITLE             UNITS  GRADES                    ";
 
 		s = s + "\n-----------------------------------------"
@@ -492,6 +494,7 @@ public class EligibilitySheetQueries {
 					c.setTerm(r.getInt(4));
 					c.setIsDoneInPrevTerm(this.prevTerm);		
 					c.setElDescr("");
+					c.checkAndSetGradeValidAndGradeComplete();
 
 					if (yearNo == semYear[0] && semNo == semYear[1] && c.isInProgress().equals("Y")){
 						c.setOPSC(true);
@@ -502,10 +505,11 @@ public class EligibilitySheetQueries {
 
 					
 				}				
+				
 
+				this.checkForRepeatAndSetFlag(c);
 
 	
-				this.checkForRepeatAndSetFlag(c);
 
 
 			} catch (SQLException e) {
@@ -538,11 +542,20 @@ public class EligibilitySheetQueries {
 						r.getString(6), r.getInt(16), r.getString(20), this.prevTerm);
 				c.setIsHuel(true);
 				
-				if (this.hasMinor(this.systemId)){
-					this.setMinorDesc(c);
-					c.setElDescr("HUEL" +  "/" + c.getElDescr() );
+				String s = this.hasMinor(this.systemId);
+				if (s != null && ! s.equals("")){
+					setMinorDesc(c,s);
+					if(!(c.getElDescr()==null)) {
+						c.setElDescr("HUEL" +  "/" + c.getElDescr() );
+					}
+					else {
+						c.setElDescr("HUEL");
+						
+					}
 				}
-				c.setElDescr("HUEL");
+				else {
+					c.setElDescr("HUEL");
+				}
 				if (yearNo == semYear[0] && semNo == semYear[1] && c.isInProgress().equals("Y")){
 					c.setOPSC(true);
 				}
@@ -550,9 +563,14 @@ public class EligibilitySheetQueries {
 					c.setOPSC(false);
 				}
 				
+				int years = this.getChart().getSemsInChart().size() / 2;
+				if (years == semYear[0] && c.isInProgress() != null && c.isInProgress().equals("Y"))
+					c.setOPSC(true);
+				c.checkAndSetGradeValidAndGradeComplete();
+				this.checkForRepeatAndSetFlag(c);
+				
 				sem.addHumanitiesElectives(c);
 
-				this.checkForRepeatAndSetFlag(c);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -577,7 +595,7 @@ public class EligibilitySheetQueries {
 		try {
 			while(r.next()) {
 				for(Course c : sem.getDelCourses()){
-					int counter =0;
+					int counter = 0;
 					String s =  r.getString(19).substring(0, 2) + "EL";
 					if(c.getElDescr().equalsIgnoreCase(s) &&
 							c.getDescription()==null){
@@ -587,11 +605,36 @@ public class EligibilitySheetQueries {
 								r.getString(6), r.getInt(16), r.getString(20), this.prevTerm);
 						cNew.setIsDel(true);
 						cNew.setElDescr(s);
+						
+						this.checkForRepeatAndSetFlag(cNew);
+//						System.out.println( cNew.getDescription() + "  : " + cNew.isInProgress());
+//						System.out.println(yearNo);
+						
+						int years = this.getChart().getSemsInChart().size() / 2;
+						
+						if (yearNo == semYear[0] && semNo == semYear[1] 
+							&& cNew.isInProgress() != null && cNew.isInProgress().equals("Y")){
+							
+							cNew.setOPSC(true);
+						}
+						else {
+							cNew.setOPSC(false);
+						}
+						
+						if (yearNo == semYear[0] && cNew.isInProgress() != null && cNew.isInProgress().equals("Y")) {
+							cNew.setOPSC(true);
+						}
+						
+						checkForRepeatAndSetFlag(cNew);
+						cNew.checkAndSetGradeValidAndGradeComplete();
+						
 						sem.getDelCourses().set(i,cNew);
 					counter++;
 					}
 					if (counter>0)
 					break;
+				
+					
 					
 				}
 
@@ -625,15 +668,20 @@ public class EligibilitySheetQueries {
 						r.getInt(13), r.getInt(13), r.getString(12), r.getInt(4), r.getInt(5), r.getString(7),
 						r.getString(6), r.getInt(16), r.getString(20), this.prevTerm);
 				c.setIsOel(true);
-				if (this.hasMinor(this.systemId)){
-					this.setMinorDesc(c);
-					c.setElDescr("EL" +  "/" + c.getElDescr() );
-				}
 				
-				sem.addOpenElectives(c);
-
-				c.setElDescr("EL");
-
+				String s = this.hasMinor(this.systemId);
+				if (s != null && ! s.equals("")){
+					setMinorDesc(c,s);
+					if(!(c.getElDescr()==null)) {
+						c.setElDescr("EL" +  "/" + c.getElDescr() );
+					}
+					else {
+						c.setElDescr("EL");
+					}
+				}
+				else {
+					c.setElDescr("EL");
+				}
 				if (yearNo == semYear[0] && semNo == semYear[1] && c.isInProgress().equals("Y")){
 					c.setOPSC(true);
 				}
@@ -641,11 +689,15 @@ public class EligibilitySheetQueries {
 					c.setOPSC(false);
 				}
 
-		
+				int years = this.getChart().getSemsInChart().size() / 2;
+				if (years == semYear[0] && c.isInProgress() != null && c.isInProgress().equals("Y"))
+					c.setOPSC(true);
+
+				this.checkForRepeatAndSetFlag(c);
+				c.checkAndSetGradeValidAndGradeComplete();
 				sem.addOpenElectives(c);
 
 				
-				this.checkForRepeatAndSetFlag(c);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -682,9 +734,15 @@ public class EligibilitySheetQueries {
 					c.setOPSC(false);
 				}
 
-				sem.setOptionalCourse(c);
+				int years = this.getChart().getSemsInChart().size() / 2;
+				if (years == semYear[0] && c.isInProgress() != null && c.isInProgress().equals("Y"))
+					c.setOPSC(true);
 			
 				this.checkForRepeatAndSetFlag(c);
+				c.checkAndSetGradeValidAndGradeComplete();
+				sem.setOptionalCourse(c);
+			
+			
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -713,10 +771,11 @@ public class EligibilitySheetQueries {
 						r.getInt(13), r.getInt(13), r.getString(12), r.getInt(4), r.getInt(5), r.getString(7),
 						r.getString(6), r.getInt(16), r.getString(20), this.prevTerm);		
 
-	
+
+				this.checkForRepeatAndSetFlag(c);
+				c.checkAndSetGradeValidAndGradeComplete();
 				sem.setPS(c);
 				
-				this.checkForRepeatAndSetFlag(c);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -880,54 +939,90 @@ public class EligibilitySheetQueries {
 		
 	
 	}
+
+	private String getPrintingTerm(int term){
+		
+		String s = "";
+		
+		String query = "SELECT DISTINCT sem_description from terms where semester = '" + term + "'";
+		
+		ResultSet rs = dbConnector.queryExecutor(query, false);
+		
+		try {
+			while (rs.next()){
+				s = rs.getString(1);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return s;
+		
+	
+	}
+
 	
 
-	public boolean hasMinor(String sysId){
+	public String hasMinor(String sysId){
 		String query ="SELECT * from student_minor where sys_id = '" + sysId + "'";
 				// Use systemID to write query for returning row from 
 				//std_minor table
+		String s = "";
 		ResultSet rs = dbConnector.queryExecutor(query, false);
-		int i=0;
+		int i = 0;
 		try {
 			while(rs.next()){
 				i++;
+				s = s + rs.getString(5);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		if(i>0)
-			return true;
+			return s;
 		else 
-			return false;
-		
+			return s;
 	}
 	
-	public void setMinorDesc (Course c){
+	public void setMinorDesc (Course c, String origMinor){
 		int CourseId = c.getCourseCode();
+		
+		System.out.println(CourseId);
 		String query = "SELECT * FROM minor_course_list where course_id = '" + c.getCourseCode() + "'";
 				//Use courseId to write a query to return row from minor course list
 				//table
 		ResultSet rs = dbConnector.queryExecutor(query, false);
-		int i = 0;
 		String desc = "";
 		try {
 			
 			while(rs.next()){
-				i++;
+
 				String s = rs.getString(1);
 				int indexOfP = s.indexOf("P");
-				desc =	s.substring(0, indexOfP);
-				desc += rs.getString(3);			
+				int indexOfMinor = origMinor.indexOf("P");
+				String check = null;
+				if (indexOfMinor >= 0 ) {
+				 check = origMinor.substring(0,indexOfMinor);
+				}
+					desc =	s.substring(0, indexOfP);
+					if(desc.equalsIgnoreCase(check)){
+						desc += rs.getString(3);
+						c.setElDescr(desc);
+					}
+					
+					else {
+						desc = null;
+						c.setElDescr(desc);
+					}
+				
 			}
+			
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		
-		if(i>0){
-			c.setElDescr(desc);
 		}
 		
 	}

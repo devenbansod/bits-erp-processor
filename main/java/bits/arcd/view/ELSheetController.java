@@ -34,15 +34,23 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Dialogs;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBoxBuilder;
+import javafx.scene.text.Text;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import bits.arcd.main.WindowLoader;
 import bits.arcd.model.Course;
 import bits.arcd.model.CourseChartQueries;
@@ -408,6 +416,12 @@ public class ELSheetController {
 	}
 
 	public void loadSingleELSheet(String idNum) {
+		Platform.runLater(new Runnable() {
+			public void run() {
+				
+			}
+		});
+		
 		try {
 
 			File file = new File(destFolder.getText() + "\\EL_SHEET_" + idNum + ".txt");

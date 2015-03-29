@@ -176,6 +176,7 @@ public class Course {
 
 			//5
 			String gradeString = "";
+			
 			if (grade != null) {
 				gradeString = grade.trim();
 				while(gradeString.length() != 5) {
@@ -211,7 +212,11 @@ public class Course {
 				infoString = infoString + "$";
 			}
 
-			
+			if (grade != null && this.gradeValid && ! this.gradeComplete )
+				infoString = infoString + "*";			
+
+			if ((this.isInProgress() != null) && ! this.isInProgress().equals("Y") && (this.projectTypeCourse || this.courseCode == 1591 ))
+				infoString = infoString + "#";
 			
 			while (infoString.length() != 3){
 				infoString = infoString + " ";
@@ -233,7 +238,7 @@ public class Course {
 				TypeString = TypeString + this.getElDescr();
 			}
 
-			while (TypeString.length() != 5){
+			while (TypeString.length() < 5 ){
 				TypeString = TypeString + " ";
 			}
 
@@ -271,13 +276,16 @@ public class Course {
 
 		for(int i=0; i<completeGrades.length; i++) {
 			if(countedGrade !=null && countedGrade.equalsIgnoreCase(completeGrades[i])) {
+//				System.out.println("1");
 				this.gradeValid = true;
 				this.gradeComplete = true;
 				return;
 			}
 		}
+		
 		for(int i=0; i<incompleteGrades.length; i++) {
 			if(countedGrade !=null && countedGrade.equalsIgnoreCase(incompleteGrades[i])) {
+//				System.out.println("2");
 				this.gradeValid = true;
 				this.gradeComplete = false;
 				return;
