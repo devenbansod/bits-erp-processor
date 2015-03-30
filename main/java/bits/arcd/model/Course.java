@@ -125,7 +125,7 @@ public class Course {
 		// catalog has many spaces
 
 		if (this.getCourseCode() == 0 && this.description == null) {
-			return "    ------------------------------------------------          " + this.getElDescr() + " ";
+			return "    ------------------------------------------------          " + this.getElDescr() + "      ";
 		}
 		else {	
 
@@ -238,7 +238,7 @@ public class Course {
 				TypeString = TypeString + this.getElDescr();
 			}
 
-			while (TypeString.length() < 5 ){
+			while (TypeString.length() < 10 ){
 				TypeString = TypeString + " ";
 			}
 

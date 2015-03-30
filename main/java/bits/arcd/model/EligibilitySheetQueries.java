@@ -124,7 +124,7 @@ public class EligibilitySheetQueries {
 
 	private String returnCenteredString(String s){
 
-		int total_spaces = 135 - s.length();
+		int total_spaces = 150 - s.length();
 
 		for(int i = 0; i < total_spaces/2; i++){
 			s = " " + s + " ";
@@ -157,12 +157,12 @@ public class EligibilitySheetQueries {
 		s = s + returnCenteredString(details) + "\n";
 
 
-		s = s + "\nYEAR     COMP  COURSE NO  COURSE TITLE             UNITS  GRADES             ";
-		s = s + "COMP  COURSE NO  COURSE TITLE             UNITS  GRADES                    ";
+		s = s + "\nYEAR      CODE  COURSE NO  COURSE TITLE           UNITS  GRADES                   ";
+		s = s + "CODE  COURSE NO  COURSE TITLE           UNITS  GRADES             ";
 
 		s = s + "\n-----------------------------------------"
 				+ "-----------------------------------------"
-				+ "---------------------------------------------------------\n";
+				+ "-------------------------------------------------------------------\n";
 		//		for(Semester sem :this.getCh().getSemsInChart()){
 
 
@@ -249,40 +249,40 @@ public class EligibilitySheetQueries {
 
 					// Add the Hum Electives to be done
 					for (int j = 0; j < first.getNoOfHUEL(); j++){
-						String temp = "    ------------------------------------------------          HUEL ";
+						String temp = "    ------------------------------------------------          HUEL      ";
 
 						sem1Courses.add(temp);
 
 					}
 
 					for (int j = 0; j < second.getNoOfHUEL(); j++){
-						String temp = "    ------------------------------------------------          HUEL ";						
+						String temp = "    ------------------------------------------------          HUEL      ";						
 						sem2Courses.add(temp);
 
 					}
 
 					// Add the Open Electives to be done
 					for (int j = 0; j < first.getNoOfOEL(); j++){
-						String temp = "    ------------------------------------------------          EL   ";
+						String temp = "    ------------------------------------------------          EL        ";
 						sem1Courses.add(temp);
 
 					}
 
 					for (int j = 0; j < second.getNoOfOEL(); j++){
-						String temp = "    ------------------------------------------------          EL    ";
+						String temp = "    ------------------------------------------------          EL         ";
 						sem2Courses.add(temp);
 					}
 
 					// Add the Disp Electives to be done
 					/**
 					for (int j = 0; j < first.getNoOfDEL(); j++){
-						String temp = "   ------------------------------------------------          DEL   ";	
+						String temp = "   ------------------------------------------------          DEL        ";	
 						sem1Courses.add(temp);
 
 					}
 
 					for (int j = 0; j < second.getNoOfDEL(); j++){
-						String temp = "   ------------------------------------------------          DEL   ";
+						String temp = "   ------------------------------------------------          DEL        ";
 
 						sem2Courses.add(temp);
 
@@ -320,7 +320,7 @@ public class EligibilitySheetQueries {
 
 						}
 						else {
-							temp = temp + "      " + "                                                                   ";
+							temp = temp + "      " + "                                                                        ";
 						}
 
 
@@ -328,7 +328,7 @@ public class EligibilitySheetQueries {
 							temp = temp + sem2Courses.get(j);
 						}
 						else {
-							temp = temp + "                                                                   ";
+							temp = temp + "                                                                        ";
 						}
 
 						temp = temp + "\n";
@@ -339,7 +339,7 @@ public class EligibilitySheetQueries {
 
 					s = s + "-----------------------------------------"
 							+ "-----------------------------------------"
-							+ "---------------------------------------------------------\n";
+							+ "-------------------------------------------------------------------\n";
 				}
 			}
 
@@ -351,7 +351,7 @@ public class EligibilitySheetQueries {
 
 				s = s + "-----------------------------------------"
 						+ "-----------------------------------------"
-						+ "---------------------------------------------------------\n";
+						+ "-------------------------------------------------------------------\n";
 
 				rem = 0;
 
@@ -369,7 +369,7 @@ public class EligibilitySheetQueries {
 		
 		s = s + "-----------------------------------------"
 				+ "-----------------------------------------"
-				+ "---------------------------------------------------------\n";
+				+ "---------------------------------------------------------------\n";
 		
 		
 		return "\n" + s;
@@ -989,7 +989,6 @@ public class EligibilitySheetQueries {
 	public void setMinorDesc (Course c, String origMinor){
 		int CourseId = c.getCourseCode();
 		
-		System.out.println(CourseId);
 		String query = "SELECT * FROM minor_course_list where course_id = '" + c.getCourseCode() + "'";
 				//Use courseId to write a query to return row from minor course list
 				//table
