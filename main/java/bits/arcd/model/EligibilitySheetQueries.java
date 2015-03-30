@@ -25,6 +25,8 @@ public class EligibilitySheetQueries {
 
 	private int termProducedIn;
 	
+	private ArrayList<Course> unaccountedCourses = new ArrayList<Course>();
+	
 	public EligibilitySheetQueries(String studentId, int term) {
 
 		dbConnector = new DBConnector();
@@ -494,7 +496,7 @@ public class EligibilitySheetQueries {
 					c.setTerm(r.getInt(4));
 					c.setIsDoneInPrevTerm(this.prevTerm);		
 					c.setElDescr("");
-					c.checkAndSetGradeValidAndGradeComplete();
+					c.checkAndSetGradeValidAndGradeComplete();					
 
 					if (yearNo == semYear[0] && semNo == semYear[1] && c.isInProgress().equals("Y")){
 						c.setOPSC(true);
@@ -504,19 +506,40 @@ public class EligibilitySheetQueries {
 					}
 
 					
-				}				
+				}	
 				
 
-				this.checkForRepeatAndSetFlag(c);
-
-	
-
+				this.checkForRepeatAndSetFlag(c);				
 
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}			
 		}		
+	}
+
+	private void addUnaccountedCourses() {
+		
+		String query = "select distinct course_id, subject, catalog, course_descr, units_taken, grade"
+				+ " from student_enrollment where sys_id = '" + this.systemId + "' and units_taken > 0"
+				+ " and course_id not in (select course_id from req_course_map where"
+				+ " sys_id = '" + this.systemId + "')";
+		
+		ResultSet rs =  dbConnector.queryExecutor(query, false);
+		
+		try {
+			while(rs.next()) {
+				
+				Course c = new Course(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4),
+							rs.getInt(5), rs.getInt(5));
+				c.setGrade(rs.getString(6));
+				this.unaccountedCourses.add(c);				
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 	private void addHuelsToSem(Semester sem, int term){	
