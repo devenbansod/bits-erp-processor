@@ -94,6 +94,7 @@ public class SemChartController {
 		webEngine.load("file:///"+path.toAbsolutePath().toString());
 		sourceFile.setText(getSettings("sourceFileCSV"));
 		destFolder.setText(getSettings("destFolder"));
+		srcFileRefresh.setText(getSettings("sourceCSVs"));
 		// Thread safe loading
 		/**Platform.runLater(new Runnable() {
 			public void run() {
@@ -198,7 +199,8 @@ public class SemChartController {
 				
 				if (selectedFolder != null)	{
 					srcFileRefresh.setText(selectedFolder.getAbsolutePath());				
-					}
+					setSettings("sourceCSVs", selectedFolder.getAbsolutePath());
+				}
 				else {
 					threadSafeConsoleOutput("Please choose a valid source folder!!");
 				}

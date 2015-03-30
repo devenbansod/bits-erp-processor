@@ -27,7 +27,7 @@ public class Course {
 		this.elDescr = elDescr;
 	}
 
-	private int minUnits,maxUnits;
+	private int minUnits, maxUnits;
 	private String grade; //A, NC
 	private int term; //1121
 	private int classNo; //3515
@@ -39,6 +39,8 @@ public class Course {
 
 	private boolean projectTypeCourse;
 
+	private boolean isOptional, isPS1;
+	
 	public boolean isGradeValid() {
 		return gradeValid;
 	}
@@ -125,7 +127,7 @@ public class Course {
 		// catalog has many spaces
 
 		if (this.getCourseCode() == 0 && this.description == null) {
-			return "    ------------------------------------------------          " + this.getElDescr() + "      ";
+			return "    ................................................          " + this.getElDescr() + "      ";
 		}
 		else {	
 
@@ -444,4 +446,41 @@ public class Course {
 	public boolean getIsProjectTypeCourse() {
 		return projectTypeCourse;
 	}
+	
+	public boolean isOptional(){
+		return isOptional;
+	}
+
+	public void setIsOptional(boolean isOptional){
+		this.isOptional = isOptional;
+	}
+
+	public void setIsPS1(boolean isPS1) {
+		this.isPS1 = isPS1;
+	}
+	
+	public boolean isPS1(){
+		return this.isPS1;
+	}
+
+	public boolean isPS2orThesis() {
+		
+		if (this.subject.equalsIgnoreCase("BITS")) {
+			if (this.catalog.equalsIgnoreCase("F412") || this.catalog.equalsIgnoreCase("F421T")
+					|| this.catalog.equalsIgnoreCase("F422T") || this.catalog.equalsIgnoreCase("F422")
+					|| this.catalog.equalsIgnoreCase("F421") || this.catalog.equalsIgnoreCase("F423T")
+					|| this.catalog.equalsIgnoreCase("F423")) {
+				return true;
+			}
+		}
+		
+		else {
+			return false;
+		}
+		
+		return false;
+		
+	}
+	
+	
 }

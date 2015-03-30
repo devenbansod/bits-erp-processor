@@ -119,7 +119,7 @@ public class ELSheetController {
 
 		destFolder.setText(getSettings("destFolderELSheet"));
 		sourceIdNosCSV.setText(getSettings("sourceIdNosCSV"));
-
+		refreshFolder.setText(getSettings("sourceCSVs"));
 
 		// Button for ELSheet Generation
 		getElSheetButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -225,13 +225,13 @@ public class ELSheetController {
 				File defaultDirectory = new File("C://");
 				chooser.setInitialDirectory(defaultDirectory);				
 
-
 				final File selectedFolder = chooser.showDialog(new Stage());
 
 				if (selectedFolder != null)	{
 					Platform.runLater(new Runnable() {
 						public void run() {
 							refreshFolder.setText(selectedFolder.getAbsolutePath());
+							setSettings("sourceCSVs", selectedFolder.getAbsolutePath());
 						}
 					});
 

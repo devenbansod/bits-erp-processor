@@ -21,6 +21,7 @@ public class EligibilitySheetQueries {
 	private int prevTerm;	
 
 	private String cgpa;
+	private double cgpaCalculated;
 	private int cgpaCup, cgpaUnits;
 
 	private int termProducedIn;
@@ -60,24 +61,33 @@ public class EligibilitySheetQueries {
 			addAllCoursesToSem(sem);
 		}
 
+		
+		addUnaccountedCourses();
+		
 		updateCgpaCupAndUnits();
 
+		
+		
+//		this.cgpaCalculated = (double)this.cgpaCup / this.cgpaUnits;
+//		
+//		System.out.println(this.cgpaCalculated);
 	}
 
 	// Methods	
 
 	public void updateCgpaCupAndUnits() {
 
-		String query = "SELECT grade_points, total FROM student_terms WHERE sys_id = '" +systemId+ "' " ;
+		String query = "SELECT grade_points, total FROM student_terms WHERE sys_id = '" + systemId + "' " ;
 		//		System.out.println(query);
 		// get cgpa cup and units from std_terms using systemId
 		ResultSet r = dbConnector.queryExecutor(query, false);
 
 		try {
 			while(r.next()){
+				
 				this.cgpaCup += r.getInt(1);
 				this.cgpaUnits += r.getInt(2);	
-				//System.out.println(r.getInt(1) + " " +r.getInt(2));
+				
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -148,7 +158,6 @@ public class EligibilitySheetQueries {
 		s = s + returnCenteredString("PRODUCED FOR : " + getPrintingTerm(termProducedIn)) + "\n";
 		
 		s = s + returnCenteredString("ELIGIBLITY SHEET (VIDE A.R. 3.21)") + "\n\n";
-
 		
 		setStudentNameFromDatabase();
 
@@ -189,9 +198,13 @@ public class EligibilitySheetQueries {
 
 					// Add the Compulsory Courses string
 					for (int j = 0; j < first.getCompulsoryCourses().size(); j++){
+						
 						if (j < first.getCompulsoryCourses().size()){
+						
 							sem1Courses.add(first.getCompulsoryCourses().get(j).toString());
+						
 						}
+						
 					}
 
 					for (int j = 0; j < second.getCompulsoryCourses().size(); j++){
@@ -251,27 +264,27 @@ public class EligibilitySheetQueries {
 
 					// Add the Hum Electives to be done
 					for (int j = 0; j < first.getNoOfHUEL(); j++){
-						String temp = "    ------------------------------------------------          HUEL      ";
+						String temp = "    ................................................          HUEL      ";
 
 						sem1Courses.add(temp);
 
 					}
 
 					for (int j = 0; j < second.getNoOfHUEL(); j++){
-						String temp = "    ------------------------------------------------          HUEL      ";						
+						String temp = "    ................................................          HUEL      ";						
 						sem2Courses.add(temp);
 
 					}
 
 					// Add the Open Electives to be done
 					for (int j = 0; j < first.getNoOfOEL(); j++){
-						String temp = "    ------------------------------------------------          EL        ";
+						String temp = "    ................................................          EL        ";
 						sem1Courses.add(temp);
 
 					}
 
 					for (int j = 0; j < second.getNoOfOEL(); j++){
-						String temp = "    ------------------------------------------------          EL         ";
+						String temp = "    ................................................          EL         ";
 						sem2Courses.add(temp);
 					}
 
@@ -362,19 +375,68 @@ public class EligibilitySheetQueries {
 		}
 
 		
-		s =  s + "LEGEND : * - BACKLOG\t" + "$ - OPSC\t" + "|| - CURRENT SEM\t" 
+		s =  s + "LEGEND : * - BACKLOG\t" + "$ - OPSC\t" + "|| - REGISTERED CURRENT SEM\t" 
 				+ "% - PREV SEM PERFORMANCE\t" + "+ - EXEMPTED\t" + "# - DEBARRED TO REGISTER\n\n";
+		
+		GraduationRequirements g = new GraduationRequirements(this);
+		
+		int[] noAndUnitsofDELs1 = g.getNumCoursesAndUnitsforDELs(this.getChart().getStream1()); 
+		int[] noAndUnitsofDELs2;
+		
+		s = s + "COMPLETED REQ (NOS, UNITS) : \tHUELS : (" + g.getNoOfHuelsCOIP() +"/3, " + g.getUnitsOFnoOfHuelsCOIP() + "/8)\t";
+		
+		if (this.getChart().getStream2() != null) {
+			noAndUnitsofDELs2 = g.getNumCoursesAndUnitsforDELs(this.getChart().getStream2());
+			
+			s = s + this.getChart().getStream1()+ "ELS : (" + g.getNoOfDelsType1COIP() + "/" + noAndUnitsofDELs1[0] 
+					+ ", " + g.getUnitsOfnoOfDelsType1COIP() + "/" + noAndUnitsofDELs1[1] + ")\t";
+			
+			s = s + this.getChart().getStream2()+ "ELS : (" + g.getNoOfDelsType2COIP() + "/" + noAndUnitsofDELs2[0] 
+					+ ", " + g.getUnitsOfnoOfDelsType2COIP() + "/" + noAndUnitsofDELs2[1] + ")\n";
+			
+		}
+		
+		else {
+		
+			s = s + "DELS : (" + g.getNoOfDelsType1COIP() + "/" + noAndUnitsofDELs1[0] 
+					+ ", " + g.getUnitsOfnoOfDelsType1COIP() + "/" + noAndUnitsofDELs1[1] + ")\t";
+
+			
+			s = s + "OELS : (" + g.getNoOfOelsCOIP() + "/5," + g.getUnitsOfnoOfOelsCOIP() + "/15)\n";  
+		
+		}
 		
 		s = s + "ACC CUP : " + this.cgpaCup + "  \tCGPA CUP : " 
 				+ this.cgpaCup + "  \tACC UNITS : " + this.cgpaUnits
 				+ "  \tCGPA UNITS : " + this.cgpaUnits + "\n";
 		
+		
 		s = s + "-----------------------------------------"
 				+ "-----------------------------------------"
-				+ "---------------------------------------------------------------\n";
+				+ "-------------------------------------------------------------------\n";
 		
 		
+		if (unaccountedCourses.size() > 0) {
+			s = s + "UNACCOUNTED COURSES : \n";
+
+			for (int j = 0; j < unaccountedCourses.size(); j++) {
+
+				if (j % 2 == 0)
+					s = s + "      "; 
+
+				s = s + unaccountedCourses.get(j);
+
+				if (j % 2 == 1) 
+					s = s + "\n";
+			}
+
+			s = s + "-----------------------------------------"
+					+ "-----------------------------------------"
+					+ "-------------------------------------------------------------------\n";
+
+		}
 		return "\n" + s;
+	
 	}
 
 
@@ -423,12 +485,7 @@ public class EligibilitySheetQueries {
 	private void checkForRepeatAndSetFlag(Course c){
 		int courseId = c.getCourseCode();
 
-		// Go to std_enrl table. Give systemID_,courseID, &(units taken not equal to 0)
-		/* DEV: AJINKYA
-		SELECT sys_id, course, units_taken
-		FROM student_enrollment
-		WHERE sys_id = &systemID AND course_id = &courseID AND units_taken > 0;
-		 */
+		
 		String sqlQuery = "SELECT * FROM student_enrollment WHERE sys_id = " 
 				+systemId+ " AND course_id = " +courseId+ " AND units_taken > 0 ";
 		ResultSet r2 = dbConnector.queryExecutor(sqlQuery, false);	
@@ -443,6 +500,10 @@ public class EligibilitySheetQueries {
 				else
 					repGrade = repGrade  + "/" + r2.getString(13) ;
 				i++;
+				
+				if (r2.getString(13) == null || r2.getString(13).equals(""))
+					c.setInProgress("Y"); 
+					
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -496,7 +557,7 @@ public class EligibilitySheetQueries {
 					c.setTerm(r.getInt(4));
 					c.setIsDoneInPrevTerm(this.prevTerm);		
 					c.setElDescr("");
-					c.checkAndSetGradeValidAndGradeComplete();					
+					c.checkAndSetGradeValidAndGradeComplete();
 
 					if (yearNo == semYear[0] && semNo == semYear[1] && c.isInProgress().equals("Y")){
 						c.setOPSC(true);
@@ -506,10 +567,13 @@ public class EligibilitySheetQueries {
 					}
 
 					
-				}	
+				}				
 				
 
-				this.checkForRepeatAndSetFlag(c);				
+				this.checkForRepeatAndSetFlag(c);
+
+	
+
 
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -517,6 +581,7 @@ public class EligibilitySheetQueries {
 			}			
 		}		
 	}
+
 
 	private void addUnaccountedCourses() {
 		
@@ -541,7 +606,7 @@ public class EligibilitySheetQueries {
 		}
 		
 	}
-
+	
 	private void addHuelsToSem(Semester sem, int term){	
 
 		int yearNo = sem.getYearNo();
@@ -568,7 +633,7 @@ public class EligibilitySheetQueries {
 				String s = this.hasMinor(this.systemId);
 				if (s != null && ! s.equals("")){
 					setMinorDesc(c,s);
-					if(!(c.getElDescr()==null)) {
+					if((c.getElDescr() != null)) {
 						c.setElDescr("HUEL" +  "/" + c.getElDescr() );
 					}
 					else {
@@ -763,6 +828,7 @@ public class EligibilitySheetQueries {
 			
 				this.checkForRepeatAndSetFlag(c);
 				c.checkAndSetGradeValidAndGradeComplete();
+				c.setIsOptional(true);
 				sem.setOptionalCourse(c);
 			
 			
@@ -797,6 +863,7 @@ public class EligibilitySheetQueries {
 
 				this.checkForRepeatAndSetFlag(c);
 				c.checkAndSetGradeValidAndGradeComplete();
+				c.setIsPS1(true);
 				sem.setPS(c);
 				
 			}
@@ -1030,7 +1097,7 @@ public class EligibilitySheetQueries {
 				}
 					desc =	s.substring(0, indexOfP);
 					if(desc.equalsIgnoreCase(check)){
-						desc += rs.getString(3);
+						desc += rs.getString(3).substring(0, 1);
 						c.setElDescr(desc);
 					}
 					

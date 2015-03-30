@@ -39,10 +39,76 @@ public class GraduationRequirements {
 	private int totalUnitsCOIP;
 	private int noOfPSTSCOIP;
 
+	public int getNoOfOelsCOIP() {
+		return noOfOelsCOIP;
+	}
+
+
+	public int getUnitsOfnoOfOelsCOIP() {
+		return unitsOfnoOfOelsCOIP;
+	}
+
+
+	public int getUnitsOFnoOfHuelsCOIP() {
+		return unitsOFnoOfHuelsCOIP;
+	}
+
+
+	public int getNoOFHuelProjects() {
+		return noOFHuelProjects;
+	}
+
+
+	public int getNoOfDelsType1COIP() {
+		return noOfDelsType1COIP;
+	}
+
+
+	public int getUnitsOfnoOfDelsType1COIP() {
+		return unitsOfnoOfDelsType1COIP;
+	}
+
+
+	public int getNoOfDelsType2COIP() {
+		return noOfDelsType2COIP;
+	}
+
+
+	public int getNoOfHuelsCOIP() {
+		return noOfHuelsCOIP;
+	}
+
+
+	public int getUnitsOfnoOfDelsType2COIP() {
+		return unitsOfnoOfDelsType2COIP;
+	}
+
+
+	public int getTotalCoursesCOIP() {
+		return totalCoursesCOIP;
+	}
+
+
+	public int getTotalUnitsCOIP() {
+		return totalUnitsCOIP;
+	}
+
+
 	public GraduationRequirements(String studentId) {
 		super();
 		this.elSheet = new EligibilitySheetQueries(studentId, 1131);
 		loopThroughSemesters(elSheet);
+		if(checkForNamedCourses() && checkForHUEL() && checkForDEL() && checkForOEL() 
+				&& checkTotalCoursework() &&checkPSThesisConditions()) {
+			this.likelyToGraduate = true;
+		}		
+	}
+	
+	
+	public GraduationRequirements(EligibilitySheetQueries e) {
+		super();
+		loopThroughSemesters(e);
+		this.elSheet = e;
 		if(checkForNamedCourses() && checkForHUEL() && checkForDEL() && checkForOEL() 
 				&& checkTotalCoursework() &&checkPSThesisConditions()) {
 			this.likelyToGraduate = true;
@@ -57,7 +123,7 @@ public class GraduationRequirements {
 
 				c.checkAndSetGradeValidAndGradeComplete();			
 
-				if(c.isGradeComplete() || c.isInProgress().equalsIgnoreCase("Y")) {
+				if(c.isGradeComplete() || (c.isInProgress() != null && c.isInProgress().equalsIgnoreCase("Y"))) {
 
 					if(!(c.isPS2orThesis())) {
 						this.totalCoursesCOIP++;
@@ -87,7 +153,7 @@ public class GraduationRequirements {
 
 					else if(c.isDel()){
 
-						if(c.getElDescr().equalsIgnoreCase(elsheet.getChart().getStream1())) {
+						if(c.getElDescr().equalsIgnoreCase(elsheet.getChart().getStream1() + "EL")) {
 							this.noOfDelsType1COIP++;
 							this.unitsOfnoOfDelsType1COIP+=c.getMaxUnits();
 							if(c.getIsProjectTypeCourse()){
@@ -95,7 +161,7 @@ public class GraduationRequirements {
 							}
 						}
 
-						if(c.getElDescr().equalsIgnoreCase(elsheet.getChart().getStream2())) {
+						if(c.getElDescr().equalsIgnoreCase(elsheet.getChart().getStream2() + "EL")) {
 							this.noOfDelsType2COIP++;
 							this.unitsOfnoOfDelsType2COIP+=c.getMaxUnits();
 							if(c.getIsProjectTypeCourse()){
@@ -145,7 +211,7 @@ public class GraduationRequirements {
 	public boolean checkForDEL(){
 
 		String delStream1 = elSheet.getChart().getStream1();
-		int[] cu = getNumCoursesAndUnits(delStream1);		
+		int[] cu = getNumCoursesAndUnitsforDELs(delStream1);		
 		int noOfDelType1Courses = cu[0];
 		int noOfDelType1Units = cu[1];
 
@@ -153,12 +219,12 @@ public class GraduationRequirements {
 
 		String delStream2 = elSheet.getChart().getStream2();
 		// Checks if first or dual degree
-		if(delStream2.isEmpty()){
+		if(delStream2 != null && delStream2.isEmpty()){
 			noOfDelType2Courses = 0;
 			noOfDelType2Units = 0;
 		}
 		else {
-			int[] cu2 = getNumCoursesAndUnits(delStream1);		
+			int[] cu2 = getNumCoursesAndUnitsforDELs(delStream1);		
 			noOfDelType2Courses = cu2[0];
 			noOfDelType2Units = cu2[1];
 		}
@@ -176,8 +242,8 @@ public class GraduationRequirements {
 	}
 
 	public boolean checkForOEL(){
-		if((this.noOfOelsCOIP< 5) || (this.noOfOelProjects >3) 
-				|| (this.unitsOFnoOfHuelsCOIP<15)){
+		if(((this.noOfOelsCOIP< 5) || (this.noOfOelProjects >3) 
+				|| (this.unitsOFnoOfHuelsCOIP<15)) && elSheet.getChart().getStream2() == null){
 			return false;
 		}
 		else return true;
@@ -211,7 +277,7 @@ public class GraduationRequirements {
 		}
 	}
 
-	private int[] getNumCoursesAndUnits(String elStream) {
+	public int[] getNumCoursesAndUnitsforDELs(String elStream) {
 
 		// Returns the num of required courses and units for a stream passed in as the parameter
 
