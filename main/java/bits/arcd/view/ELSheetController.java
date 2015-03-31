@@ -148,7 +148,7 @@ public class ELSheetController {
 					}
 
 					else if (idNum.getText().length() != 12 && idNum.getText().contains("%")) {
-						
+
 						threadSafeConsoleOutput("Processing, Please wait.........");
 						Platform.runLater(new Runnable() {
 							public void run() {
@@ -163,7 +163,7 @@ public class ELSheetController {
 								loadELSheetsLike(idNum.getText());
 							}
 						};
-						
+
 						temp.start();
 
 					}
@@ -339,7 +339,6 @@ public class ELSheetController {
 			String idNo = "";
 			while(sc.hasNext()){
 				idNo = sc.nextLine().replace(",", "");
-				System.out.println(idNo);
 				idNos.add(idNo);
 			}
 
@@ -380,13 +379,13 @@ public class ELSheetController {
 			e1.printStackTrace();
 		}
 		//		System.out.println(idNos.size());
+
 		for(int j = 0; j < idNos.size(); j++) {
 
 			if (! inpSemNum.getText().equals("")){
 				EligibilitySheetQueries e = new EligibilitySheetQueries(idNos.get(j), Integer.parseInt(inpSemNum.getText()));
 				String s = e.toString();
-
-
+				
 				try {
 					bw.write(s);
 					bw.write("\f");
@@ -395,22 +394,26 @@ public class ELSheetController {
 					e1.printStackTrace();
 				}
 
-
 				threadSafeConsoleOutput("\n" + (new Date()).toString() 
 						+ " : Wrote " + idNos.get(j).toString() + "\n");
 			}
 
-			threadSafeConsoleOutput("\n\n" + (new Date()).toString() + " : Exported the Chart Data into " 
+			threadSafeConsoleOutput("\n\n" + (new Date()).toString() + " : Exported the EL Sheets into " 
 					+ f.getAbsolutePath() + "\n");
 
-		}
-		try {
-			bw.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+
+			
 		}
 
+
+		try {
+			bw.close();
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		
 		threadSafeConsoleOutput("\n" + (new Date()).toString() 
 				+ " : File written inside : " + destFolder.getText() + "\n");
 	}
@@ -418,10 +421,10 @@ public class ELSheetController {
 	public void loadSingleELSheet(String idNum) {
 		Platform.runLater(new Runnable() {
 			public void run() {
-				
+
 			}
 		});
-		
+
 		try {
 
 			File file = new File(destFolder.getText() + "\\EL_SHEET_" + idNum + ".txt");
@@ -1069,10 +1072,10 @@ public class ELSheetController {
 
 	private void loadELSheetsLike(String inputString) {
 
-		DBConnector db = new DBConnector();
+		DBConnector db = DBConnector.getInstance();
 
 		String query = "SELECT * FROM STUDENTS WHERE campus_id LIKE '" + inputString + "'";
-		
+
 		ResultSet rs = db.queryExecutor(query, false);
 
 		String idNo = "";
@@ -1084,10 +1087,15 @@ public class ELSheetController {
 				idNo = rs.getString(2);
 				idNos.add(idNo);
 			}
+
+			rs.close();
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+
 
 		File f2 = new File(destFolder.getText());
 
@@ -1098,7 +1106,7 @@ public class ELSheetController {
 		if(f2.isDirectory()) {
 			batchProcessELSheetsHelper(idNos, f_Out);
 		}
-		
+
 		putWelcomeHTML();
 
 	}

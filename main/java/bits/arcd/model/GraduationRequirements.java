@@ -283,32 +283,32 @@ public class GraduationRequirements {
 
 		int[] cu = {-1, -1};
 
-		if(elStream.equalsIgnoreCase("C6") || elStream.equalsIgnoreCase("A5") 
+		if(elStream != null && (elStream.equalsIgnoreCase("C6") || elStream.equalsIgnoreCase("A5") 
 				|| elStream.equalsIgnoreCase("AB") || elStream.equalsIgnoreCase("A4")
 				|| elStream.equalsIgnoreCase("A8") || elStream.equalsIgnoreCase("AA")
 				|| elStream.equalsIgnoreCase("A3") || elStream.equalsIgnoreCase("A7")
-				|| elStream.equalsIgnoreCase("B2") || elStream.equalsIgnoreCase("A2")) {
+				|| elStream.equalsIgnoreCase("B2") || elStream.equalsIgnoreCase("A2"))) {
 
 			cu[0] = 4;
 			cu[1] = 12;
 			return cu;
 		}
 
-		if(elStream.equalsIgnoreCase("B1")|| elStream.equalsIgnoreCase("B5")
+		if(elStream != null && (elStream.equalsIgnoreCase("B1")|| elStream.equalsIgnoreCase("B5")
 				|| elStream.equalsIgnoreCase("B4")|| elStream.equalsIgnoreCase("A1")||
-				elStream.equalsIgnoreCase("D2")|| elStream.equalsIgnoreCase("C7")){
+				elStream.equalsIgnoreCase("D2")|| elStream.equalsIgnoreCase("C7"))){
 			cu[0] = 5;
 			cu[1] = 15;
 			return cu;
 		}
 
-		if(elStream.equalsIgnoreCase("B3")) {
+		if(elStream != null && (elStream.equalsIgnoreCase("B3"))) {
 			cu[0] = 6;
 			cu[1] = 18;
 			return cu;
 		}
 
-		if(elStream.equalsIgnoreCase("C2")) {
+		if(elStream != null && (elStream.equalsIgnoreCase("C2"))) {
 			cu[0] = 7;
 			cu[1] = 21;
 			return cu;

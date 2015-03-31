@@ -27,13 +27,13 @@ public class CourseChartQueries {
 	}
 
 	public boolean checkIfHasOptional(){
-		String query = "SELECT descr_4 FROM charts WHERE rqrmnt = '" +this.requirementNo+ "' AND descr_4 LIKE '%Opti%'";
-		ResultSet r = dbConnector.queryExecutor(query, false);
+		ResultSet r = dbConnector.checkOptional(this.requirementNo);
 		int i=0;
 		try {
 			while(r.next()){
 				i++;
 			}
+			r.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -48,7 +48,7 @@ public class CourseChartQueries {
 		this.yrNsem = yrNsem;
 	}
 
-	private DBConnector dbConnector = null;	
+	public DBConnector dbConnector = null;	
 	// db_op.batchCSVLoad("D:\\Dropbox");
 
 	public CourseChartQueries(String requirementNo) {
@@ -58,7 +58,7 @@ public class CourseChartQueries {
 		// or not. If it is equal to 0, do nothing, else proceed.......
 		requirementGroup = 0;
 
-		dbConnector = new DBConnector();
+		dbConnector = DBConnector.getInstance();
 		this.requirementNo = requirementNo;
 
 		reqGroupCheck = getRequirementGroup(requirementNo).trim();
@@ -74,7 +74,7 @@ public class CourseChartQueries {
 		}
 		
 		// Don't forget to close the connections!!!
-		dbConnector.closeConnections();
+//		dbConnector.closeConnections();
 	}
 
 
@@ -223,14 +223,14 @@ public class CourseChartQueries {
 					// Add the Hum Electives to be done
 
 					for (int j = 0; j < first.getNoOfHUEL(); j++){
-						String temp = "    ------------------------------------------------          HUEL      ";
+						String temp = "    ................................................          HUEL      ";
 
 						sem1Courses.add(temp);
 
 					}
 
 					for (int j = 0; j < second.getNoOfHUEL(); j++){
-						String temp = "    ------------------------------------------------          HUEL      ";						
+						String temp = "    ................................................          HUEL      ";						
 						sem2Courses.add(temp);
 
 					}
@@ -254,22 +254,15 @@ public class CourseChartQueries {
 
 					// Add the Open Electives to be done
 					for (int j = 0; j < first.getNoOfOEL(); j++){
-						String temp = "    ------------------------------------------------          EL        ";
+						String temp = "    ................................................          EL        ";
 						sem1Courses.add(temp);
 
 					}
 
 					for (int j = 0; j < second.getNoOfOEL(); j++){
-						String temp = "    ------------------------------------------------          EL        ";
+						String temp = "    ................................................          EL        ";
 						sem2Courses.add(temp);
 					}
-
-
-
-
-
-
-
 
 					// Loop through both ArrayLists and concatenate			
 					for(int j = 0; j < maxof(sem1Courses.size(), sem2Courses.size()); j++){
@@ -286,7 +279,7 @@ public class CourseChartQueries {
 
 						}
 						else {
-							temp = temp + "      " + "                                                                         ";
+							temp = temp + "      " + "                                                                        ";
 						}
 
 
@@ -359,11 +352,7 @@ public class CourseChartQueries {
 
 	private void addSummerTerm(String requirementNo) {
 
-		String query = "select * from " + DBConnector.table_semCharts + "  t, "
-				+ "courses c WHERE (t.course = c.course_id or t.course = '') and rqrmnt = " +
-				requirementNo+ " and descr_3 like '%ummer%erm%'";
-
-		ResultSet rs = dbConnector.queryExecutor(query, false);		
+		ResultSet rs = dbConnector.addSummerTerm(requirementNo);		
 		//System.out.println(query);
 
 		int i =0;		
@@ -382,6 +371,7 @@ public class CourseChartQueries {
 				}
 
 			}
+			rs.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -390,19 +380,7 @@ public class CourseChartQueries {
 	}
 
 
-	public ResultSet getCompulsoryCoursesForOneSem(String req_num, int yearNo, int semNo)	{
-		ResultSet rs = null;
-		//System.out.println(req_grp);
-		String sqlQuery = "SELECT * FROM "+DBConnector.table_semCharts
-				+ " t, courses c WHERE (t.course = c.course_id or t.course = '') and rqrmnt = '"+req_num
-				+"' and descr_3 like 'Year "+yearNo+" Sem "+semNo+"%' "
-				+"AND descr_4 not like '%lective%'"
-				+"AND descr_4 not like '%Opti%'";// AND rq_group = "+req_grp+";";
 
-		//System.out.println(sqlQuery);
-		rs = dbConnector.queryExecutor(sqlQuery, false);
-		return rs;
-	}
 
 
 	//+++++++++++++++++++++++++++++++++++++++++++++++	
@@ -431,12 +409,7 @@ public class CourseChartQueries {
 	public int getNoOfDELType1 (String req_num, int yearNo, int semNo) {
 		ResultSet rs = null; int retVal = 0;
 
-
-		String sqlQuery = "SELECT min_course FROM "+DBConnector.table_semCharts +
-				" WHERE rqrmnt = '"+req_num+"' and descr_3 like 'Year "+yearNo+" Sem "+semNo+"%' "
-				+"AND descr_4 like '"+ stream1 +"%isp%%lective%' ";
-
-		rs = dbConnector.queryExecutor(sqlQuery, false);
+		rs = dbConnector.getNoOfDELsType1(req_num, yearNo, semNo, this.stream1);
 		try {
 			while(rs.next()){
 				retVal = rs.getInt(1);				
@@ -452,11 +425,7 @@ public class CourseChartQueries {
 	public int getNoOfDELType2 (String req_num, int yearNo, int semNo) {
 		ResultSet rs = null; int retVal = 0;		
 
-		String sqlQuery = "SELECT min_course FROM "+DBConnector.table_semCharts +
-				" WHERE rqrmnt = '"+req_num+"' and descr_3 like 'Year "+yearNo+" Sem "+semNo+"%' "
-				+"AND descr_4 like '"+ stream2 +"%isp%%lective%' ";
-
-		rs = dbConnector.queryExecutor(sqlQuery, false);
+		rs = dbConnector.getNoOfDELsType1(req_num, yearNo, semNo, this.stream2);
 		try {
 			while(rs.next()){
 				retVal = rs.getInt(1);
@@ -473,10 +442,8 @@ public class CourseChartQueries {
 	public int getNoOfHUEL(String req_num, int yearNo, int semNo)	{
 		ResultSet rs = null;
 		int num = 0;
-		String sqlQuery = "SELECT min_course FROM "+DBConnector.table_semCharts +
-				" WHERE rqrmnt = '"+req_num+"' and descr_3 like 'Year "+yearNo+" Sem "+semNo+"%' "
-				+"AND descr_4 like '%um%lective%' ";
-		rs = dbConnector.queryExecutor(sqlQuery, false);
+		
+		rs = dbConnector.getNoOfHUELsType(req_num, yearNo, semNo);
 
 		try {
 			while(rs.next()){
@@ -491,10 +458,8 @@ public class CourseChartQueries {
 
 	public int getNoOfDEL (String req_num, int yearNo, int semNo) {
 		ResultSet rs = null; int retVal = 0;		
-		String sqlQuery = "SELECT min_course FROM "+DBConnector.table_semCharts +
-				" WHERE rqrmnt = '"+req_num+"' and descr_3 like 'Year "+yearNo+" Sem "+semNo+"%' "
-				+"AND descr_4 like '%isp%%lective%' ";//+"AND rq_group = "+req_grp+";";
-		rs = dbConnector.queryExecutor(sqlQuery, false);
+		
+		rs = dbConnector.getNoOfDELs(req_num, yearNo, semNo);
 		try {
 			while(rs.next()){
 				retVal = rs.getInt(1);
@@ -510,10 +475,8 @@ public class CourseChartQueries {
 	public int getNoOfOEL(String req_num, int yearNo, int semNo) {
 		ResultSet rs = null;
 		int num = 0;
-		String sqlQuery = "SELECT min_course FROM "+DBConnector.table_semCharts +
-				" WHERE rqrmnt = '"+req_num+"' and descr_3 like 'Year "+yearNo+" Sem "+semNo+"%' "
-				+"AND descr_4 like '%pen%lective%' ";//+"AND rq_group = "+req_grp+";";
-		rs = dbConnector.queryExecutor(sqlQuery, false);
+		
+		rs = dbConnector.getNoOfOELs(req_num, yearNo, semNo);
 
 		try {
 			while(rs.next()){
@@ -529,10 +492,7 @@ public class CourseChartQueries {
 	public String getRequirementDescription(String req_num) {
 		ResultSet rs = null;
 		String req_descr = "";
-		String sqlQuery = "SELECT descr FROM "+DBConnector.table_semCharts +
-				" WHERE rqrmnt = " + req_num +
-				" LIMIT 1;";
-		rs = dbConnector.queryExecutor(sqlQuery, false);
+		rs = dbConnector.getRequirementDescription(req_num);
 
 		try {
 			while(rs.next()) {
@@ -551,7 +511,7 @@ public class CourseChartQueries {
 		String sqlQuery = "SELECT rq_group FROM "+DBConnector.table_semCharts +
 				" WHERE rqrmnt = " + req_num +
 				" LIMIT 1;";
-		rs = dbConnector.queryExecutor(sqlQuery, false);
+		rs = dbConnector.getRequirementGroup(req_num);
 
 		try {
 			while(rs.next()) {
@@ -568,9 +528,8 @@ public class CourseChartQueries {
 	public boolean existsSem (String req_num, int yearNo, int semNo)	{
 		ResultSet rs = null; boolean retVal = true;
 		// descr_3 string must be created from yearNo and semNo		
-		String sqlQuery = "SELECT COUNT(*) FROM "+DBConnector.table_semCharts
-				+ " WHERE rqrmnt = '"+req_num+"' and descr_3 like 'Year "+yearNo+" Sem "+semNo+"%';";
-		rs = dbConnector.queryExecutor(sqlQuery, false);
+		
+		rs = dbConnector.existsSem(req_num, yearNo, semNo);
 		try {
 			while(rs.next()) {
 				if (rs.getInt(1)==0)	{
@@ -597,7 +556,7 @@ public class CourseChartQueries {
 	 */
 	public static void importChartsData(String csv_path, String filename, boolean iftruncates)
 	{
-		DBConnector tempConnector = new DBConnector();
+		DBConnector tempConnector = DBConnector.getInstance();
 		String table_name = getTableName(filename);
 		
 		
@@ -620,7 +579,7 @@ public class CourseChartQueries {
 	// and Password which is statically loaded from the WindowLoader class
 
 	public static String batchCSVChartsLoad(String directoryPath)	{
-		DBConnector tempConnector = new DBConnector();
+		DBConnector tempConnector = DBConnector.getInstance();
 		StringBuffer output = new StringBuffer();
 		File directory = new File(directoryPath);
 

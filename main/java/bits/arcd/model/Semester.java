@@ -36,7 +36,7 @@ public class Semester {
 		this.semNo = semNo;
 		this.requirementNo = requirementNo;
 
-		ResultSet rs =  chartOps.getCompulsoryCoursesForOneSem(requirementNo, yearNo, semNo);		
+		ResultSet rs =  chartOps.dbConnector.getCompulsoryCoursesForOneSem(requirementNo, yearNo, semNo);		
 
 		int i = 0;
 		
