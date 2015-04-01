@@ -54,7 +54,10 @@ public class AcadCounselBoard {
 		}
 	}
 
-
+	public boolean getIsAcb(){
+		return this.isACB;
+	}
+	
 
 	public AcadCounselBoard(String studentId){
 		setStudentId(studentId);
@@ -63,6 +66,12 @@ public class AcadCounselBoard {
 
 	}
 
+	public AcadCounselBoard(EligibilitySheetQueries e) {
+		elSheet = e;
+		setStudentId(e.getStudentId());
+		setCgpaConstraint();
+	}
+	
 	public String getStudentId() {
 		return studentId;
 	}

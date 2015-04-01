@@ -162,6 +162,26 @@ public class EligibilitySheetQueries {
 		s = s + returnCenteredString("PRODUCED FOR : " + getPrintingTerm(termProducedIn)) + "\n";
 
 		s = s + returnCenteredString("ELIGIBLITY SHEET (VIDE A.R. 3.21)") + "\n\n";
+		GraduationRequirements g = new GraduationRequirements(this);
+		
+		AcadCounselBoard a = new AcadCounselBoard(this);
+		
+		String statuses = "";
+		
+		if ( ! a.getIsAcb()) {
+			statuses = statuses + "STATUS : NORMAL";
+		}
+		else {
+			statuses = statuses + "STATUS : ACB";
+		}
+
+		if (g.isLikelyToGraduate())
+			statuses = statuses + " \tLIKELY TO GRADUATE";
+
+		else if (g.isGraduated())
+			statuses = statuses + " \tGRADUATED";
+		
+		s = s + returnCenteredString(statuses) + "\n";
 
 		setStudentNameFromDatabase();
 
@@ -172,12 +192,12 @@ public class EligibilitySheetQueries {
 		s = s + returnCenteredString(details) + "\n";
 
 
-		s = s + "\nYEAR      CODE  COURSE NO  COURSE TITLE           UNITS  GRADES                   ";
-		s = s + "CODE  COURSE NO  COURSE TITLE           UNITS  GRADES             ";
+		s = s + "\nYEAR      CODE  COURSE NO    COURSE TITLE            UNITS  GRADES                  ";
+		s = s + "CODE  COURSE NO    COURSE TITLE            UNITS  GRADES             ";
 
 		s = s + "\n-----------------------------------------"
 				+ "-----------------------------------------"
-				+ "-------------------------------------------------------------------\n";
+				+ "----------------------------------------------------------------------\n";
 		//		for(Semester sem :this.getCh().getSemsInChart()){
 
 
@@ -363,7 +383,7 @@ public class EligibilitySheetQueries {
 
 					s = s + "-----------------------------------------"
 							+ "-----------------------------------------"
-							+ "-------------------------------------------------------------------\n";
+							+ "----------------------------------------------------------------------\n";
 				}
 			}
 
@@ -374,7 +394,7 @@ public class EligibilitySheetQueries {
 
 				s = s + "-----------------------------------------"
 						+ "-----------------------------------------"
-						+ "-------------------------------------------------------------------\n";
+						+ "----------------------------------------------------------------------\n";
 
 				rem = 0;
 
@@ -386,7 +406,6 @@ public class EligibilitySheetQueries {
 		s =  s + "LEGEND : * - BACKLOG\t" + "$ - OPSC\t" + "|| - REGISTERED CURRENT SEM\t" 
 				+ "% - PREV SEM PERFORMANCE\t" + "+ - EXEMPTED\t" + "# - DEBARRED TO REGISTER\n\n";
 
-		GraduationRequirements g = new GraduationRequirements(this);
 
 		int[] noAndUnitsofDELs1 = g.getNumCoursesAndUnitsforDELs(this.getChart().getStream1()); 
 		int[] noAndUnitsofDELs2;
@@ -420,7 +439,7 @@ public class EligibilitySheetQueries {
 		
 		s = s + "-----------------------------------------"
 				+ "-----------------------------------------"
-				+ "-------------------------------------------------------------------\n";
+				+ "----------------------------------------------------------------------\n";
 
 
 		if (unaccountedCourses.size() > 0) {
@@ -439,7 +458,7 @@ public class EligibilitySheetQueries {
 
 			s = s + "\n-----------------------------------------"
 					+ "-----------------------------------------"
-					+ "-------------------------------------------------------------------\n";
+					+ "----------------------------------------------------------------------\n";
 
 		}
 		
@@ -586,6 +605,9 @@ public class EligibilitySheetQueries {
 				Course c = new Course(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4),
 						rs.getInt(5), rs.getInt(5));
 				c.setGrade(rs.getString(6));
+				c.setUnaccountedCourse(true);
+				c.setElDescr("UT");
+				c.setIsDoneInPrevTerm(this.prevTerm);
 				this.unaccountedCourses.add(c);				
 			}
 		} catch (SQLException e) {
@@ -1023,7 +1045,7 @@ public class EligibilitySheetQueries {
 		// write a query to get the last term of the person done
 		//subtract one from the Last term and set LastTerm
 
-		ResultSet rs = dbConnector.setPrevTerm(StudentId);
+		ResultSet rs = dbConnector.setPrevTerm(this.systemId);
 
 		int term=0 ;
 		try {

@@ -51,7 +51,17 @@ public class Course {
 
 	private boolean gradeValid, gradeComplete;
 
-	private boolean isNamedCourse, isHuel, isDel, isOel;
+	private boolean isNamedCourse, isHuel, isDel, isOel, isUnaccountedCourse;
+
+	
+	
+	public boolean isUnaccountedCourse() {
+		return isUnaccountedCourse;
+	}
+
+	public void setUnaccountedCourse(boolean isUnaccountedCourse) {
+		this.isUnaccountedCourse = isUnaccountedCourse;
+	}
 
 	public Course(int courseCode, String subject, String catalog,
 			String description, int minUnits, int maxUnits) {
@@ -127,7 +137,7 @@ public class Course {
 		// catalog has many spaces
 
 		if (this.getCourseCode() == 0 && this.description == null) {
-			return "    ................................................           " + this.getElDescr() + "      ";
+			return "    ................................................            " + this.getElDescr() + "      ";
 		}
 		else {	
 
@@ -136,7 +146,7 @@ public class Course {
 			if(courseCode != 0){
 				courseCodeString = courseCodeString + courseCode;
 			} 
-			while (courseCodeString.length() != 5 ) {
+			while (courseCodeString.length() < 5 ) {
 				courseCodeString = courseCodeString + " ";
 			}
 
@@ -145,7 +155,7 @@ public class Course {
 			if (subject != null)
 				courseSubjectString = courseSubjectString + subject;
 
-			while (courseSubjectString.length() != 5 ) {
+			while (courseSubjectString.length() <= 5 ) {
 				courseSubjectString = courseSubjectString + " ";
 			}
 
@@ -155,7 +165,7 @@ public class Course {
 				courseCatalogString = courseCatalogString + catalog.trim() + "";
 			}
 
-			while (courseCatalogString.length() != 5 ) {
+			while (courseCatalogString.length() < 5 ) {
 				courseCatalogString = courseCatalogString + " ";
 			}
 
@@ -172,7 +182,7 @@ public class Course {
 			if(UnitsString != null){
 				UnitsString = UnitsString + maxUnits + "";
 			}
-			while (UnitsString.length() != 3 ) {
+			while (UnitsString.length() < 3 ) {
 				UnitsString = UnitsString + " ";
 			}
 
@@ -181,13 +191,13 @@ public class Course {
 
 			if (grade != null) {
 				gradeString = grade.trim();
-				while(gradeString.length() != 5) {
+				while(gradeString.length() < 5) {
 					gradeString = gradeString + " ";
 				}
 			}
 
 			else {
-				while(gradeString.length() != 5) {
+				while(gradeString.length() < 5) {
 					gradeString = gradeString + " ";
 				}
 			}
@@ -197,7 +207,7 @@ public class Course {
 			if (this.doneInPrevSem) {
 				ExtString = ExtString + "%";
 			}
-			while (ExtString.length() != 5){
+			while (ExtString.length() < 5){
 				ExtString = ExtString + " ";
 			}
 
@@ -214,13 +224,13 @@ public class Course {
 				infoString = infoString + "$";
 			}
 
-			if (grade != null && this.gradeValid && ! this.gradeComplete )
+			if (grade != null && this.gradeValid && !this.gradeComplete )
 				infoString = infoString + "*";			
 
 			if ((this.isInProgress() != null) && ! this.isInProgress().equals("Y") && (this.projectTypeCourse || this.courseCode == 1591 ))
 				infoString = infoString + "#";
 
-			while (infoString.length() != 3){
+			while (infoString.length() < 3){
 				infoString = infoString + " ";
 			}
 
@@ -240,6 +250,11 @@ public class Course {
 				TypeString = TypeString + this.getElDescr();
 			}
 
+			if (this.isUnaccountedCourse) {
+				TypeString = TypeString + this.getElDescr();
+			}
+			
+			
 			while (TypeString.length() < 10 ){
 				TypeString = TypeString + " ";
 			}
