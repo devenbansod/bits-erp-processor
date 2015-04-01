@@ -206,13 +206,14 @@ public class EligibilitySheetQueries {
 						}
 
 					}
+					
 
 					for (int j = 0; j < second.getCompulsoryCourses().size(); j++){
 						if (j < second.getCompulsoryCourses().size()){
 							sem2Courses.add(second.getCompulsoryCourses().get(j).toString());
 						}
 					}
-
+					
 					// Add the Humanities Courses Done
 					for (int j = 0; j < first.getHumanitiesCourses().size(); j++){
 
@@ -230,6 +231,7 @@ public class EligibilitySheetQueries {
 
 					}
 
+					
 
 					// Add the Disp Electives done
 					for (int j = 0; j < first.getDelCourses().size(); j++){
@@ -248,6 +250,7 @@ public class EligibilitySheetQueries {
 
 					}
 
+					
 					// Add the Open Electives done
 					for (int j = 0; j < first.getOpenElCourses().size(); j++){
 
@@ -264,27 +267,27 @@ public class EligibilitySheetQueries {
 
 					// Add the Hum Electives to be done
 					for (int j = 0; j < first.getNoOfHUEL(); j++){
-						String temp = "    ................................................          HUEL      ";
+						String temp = "    .................................................          HUEL      ";
 
 						sem1Courses.add(temp);
 
 					}
 
 					for (int j = 0; j < second.getNoOfHUEL(); j++){
-						String temp = "    ................................................          HUEL      ";						
+						String temp = "    .................................................          HUEL      ";						
 						sem2Courses.add(temp);
 
 					}
 
 					// Add the Open Electives to be done
 					for (int j = 0; j < first.getNoOfOEL(); j++){
-						String temp = "    ................................................          EL        ";
+						String temp = "    .................................................          EL        ";
 						sem1Courses.add(temp);
 
 					}
 
 					for (int j = 0; j < second.getNoOfOEL(); j++){
-						String temp = "    ................................................          EL         ";
+						String temp = "    .................................................          EL         ";
 						sem2Courses.add(temp);
 					}
 
@@ -335,7 +338,7 @@ public class EligibilitySheetQueries {
 
 						}
 						else {
-							temp = temp + "      " + "                                                                        ";
+							temp = temp + "      " + "                                                                         ";
 						}
 
 
@@ -343,14 +346,16 @@ public class EligibilitySheetQueries {
 							temp = temp + sem2Courses.get(j);
 						}
 						else {
-							temp = temp + "                                                                        ";
+							temp = temp + "                                                                         ";
 						}
 
 						temp = temp + "\n";
 
 						s = s + temp;
+						
 
 					}
+					
 
 					s = s + "-----------------------------------------"
 							+ "-----------------------------------------"
@@ -362,7 +367,6 @@ public class EligibilitySheetQueries {
 
 				Semester PS = this.getChart().getSemsInChart().get(i);
 				s = s + "Summer" + PS.getPS().toString() + "\n";
-
 
 				s = s + "-----------------------------------------"
 						+ "-----------------------------------------"
@@ -409,8 +413,7 @@ public class EligibilitySheetQueries {
 		s = s + "ACC CUP : " + this.cgpaCup + "\t\tCGPA CUP : " 
 				+ this.cgpaCup + "\t\tACC UNITS : " + this.cgpaUnits
 				+ "\t\tCGPA UNITS : " + this.cgpaUnits + "\n";
-
-
+		
 		s = s + "-----------------------------------------"
 				+ "-----------------------------------------"
 				+ "-------------------------------------------------------------------\n";
@@ -430,11 +433,12 @@ public class EligibilitySheetQueries {
 					s = s + "\n";
 			}
 
-			s = s + "-----------------------------------------"
+			s = s + "\n-----------------------------------------"
 					+ "-----------------------------------------"
 					+ "-------------------------------------------------------------------\n";
 
 		}
+		
 		return "\n" + s;
 
 	}
@@ -442,11 +446,10 @@ public class EligibilitySheetQueries {
 
 	public int[] getSemTerm(int term){
 		int[] ys = {-1,-1};
-		String query = "SELECT sem_description FROM terms WHERE semester = '" +term+ "'";
 		ResultSet rs = null;
 		String x = null;
 		try {
-			rs = dbConnector.queryExecutor(query, false);
+			rs = dbConnector.getSemTerm(term);
 		}
 		catch (Exception e){
 			e.printStackTrace();
@@ -491,10 +494,7 @@ public class EligibilitySheetQueries {
 	private void checkForRepeatAndSetFlag(Course c){
 		int courseId = c.getCourseCode();
 
-
-		String sqlQuery = "SELECT * FROM student_enrollment WHERE sys_id = " 
-				+systemId+ " AND course_id = " +courseId+ " AND units_taken > 0 ";
-		ResultSet r2 = dbConnector.queryExecutor(sqlQuery, false);	
+		ResultSet r2 = dbConnector.checkAndSetRepeatFlag(systemId, courseId);	
 
 		int i=0;
 		String repGrade = "";
@@ -504,11 +504,11 @@ public class EligibilitySheetQueries {
 				if(i==0)
 					repGrade = r2.getString(13);
 				else
-					repGrade = repGrade  + "/" + r2.getString(13) ;
+					repGrade = repGrade  + "/" + r2.getString(13);
 				i++;
 
 				if (r2.getString(13) == null || r2.getString(13).equals(""))
-					c.setInProgress("Y"); 
+					c.setInProgress("Y");
 
 			}
 		} catch (SQLException e) {
@@ -550,6 +550,7 @@ public class EligibilitySheetQueries {
 					c.setTerm(r.getInt(4));
 					c.setIsDoneInPrevTerm(this.prevTerm);		
 					c.setElDescr("");
+					this.checkForRepeatAndSetFlag(c);
 					c.checkAndSetGradeValidAndGradeComplete();
 
 					if (yearNo == semYear[0] && semNo == semYear[1] && c.isInProgress().equals("Y")){
@@ -558,9 +559,6 @@ public class EligibilitySheetQueries {
 					else {
 						c.setOPSC(false);
 					}
-					
-
-					this.checkForRepeatAndSetFlag(c);
 				}				
 
 
@@ -645,8 +643,9 @@ public class EligibilitySheetQueries {
 				int years = this.getChart().getSemsInChart().size() / 2;
 				if (years == semYear[0] && c.isInProgress() != null && c.isInProgress().equals("Y"))
 					c.setOPSC(true);
-				c.checkAndSetGradeValidAndGradeComplete();
 				this.checkForRepeatAndSetFlag(c);
+				c.checkAndSetGradeValidAndGradeComplete();
+				
 
 				sem.addHumanitiesElectives(c);
 
@@ -865,10 +864,6 @@ public class EligibilitySheetQueries {
 
 	private void addPracticeSchoolToSem(Semester sem) {	
 
-
-		String query = "Select * from req_course_map where sys_id = '" + systemId
-				+ "' and sem_course_decription like '%ummer%erm%'";
-
 		ResultSet r = dbConnector.addPS1toSem(systemId);
 		
 		try {
@@ -949,12 +944,10 @@ public class EligibilitySheetQueries {
 
 	private void setRequirementNo(String studentId) {
 		String k = null;
-		String sqlQuery = "SELECT rqrmnt FROM std_req_mapping"
-				+ " WHERE sys_id = (SELECT sys_id FROM students WHERE campus_id = '"+ studentId +"');";		
-		//System.out.println(sqlQuery);
+
 		ResultSet rs = null;
 		try {
-			rs = dbConnector.queryExecutor(sqlQuery, false);
+			rs = dbConnector.setRequirementNo(studentId);
 		}
 		catch (Exception e){
 			e.printStackTrace();
@@ -1026,7 +1019,7 @@ public class EligibilitySheetQueries {
 		// write a query to get the last term of the person done
 		//subtract one from the Last term and set LastTerm
 
-		ResultSet rs = dbConnector.setPrevTerm(systemId);
+		ResultSet rs = dbConnector.setPrevTerm(StudentId);
 
 		int term=0 ;
 		try {
@@ -1122,7 +1115,7 @@ public class EligibilitySheetQueries {
 		//std_minor table
 		String s = "";
 		
-		ResultSet rs = dbConnector.queryExecutor(query, false);
+		ResultSet rs = dbConnector.hasMinor(sysId);
 		int i = 0;
 		try {
 			while(rs.next()){
@@ -1151,10 +1144,9 @@ public class EligibilitySheetQueries {
 	public void setMinorDesc (Course c, String origMinor){
 		int CourseId = c.getCourseCode();
 
-		String query = "SELECT * FROM minor_course_list where course_id = '" + c.getCourseCode() + "'";
 		//Use courseId to write a query to return row from minor course list
 		//table
-		ResultSet rs = dbConnector.queryExecutor(query, false);
+		ResultSet rs = dbConnector.setMinorDesc(CourseId);
 		String desc = "";
 		try {
 

@@ -127,7 +127,7 @@ public class Course {
 		// catalog has many spaces
 
 		if (this.getCourseCode() == 0 && this.description == null) {
-			return "    ................................................          " + this.getElDescr() + "      ";
+			return "    ................................................           " + this.getElDescr() + "      ";
 		}
 		else {	
 
@@ -163,7 +163,7 @@ public class Course {
 			String courseDescrString = "";
 			if (description != null)
 				courseDescrString = courseDescrString + description.trim() + "";
-			while (courseDescrString.length() != 25 ) {
+			while (courseDescrString.length() <= 25 ) {
 				courseDescrString = courseDescrString + " ";
 			}
 
@@ -270,14 +270,14 @@ public class Course {
 		// set correct grade for repeat
 		if(this.isRepeat() != null && this.isRepeat().equalsIgnoreCase("Y")) {
 
-			System.out.println(this.description + " is repeated.\n");
+//			System.out.println(this.description + " is repeated.\n");
 
 			countedGrade = this.grade.substring(this.grade.lastIndexOf("/") + 1);
-			System.out.println(countedGrade);
+//			System.out.println(countedGrade);
 		}
 
-		for(int i=0; i<completeGrades.length; i++) {
-			if(countedGrade !=null && countedGrade.equalsIgnoreCase(completeGrades[i])) {
+		for(int i=0; i < completeGrades.length; i++) {
+			if(countedGrade != null && countedGrade.equalsIgnoreCase(completeGrades[i])) {
 //				System.out.println("1");
 				this.gradeValid = true;
 				this.gradeComplete = true;
@@ -286,7 +286,7 @@ public class Course {
 		}
 		
 		for(int i=0; i<incompleteGrades.length; i++) {
-			if(countedGrade !=null && countedGrade.equalsIgnoreCase(incompleteGrades[i])) {
+			if(countedGrade != null && countedGrade.equalsIgnoreCase(incompleteGrades[i])) {
 //				System.out.println("2");
 				this.gradeValid = true;
 				this.gradeComplete = false;

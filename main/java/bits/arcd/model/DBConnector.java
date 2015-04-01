@@ -2,6 +2,7 @@ package bits.arcd.model;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Properties;
 
 import bits.arcd.main.WindowLoader;
 
@@ -54,8 +55,20 @@ public class DBConnector
 		this.db_host = WindowLoader.IPAddress; this.user_nm = WindowLoader.usernm; 
 		this.passwd = WindowLoader.passwd;
 		try {
-			connection = DriverManager.getConnection(db_host+db_name, user_nm, passwd);
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			Properties p = new Properties();
+			connection = DriverManager.getConnection("jdbc:mysql://"+"localhost:3306"+"/erp_temp?cachePrepStmts=true", user_nm, passwd);
+			
 		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -620,6 +633,7 @@ public class DBConnector
 		
 		try {
 			psUpdateCGPACupUnits.setString(1, systemId);
+			rs = psUpdateCGPACupUnits.executeQuery();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -634,6 +648,7 @@ public class DBConnector
 		
 		try {
 			psSetStudentNameFromDatabase.setString(1, systemId);
+			rs = psSetStudentNameFromDatabase.executeQuery();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -648,6 +663,7 @@ public class DBConnector
 		
 		try {
 			psGetSemTerm.setInt(1, term);
+			rs = psGetSemTerm.executeQuery();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -662,6 +678,7 @@ public class DBConnector
 		try {
 			psCheckRepeatAndSetFlag.setString(1, sysid);
 			psCheckRepeatAndSetFlag.setInt(2, courseId);
+			rs = psCheckRepeatAndSetFlag.executeQuery();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -12,14 +12,14 @@ public class MainTest {
 		String k = "D:/Dropbox/ERP Volunteers/Data/sample_data/";
 		//ELChartOperator e0 = new ELChartOperator("jdbc:mysql://"+SemChartController.IPAddress+"/","ghazi","erp321");
 		//e0.importCSVs(true, k+"std.csv", k+"std_programs.csv", k+"reqcourse_map.csv", k+"std_enrl.csv", k+"courses.csv", k+"terms.csv", k+"std_terms.csv", k+"std_req_mapping.csv");
-		EligibilitySheetQueries e1 = new EligibilitySheetQueries("2011B3A7463P", 1131);
+		EligibilitySheetQueries e1 = new EligibilitySheetQueries("2012A8PS187P", 1131);
 		//System.out.println(e1.getSystemId("2012B3A7316P"));
 		CourseChartQueries c = e1.getChart();
 		//System.out.println(c);
 
 		//c.
-		Semester s1 = e1.getChart().getSemsInChart().get(4);
+//		Semester s1 = e1.getChart().getSemsInChart().get(4);
 		//s1.getCompulsoryCourses().get(0).getGrade();
-		System.out.println(s1.toString());
+		System.out.println(e1.toString());
 	}
 }	

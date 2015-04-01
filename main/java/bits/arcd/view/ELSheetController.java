@@ -313,8 +313,17 @@ public class ELSheetController {
 
 		Date d = new Date();
 		String formattedDate = convertToProperString(d.toString());
-		File f_Out = new File(destFolder.getText() + "\\EL_SHEETS_" + formattedDate + ".txt");
+		final File f_Out = new File(destFolder.getText() + "\\EL_SHEETS_" + formattedDate + ".txt");
 
+		threadSafeConsoleOutput("Processing, Please wait.........");
+		Platform.runLater(new Runnable() {
+			public void run() {
+				FileSystem tempfs = FileSystems.getDefault();
+				Path path = tempfs.getPath("src/main/resources/html_res/Wait.html");
+				webEngine.load("file:///"+path.toAbsolutePath().toString());
+			}
+		});
+		
 		if( f.isFile() && f2.isDirectory()) {
 
 
@@ -334,7 +343,7 @@ public class ELSheetController {
 				e.printStackTrace();
 			}
 
-			ArrayList<String> idNos = new ArrayList<String>();
+			final ArrayList<String> idNos = new ArrayList<String>();
 
 			String idNo = "";
 			while(sc.hasNext()){
@@ -342,9 +351,15 @@ public class ELSheetController {
 				idNos.add(idNo);
 			}
 
+//			Thread thread = new Thread(){
+//				public void run(){
+					batchProcessELSheetsHelper(idNos, f_Out);
+					
+//				}
+//			};
+//			thread.start();
 
-
-			batchProcessELSheetsHelper(idNos, f_Out);
+			
 		}
 		else {
 			threadSafeConsoleOutput("Invalid directory specified!");
