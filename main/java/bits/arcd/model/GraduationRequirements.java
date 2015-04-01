@@ -44,6 +44,7 @@ public class GraduationRequirements {
 		this.elSheet = new EligibilitySheetQueries(studentId, 1131);
 		loopThroughSemesters(elSheet);
 		setGraduationFields();
+		debugger();
 	}
 	
 	public GraduationRequirements(EligibilitySheetQueries e) {
@@ -52,6 +53,22 @@ public class GraduationRequirements {
 		this.studentId = e.getStudentId();
 		loopThroughSemesters(elSheet);		
 		setGraduationFields();
+		debugger();
+	}
+
+	private void debugger() {
+		System.out.println(this.studentId);
+		System.out.println("checkForDEL  =" + checkForDEL());
+		System.out.println("checkForHUEL  =" + checkForHUEL());
+		System.out.println("checkForNamedCourses  =" + checkForNamedCourses());
+		System.out.println("checkForOEL  =" + checkForOEL());
+		System.out.println("checkPSThesisConditions  =" + checkPSThesisConditions());
+		System.out.println("checkTotalCoursework  =" + checkTotalCoursework());
+		System.out.println("totalCoursesCOIP  ="+ this.totalCoursesCOIP);
+		System.out.println("totalUnitsCOIP  =" + totalUnitsCOIP);
+		System.out.println("incompleteNamedCourses  =" + this.incompleteNamedCourses);
+		System.out.println("graduationStatus  =" + this.graduationStatus);
+		System.out.println();
 	}
 
 	private void loopThroughSemesters(EligibilitySheetQueries elsheet){
@@ -76,9 +93,9 @@ public class GraduationRequirements {
 					else if(c.isPS1()) {
 						this.noOfPS1++;
 					}
-					else if(c.isPS2()) {
-					
+					else if(c.isPS2()) {					
 						this.noOfPS2++;
+						break;
 					}					
 					else if(c.is16unitThesis()) {
 							this.noOf16unitThesis++;
@@ -124,7 +141,7 @@ public class GraduationRequirements {
 							}
 						}
 
-						if(c.getElDescr().equalsIgnoreCase(elsheet.getChart().getStream2() + "EL")) {
+						else if(c.getElDescr().equalsIgnoreCase(elsheet.getChart().getStream2() + "EL")) {
 							this.noOfDelsType2COIP++;
 							this.unitsOfnoOfDelsType2COIP+=c.getMaxUnits();
 							if(c.getIsProjectTypeCourse()){
@@ -145,12 +162,9 @@ public class GraduationRequirements {
 				else {
 					
 					//lists the named courses to be completed
-					if(c.isNamedCourse() || c.isOptional() || c.isPS1()) {						
-						if(!(c.getSubject().equalsIgnoreCase("BITS") 
-								&& c.getCatalog().equalsIgnoreCase("F421T"))) {								
+					if(c.isNamedCourse() || c.isOptional() || c.isPS1()) {												
 							this.noOfIncompleteNamedCourses++;
-							this.incompleteNamedCourses.add(c);		
-						}									
+							this.incompleteNamedCourses.add(c);														
 					}					
 				}
 			}
@@ -209,7 +223,7 @@ public class GraduationRequirements {
 
 		String delStream2 = elSheet.getChart().getStream2();
 		// Checks if first or dual degree
-		if(delStream2 != null && delStream2.isEmpty()){
+		if(delStream2 != null && !delStream2.isEmpty()){
 			noOfDelType2Courses = 0;
 			noOfDelType2Units = 0;
 		}

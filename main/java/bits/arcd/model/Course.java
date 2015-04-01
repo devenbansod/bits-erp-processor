@@ -470,12 +470,25 @@ public class Course {
 		this.isOptional = isOptional;
 	}
 
-	public void setIsPS1(boolean isPS1) {
-		this.isPS1 = isPS1;
+	public void setIsPS1() {
+		
+		if( this.catalog.equalsIgnoreCase("F4221") && this.subject.equalsIgnoreCase("BITS") )
+		{
+			this.isPS1 = true ;
+		}
+		else {
+			this.isPS1 = false ;
+		}		
 	}
 
 	public boolean isPS1(){
-		return this.isPS1;
+		if( this.catalog.equalsIgnoreCase("F4221") && this.subject.equalsIgnoreCase("BITS") )
+		{
+			return true ;
+		}
+		else {
+			return false ;
+		}		
 	}
 
 	public boolean isPS2() {
