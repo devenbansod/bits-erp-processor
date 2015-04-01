@@ -7,6 +7,7 @@ public class Course {
 	private String catalog ; //eg F111
 	private String description;//Computer Programming
 	private String elDescr; // "HUEL", "A8EL", "B3EL", "EL"
+	private int numGrade;
 
 	private boolean OPSC;
 
@@ -74,7 +75,8 @@ public class Course {
 		this.minUnits = minUnits;
 		this.maxUnits = maxUnits;
 
-		this.grade = grade.trim();
+
+		this.grade = grade.trim();	
 		this.term = term;
 		this.classNo = classNo;
 		this.includeInGPA = includeInGPA.trim();
@@ -86,8 +88,8 @@ public class Course {
 		setIsProjectTypeCourse();
 
 	}
-	
-	
+
+
 	public boolean isNamedCourse() {
 		return isNamedCourse;
 	}
@@ -119,6 +121,8 @@ public class Course {
 	public void setIsOel(boolean isOel) {
 		this.isOel = isOel;
 	}
+	
+	
 
 	@Override
 	public String toString() {
@@ -176,7 +180,7 @@ public class Course {
 
 			//5
 			String gradeString = "";
-			
+
 			if (grade != null) {
 				gradeString = grade.trim();
 				while(gradeString.length() != 5) {
@@ -201,8 +205,8 @@ public class Course {
 
 			//5
 			String infoString = "";
-			
-			
+
+
 			if (this.inProgress != null && this.inProgress.equals("Y"))
 			{
 				infoString = infoString + "||";
@@ -217,7 +221,7 @@ public class Course {
 
 			if ((this.isInProgress() != null) && ! this.isInProgress().equals("Y") && (this.projectTypeCourse || this.courseCode == 1591 ))
 				infoString = infoString + "#";
-			
+
 			while (infoString.length() != 3){
 				infoString = infoString + " ";
 			}
@@ -268,24 +272,24 @@ public class Course {
 		// set correct grade for repeat
 		if(this.isRepeat() != null && this.isRepeat().equalsIgnoreCase("Y")) {
 
-			System.out.println(this.description + " is repeated.\n");
+			//System.out.println(this.description + " is repeated.\n");
 
 			countedGrade = this.grade.substring(this.grade.lastIndexOf("/") + 1);
-			System.out.println(countedGrade);
+			//System.out.println(countedGrade);
 		}
 
 		for(int i=0; i<completeGrades.length; i++) {
 			if(countedGrade !=null && countedGrade.equalsIgnoreCase(completeGrades[i])) {
-//				System.out.println("1");
+				//				System.out.println("1");
 				this.gradeValid = true;
 				this.gradeComplete = true;
 				return;
 			}
 		}
-		
+
 		for(int i=0; i<incompleteGrades.length; i++) {
 			if(countedGrade !=null && countedGrade.equalsIgnoreCase(incompleteGrades[i])) {
-//				System.out.println("2");
+				//				System.out.println("2");
 				this.gradeValid = true;
 				this.gradeComplete = false;
 				return;
@@ -444,4 +448,39 @@ public class Course {
 	public boolean getIsProjectTypeCourse() {
 		return projectTypeCourse;
 	}
+
+	public int getNumGrade(){
+		String countedGrade = new String();
+		if(this.isRepeat !=null && this.isRepeat.equalsIgnoreCase("Y"))
+			countedGrade = this.grade.substring(this.grade.lastIndexOf("/") + 1);
+		else
+			countedGrade = this.grade;
+		
+		
+		//System.out.println(this.description + ":" + this.grade + ":" +countedGrade);
+		
+		switch(countedGrade){
+		case "A":
+			return 10;
+		case "A-":
+			return 9;
+		case "B":
+			return 8;
+		case "B-":
+			return 7;
+		case "C":
+			return 6;
+		case "C-":
+			return 5;
+		case "D":
+			return 4;
+		case "E":
+			return 2;
+		default:
+			return -1;
+		}
+
+	}
+
 }
+
