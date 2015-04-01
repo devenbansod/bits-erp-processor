@@ -11,10 +11,6 @@ import sun.misc.Perf.GetPerfAction;
 public class EligibilitySheetQueries {
 
 	private String studentId;
-	public String getStudentId() {
-		return studentId;
-	}
-
 	private String systemId;
 	private String requirementNo;
 	private String studentName;
@@ -271,27 +267,27 @@ public class EligibilitySheetQueries {
 
 					// Add the Hum Electives to be done
 					for (int j = 0; j < first.getNoOfHUEL(); j++){
-						String temp = "    .................................................          HUEL      ";
+						String temp = "    ................................................           HUEL      ";
 
 						sem1Courses.add(temp);
 
 					}
 
 					for (int j = 0; j < second.getNoOfHUEL(); j++){
-						String temp = "    .................................................          HUEL      ";						
+						String temp = "    ................................................           HUEL      ";						
 						sem2Courses.add(temp);
 
 					}
 
 					// Add the Open Electives to be done
 					for (int j = 0; j < first.getNoOfOEL(); j++){
-						String temp = "    .................................................          EL        ";
+						String temp = "    ................................................           EL        ";
 						sem1Courses.add(temp);
 
 					}
 
 					for (int j = 0; j < second.getNoOfOEL(); j++){
-						String temp = "    .................................................          EL         ";
+						String temp = "    ................................................           EL         ";
 						sem2Courses.add(temp);
 					}
 
