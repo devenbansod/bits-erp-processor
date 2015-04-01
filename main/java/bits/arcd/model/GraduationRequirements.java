@@ -239,14 +239,15 @@ public class GraduationRequirements {
 		if(elSheet.getChart().getStream2() == null) {
 			noOfOelsReq = 5;
 			unitsOfOelsReq = 15;
+			noOfOelsReq += this.noOfExtraEl;
+			unitsOfOelsReq += this.unitOfExtraEl;
 		}
 		else {
 			noOfOelsReq = 0;
 			unitsOfOelsReq = 0;
 		}
 		
-		noOfOelsReq += this.noOfExtraEl;
-		unitsOfOelsReq += this.unitOfExtraEl;
+		
 		
 		if( (this.noOfOelsCOIP< noOfOelsReq) || (this.unitsOfnoOfOelsCOIP<unitsOfOelsReq)){
 			return false;
