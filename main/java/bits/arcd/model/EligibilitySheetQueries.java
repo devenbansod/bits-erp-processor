@@ -133,6 +133,10 @@ public class EligibilitySheetQueries {
 	public String getStudentName(){
 		return this.studentName;
 	}
+	
+	public String getStudentId(){
+		return this.studentId;
+	}
 
 	private String returnCenteredString(String s){
 
