@@ -11,6 +11,10 @@ import sun.misc.Perf.GetPerfAction;
 public class EligibilitySheetQueries {
 
 	private String studentId;
+	public String getStudentId() {
+		return studentId;
+	}
+
 	private String systemId;
 	private String requirementNo;
 	private String studentName;

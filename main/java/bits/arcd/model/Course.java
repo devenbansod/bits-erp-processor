@@ -40,7 +40,7 @@ public class Course {
 	private boolean projectTypeCourse;
 
 	private boolean isOptional, isPS1;
-	
+
 	public boolean isGradeValid() {
 		return gradeValid;
 	}
@@ -88,8 +88,8 @@ public class Course {
 		setIsProjectTypeCourse();
 
 	}
-	
-	
+
+
 	public boolean isNamedCourse() {
 		return isNamedCourse;
 	}
@@ -178,7 +178,7 @@ public class Course {
 
 			//5
 			String gradeString = "";
-			
+
 			if (grade != null) {
 				gradeString = grade.trim();
 				while(gradeString.length() != 5) {
@@ -203,8 +203,8 @@ public class Course {
 
 			//5
 			String infoString = "";
-			
-			
+
+
 			if (this.inProgress != null && this.inProgress.equals("Y"))
 			{
 				infoString = infoString + "||";
@@ -219,7 +219,7 @@ public class Course {
 
 			if ((this.isInProgress() != null) && ! this.isInProgress().equals("Y") && (this.projectTypeCourse || this.courseCode == 1591 ))
 				infoString = infoString + "#";
-			
+
 			while (infoString.length() != 3){
 				infoString = infoString + " ";
 			}
@@ -270,24 +270,24 @@ public class Course {
 		// set correct grade for repeat
 		if(this.isRepeat() != null && this.isRepeat().equalsIgnoreCase("Y")) {
 
-//			System.out.println(this.description + " is repeated.\n");
+			//			System.out.println(this.description + " is repeated.\n");
 
 			countedGrade = this.grade.substring(this.grade.lastIndexOf("/") + 1);
-//			System.out.println(countedGrade);
+			//			System.out.println(countedGrade);
 		}
 
 		for(int i=0; i < completeGrades.length; i++) {
 			if(countedGrade != null && countedGrade.equalsIgnoreCase(completeGrades[i])) {
-//				System.out.println("1");
+				//				System.out.println("1");
 				this.gradeValid = true;
 				this.gradeComplete = true;
 				return;
 			}
 		}
-		
+
 		for(int i=0; i<incompleteGrades.length; i++) {
 			if(countedGrade != null && countedGrade.equalsIgnoreCase(incompleteGrades[i])) {
-//				System.out.println("2");
+				//				System.out.println("2");
 				this.gradeValid = true;
 				this.gradeComplete = false;
 				return;
@@ -446,7 +446,7 @@ public class Course {
 	public boolean getIsProjectTypeCourse() {
 		return projectTypeCourse;
 	}
-	
+
 	public boolean isOptional(){
 		return isOptional;
 	}
@@ -458,29 +458,62 @@ public class Course {
 	public void setIsPS1(boolean isPS1) {
 		this.isPS1 = isPS1;
 	}
-	
+
 	public boolean isPS1(){
 		return this.isPS1;
 	}
 
-	public boolean isPS2orThesis() {
-		
+	public boolean isPS2() {
+
 		if (this.subject.equalsIgnoreCase("BITS")) {
-			if (this.catalog.equalsIgnoreCase("F412") || this.catalog.equalsIgnoreCase("F421T")
-					|| this.catalog.equalsIgnoreCase("F422T") || this.catalog.equalsIgnoreCase("F422")
-					|| this.catalog.equalsIgnoreCase("F421") || this.catalog.equalsIgnoreCase("F423T")
-					|| this.catalog.equalsIgnoreCase("F423")) {
+			if (this.catalog.equalsIgnoreCase("F412")){
 				return true;
 			}
 		}
-		
+
 		else {
 			return false;
 		}
-		
+
 		return false;
-		
+
 	}
-	
-	
+
+	public boolean is16unitThesis() {
+
+		if (this.subject.equalsIgnoreCase("BITS")) {
+			if (this.catalog.equalsIgnoreCase("F421T")
+					|| this.catalog.equalsIgnoreCase("F422T")
+					|| this.catalog.equalsIgnoreCase("F422")
+					|| this.catalog.equalsIgnoreCase("F421") 
+					){
+				return true;
+			}
+		}
+
+		else {
+			return false;
+		}
+
+		return false;
+
+	}
+	public boolean is9unitThesis() {
+
+		if (this.subject.equalsIgnoreCase("BITS")) {
+			if (this.catalog.equalsIgnoreCase("F423")|| this.catalog.equalsIgnoreCase("F423T")){
+				return true;
+			}
+		}
+
+		else {
+			return false;
+		}
+
+		return false;
+
+	}
+
+
 }
+
