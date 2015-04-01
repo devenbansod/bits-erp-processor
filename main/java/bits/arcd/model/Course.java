@@ -472,7 +472,7 @@ public class Course {
 
 	public void setIsPS1() {
 		
-		if( this.catalog.equalsIgnoreCase("F4221") && this.subject.equalsIgnoreCase("BITS") )
+		if( this.catalog != null && this.catalog.equalsIgnoreCase("F221") && this.subject.equalsIgnoreCase("BITS") )
 		{
 			this.isPS1 = true ;
 		}
@@ -482,7 +482,7 @@ public class Course {
 	}
 
 	public boolean isPS1(){
-		if( this.catalog.equalsIgnoreCase("F4221") && this.subject.equalsIgnoreCase("BITS") )
+		if( this.catalog != null && this.catalog.equalsIgnoreCase("F221") && this.subject.equalsIgnoreCase("BITS") )
 		{
 			return true ;
 		}
