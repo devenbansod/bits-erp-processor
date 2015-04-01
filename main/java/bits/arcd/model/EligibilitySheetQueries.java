@@ -902,7 +902,7 @@ public class EligibilitySheetQueries {
 
 				this.checkForRepeatAndSetFlag(c);
 				c.checkAndSetGradeValidAndGradeComplete();
-				c.setIsPS1(true);
+				c.setIsPS1();
 				sem.setPS(c);
 
 			}
