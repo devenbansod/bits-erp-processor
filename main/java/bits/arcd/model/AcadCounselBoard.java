@@ -15,6 +15,9 @@ public class AcadCounselBoard {
 	//FINAL OP
 	private boolean isACB;
 	private boolean isBackLog;
+	private ArrayList<Course> backLogCourses;
+	private int noOfTotalCourses;
+	private int noOfCompletedCourses;
 
 
 	public boolean isBackLog() {
@@ -22,7 +25,7 @@ public class AcadCounselBoard {
 	}
 
 	private void setBackLog() {
-		if(this.getNoOfCompletedCourses() < this.getNoOfTotlalCourses())
+		if(this.getNoOfCompletedCourses() < this.getNoOfTotalCourses())
 			this.isBackLog = true;
 		else
 			this.isBackLog = false;
@@ -56,7 +59,7 @@ public class AcadCounselBoard {
 	//	}
 
 	private void setCourseNumCondition() {
-		if(3*this.getNoOfCompletedCourses() < 2*this.getNoOfTotlalCourses()){
+		if(3*this.getNoOfCompletedCourses() < 2*this.getNoOfTotalCourses()){
 			this.courseNumCondition = true;
 		} else {
 			this.courseNumCondition = false;
@@ -84,8 +87,11 @@ public class AcadCounselBoard {
 
 
 	public AcadCounselBoard(String studentId,int term){
+		backLogCourses = new ArrayList<Course>();
 		setStudentId(studentId);
 		elSheet = new EligibilitySheetQueries(studentId,term);
+		setNoOfTotalCourses();
+		setNoOfCompletedCourses();
 		setCgpaConstraint();
 		seteGradeCondition();
 		setCourseNumCondition();
@@ -110,28 +116,6 @@ public class AcadCounselBoard {
 	}
 
 	private void setCgpaConstraint() {
-		//		String systemId = elSheet.getSystemId();
-		//		double cgpa = -1;
-		//		String query = "SELECT CGPA FROM student_terms st WHERE sys_id = '" +systemId+ "' AND semester = (SELECT MAX(semester) FROM student_terms WHERE sys_id = '" +systemId+ "')";
-		//		ResultSet rs = null;
-		//		try {
-		//			rs = dbConnector.queryExecutor(query, false);
-		//		}
-		//		catch (Exception e){
-		//			e.printStackTrace();
-		//		}
-		//
-		//		try {
-		//			while (rs.next()){
-		//				cgpa =  Double.parseDouble(rs.getString(1));
-		//
-		//			}
-		//		} catch (SQLException e) {
-		//			// TODO Auto-generated catch block
-		//			e.printStackTrace();
-		//		}
-
-
 		Double cgpa = Double.parseDouble(elSheet.getCgpa());
 		if(cgpa <= 4.5){
 			this.cgpaCondition = true;
@@ -193,7 +177,7 @@ public class AcadCounselBoard {
 		int[] ys = {-1,-1};
 		String query = "SELECT sem_description FROM terms WHERE semester = '" +term+ "'";
 		ResultSet rs = null;
-		String x = null;
+		String x = new String();
 		try {
 			rs = dbConnector.queryExecutor(query, false);
 		}
@@ -229,8 +213,9 @@ public class AcadCounselBoard {
 
 	public String printACB() {
 		String s = "";
-		s = "ID: " +studentId + "\tNAME: " +elSheet.getStudentName()+ "\n" + "REQ. GROUP: " +elSheet.getChart().getRequirementGroup() 
+		s = "ID: " +studentId + "\tNAME: " +elSheet.getStudentName()+ "\n" + "REQ. GROUP: " +elSheet.getChart().getRequirementGroup()
 				+ "\tREQ. NO: "+ elSheet.getRequirementNo() + "\tREQ. DESCRIPTION: " +elSheet.getChart().getRequirementDescription()
+				+ "\nCGPA: " +elSheet.getCgpa()
 				+"\n\n";
 
 		for(String sr : reasonList){
@@ -241,18 +226,53 @@ public class AcadCounselBoard {
 		s = s + "\n-------------------------------------------------------------------------\n";
 		return s;
 	}
-	
+
 	public String printBackLog(){
+		int i = 0;
+		int rem = this.getNoOfTotalCourses() - this.getNoOfCompletedCourses();
 		String s = "";
 		s = "ID: " +studentId + "\tNAME: " +elSheet.getStudentName()+ "\n" + "REQ. GROUP: " +elSheet.getChart().getRequirementGroup() 
 				+ "\tREQ. NO: "+ elSheet.getRequirementNo() + "\tREQ. DESCRIPTION: " +elSheet.getChart().getRequirementDescription()
 				+"\n";
 		s = s + "No. of Courses Completed: " + this.getNoOfCompletedCourses() +"\n";
-		s = s + "No. of Courses to be done: " + this.getNoOfTotlalCourses() +"\n";
+		s = s + "No. of Courses to be done: " + this.getNoOfTotalCourses() +"\n";
+		s = s + "Remaining Courses: (In Backlog array: " +backLogCourses.size();
+		for(Course c : this.backLogCourses){
+			i++;
+			if(c.getCourseCode()==0){
+				s = s + "\n\t[" +i+ "] " + c.getElDescr();
+			}else{
+				s = s + "\n\t[" +i+ "] " + c.getSubject()+ " " +c.getCatalog()+ "\t" +c.getDescription();
+			}
+			rem--;
+
+		}
+		if(rem > 0){
+			for(Semester sem2  : elSheet.getChart().getSemsInChart()){
+				for(int j=0; j< sem2.getNoOfHUEL(); j++){
+					s = s + "\n\t[" + ++i+ "] HUEL";
+					rem--;
+				}
+				for(int j=0; j< sem2.getNoOfOEL(); j++){
+					s = s + "\n\t[" + ++i+ "] OEL";
+					rem--;
+				}	
+			}
+
+		}
+		s = s + "\n---------------------------------------------------------\n";		
 		return s;
 	}
 
-	public int getNoOfTotlalCourses (){
+	public int getNoOfTotalCourses() {
+		return noOfTotalCourses;
+	}
+
+	public int getNoOfCompletedCourses() {
+		return noOfCompletedCourses;
+	}
+
+	public void setNoOfTotalCourses (){
 		int prevTerm = elSheet.getPrevTerm();
 		int [] ys = getSemTerm(prevTerm);
 		int count = 0;
@@ -264,47 +284,53 @@ public class AcadCounselBoard {
 			if(s.hasOptional || s.isSummerTerm)
 				count++;
 		}
-		return count;
-		}
-	
-	public int getNoOfCompletedCourses (){
+		this.noOfTotalCourses = count;
+	}
+
+	public void setNoOfCompletedCourses (){
 		int prevTerm = elSheet.getPrevTerm();
 		int [] ys = getSemTerm(prevTerm);
 		int count = 0;
-		
-		
+
+
 		int countOfsems = this.getNoofSems(ys);
 		for(int i=0;i<countOfsems;i++){
-			
+
 			Semester s= elSheet.getChart().getSemsInChart().get(i);
 			for(Course c : s.getAllCourses()){
-				
+
 				c.checkAndSetGradeValidAndGradeComplete();
 				if(c.isGradeComplete()){
 					count++;
+				} else {
+					if(c.isInProgress()!=null && c.isInProgress().equalsIgnoreCase("Y")){
+						count++;
+					} else
+						this.backLogCourses.add(c);
+					System.out.println("Inside getNoOfCOmp: " +i);
 				}
 			}
 		}
-		return count;
+		this.noOfCompletedCourses =  count;
 	}
-		
 
 
 
 
-public int getNoofSems(int[] ys){
-	int i =0;
-	for(Semester s: elSheet.getChart().getSemsInChart()){
-		if (s.getYearNo() < ys[0]){
-			i++;
+
+	public int getNoofSems(int[] ys){
+		int i = 0;
+		for(Semester s: elSheet.getChart().getSemsInChart()){
+			if (s.getYearNo() < ys[0]){
+				i++;
 			}
-		if((s.getYearNo() == ys[0])&& s.getSemNo()<=ys[1]){
-			i++;
-		}
-		
+			if((s.getYearNo() == ys[0])&& s.getSemNo()<=ys[1]){
+				i++;
+			}
 
+
+		}
+
+		return i;
 	}
-	
-	return i;
-}
 }
