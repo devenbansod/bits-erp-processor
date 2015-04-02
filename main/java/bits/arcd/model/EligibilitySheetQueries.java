@@ -995,7 +995,7 @@ public class EligibilitySheetQueries {
 
 				this.checkForRepeatAndSetFlag(c);
 				c.checkAndSetGradeValidAndGradeComplete();
-				c.setIsPS1();
+				c.setIsSummerTermPS1(true);
 				sem.setPS(c);
 
 			}

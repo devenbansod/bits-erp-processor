@@ -292,8 +292,15 @@ public class Semester {
 	public void setPS(Course praticeSchoolOne){
 		this.practiceSchoolOne = praticeSchoolOne;
 	}
-	
-	
-	
+
+	public boolean hasPS2() {
+		for(Course c: this.getAllCourses()) {
+			if(c.getCatalog() != null && c.getCatalog().equalsIgnoreCase("F412") 
+				&& c.getSubject().equalsIgnoreCase("BITS")) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 }

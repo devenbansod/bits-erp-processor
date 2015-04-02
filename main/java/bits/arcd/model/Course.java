@@ -40,7 +40,7 @@ public class Course {
 
 	private boolean projectTypeCourse;
 
-	private boolean isOptional, isPS1;
+	private boolean isOptional, isSummerTermPS1;
 
 	public boolean isGradeValid() {
 		return gradeValid;
@@ -471,19 +471,16 @@ public class Course {
 		this.isOptional = isOptional;
 	}
 
-	public void setIsPS1() {
-		
-		if( this.catalog != null && this.catalog.equalsIgnoreCase("F221") && this.subject.equalsIgnoreCase("BITS") )
-		{
-			this.isPS1 = true ;
-		}
-		else {
-			this.isPS1 = false ;
-		}		
+	public void setIsSummerTermPS1(boolean ps1) {		
+		this.isSummerTermPS1 = ps1 ;
 	}
 
-	public boolean isPS1(){
-		if( this.catalog != null && this.catalog.equalsIgnoreCase("F221") && this.subject.equalsIgnoreCase("BITS") )
+	public boolean isSummerTermPS1(){
+		return this.isSummerTermPS1;		
+	}
+
+	public boolean isOelPS1(){
+		if( !this.isSummerTermPS1 && this.catalog != null && this.catalog.equalsIgnoreCase("F221") && this.subject.equalsIgnoreCase("BITS") )
 		{
 			return true ;
 		}
