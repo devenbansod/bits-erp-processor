@@ -186,10 +186,7 @@ public class AcadCounselBoard {
 			e.printStackTrace();
 		}
 		
-//		x = x.trim();
 
-		System.out.println(x.length());
-		System.out.println(studentId);
 		if(x.contains("Summer")){
 			ys[0] = 0;
 			ys[1] = 0;
@@ -291,7 +288,6 @@ public class AcadCounselBoard {
 
 	public void setNoOfTotalCourses (){
 		int prevTerm = elSheet.getPrevTerm();
-		System.out.println("prev term : "+ prevTerm);
 		int [] ys = getSemTerm(prevTerm);
 		int count = 0;
 		int countOfsems = this.getNoofSems(ys);

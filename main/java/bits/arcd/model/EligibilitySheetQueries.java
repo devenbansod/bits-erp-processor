@@ -115,7 +115,6 @@ public class EligibilitySheetQueries {
 	public void updateCgpaCupAndUnits() {
 
 		String query = "SELECT grade_points, total FROM student_terms WHERE sys_id = '" + systemId + "' " ;
-		//		System.out.println(query);
 		// get cgpa cup and units from std_terms using systemId
 		ResultSet r = dbConnector.queryExecutor(query, false);
 
@@ -747,7 +746,6 @@ public class EligibilitySheetQueries {
 				if(c.isRepeat() != null && c.isRepeat().equalsIgnoreCase("Y")){
 					accumulatedUnits += c.getMaxUnits();
 					accumulatedCUP += c.getMaxUnits()*c.getFirstGrade();
-					System.out.println(c.getDescription() + " : "+c.getGrade() + "  : " +c.getFirstGrade() + " Units: "+c.getMaxUnits());
 					if(c.isInProgress()!= null && c.isInProgress().equalsIgnoreCase("Y")&&c.getFirstGrade() >0){
 						calculatedUnits += c.getMaxUnits();
 						calcultedCUP += c.getMaxUnits()*c.getFirstGrade();
@@ -796,9 +794,7 @@ public class EligibilitySheetQueries {
 						cNew.setElDescr(s);
 
 						this.checkForRepeatAndSetFlag(cNew);
-						//						System.out.println( cNew.getDescription() + "  : " + cNew.isInProgress());
-						//						System.out.println(yearNo);
-
+					
 						int years = this.getChart().getSemsInChart().size() / 2;
 
 						if (yearNo == semYear[0] && semNo == semYear[1] 

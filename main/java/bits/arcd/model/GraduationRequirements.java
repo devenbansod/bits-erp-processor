@@ -44,7 +44,7 @@ public class GraduationRequirements {
 		this.elSheet = new EligibilitySheetQueries(studentId, 1131);
 		loopThroughSemesters(elSheet);
 		setGraduationFields();
-		debugger();
+//		debugger();
 	}
 	
 	public GraduationRequirements(EligibilitySheetQueries e) {
@@ -53,7 +53,7 @@ public class GraduationRequirements {
 		this.studentId = e.getStudentId();
 		loopThroughSemesters(elSheet);		
 		setGraduationFields();
-		debugger();
+//		debugger();
 	}
 
 	private void debugger() {
