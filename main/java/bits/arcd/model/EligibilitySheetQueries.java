@@ -1034,7 +1034,8 @@ public class EligibilitySheetQueries {
 
 				this.checkForRepeatAndSetFlag(c);
 				c.checkAndSetGradeValidAndGradeComplete();
-				c.setIsPS1();
+				c.setIsSummerTerm(true);
+				
 				if(c.getNumGrade() >0){
 					calculatedUnits += c.getMaxUnits();
 					accumulatedUnits += c.getMaxUnits();
