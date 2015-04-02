@@ -40,7 +40,7 @@ public class Course {
 
 	private boolean projectTypeCourse;
 
-	private boolean isOptional, isSummerTermPS1;
+	private boolean isOptional, isPS1;
 
 	public boolean isGradeValid() {
 		return gradeValid;
@@ -268,10 +268,6 @@ public class Course {
 
 
 			return retval;
-			//		return "\nCourse [courseId=" + courseCode + ", subject=" + subject
-			//				+ ", catalog=" + catalog + ", description= " + description
-			//				+ ", minUnits= " + minUnits + ", maxUnits= " + maxUnits + ", grade= "+ grade +
-			//				", Previous Term= " + doneInPrevSem + ", Project Type Course= " + projectTypeCourse + "]"+"\n";
 		}
 	}
 
@@ -285,16 +281,11 @@ public class Course {
 
 		// set correct grade for repeat
 		if(this.isRepeat() != null && this.isRepeat().equalsIgnoreCase("Y")) {
-
-			//			System.out.println(this.description + " is repeated.\n");
-
 			countedGrade = this.grade.substring(this.grade.lastIndexOf("/") + 1);
-			//			System.out.println(countedGrade);
 		}
 
 		for(int i=0; i < completeGrades.length; i++) {
 			if(countedGrade != null && countedGrade.equalsIgnoreCase(completeGrades[i])) {
-				//				System.out.println("1");
 				this.gradeValid = true;
 				this.gradeComplete = true;
 				return;
@@ -303,7 +294,6 @@ public class Course {
 
 		for(int i=0; i<incompleteGrades.length; i++) {
 			if(countedGrade != null && countedGrade.equalsIgnoreCase(incompleteGrades[i])) {
-				//				System.out.println("2");
 				this.gradeValid = true;
 				this.gradeComplete = false;
 				return;
@@ -471,16 +461,19 @@ public class Course {
 		this.isOptional = isOptional;
 	}
 
-	public void setIsSummerTermPS1(boolean ps1) {		
-		this.isSummerTermPS1 = ps1 ;
+	public void setIsPS1() {
+		
+		if( this.catalog != null && this.catalog.equalsIgnoreCase("F221") && this.subject.equalsIgnoreCase("BITS") )
+		{
+			this.isPS1 = true ;
+		}
+		else {
+			this.isPS1 = false ;
+		}		
 	}
 
-	public boolean isSummerTermPS1(){
-		return this.isSummerTermPS1;		
-	}
-
-	public boolean isOelPS1(){
-		if( !this.isSummerTermPS1 && this.catalog != null && this.catalog.equalsIgnoreCase("F221") && this.subject.equalsIgnoreCase("BITS") )
+	public boolean isPS1(){
+		if( this.catalog != null && this.catalog.equalsIgnoreCase("F221") && this.subject.equalsIgnoreCase("BITS") )
 		{
 			return true ;
 		}
@@ -546,10 +539,7 @@ public class Course {
 			countedGrade = this.grade.substring(this.grade.lastIndexOf("/") + 1);
 		else
 			countedGrade = this.grade;
-		
-		
-		//System.out.println(this.description + ":" + this.grade + ":" +countedGrade);
-		
+				
 		switch(countedGrade){
 		case "A":
 			return 10;
@@ -575,4 +565,3 @@ public class Course {
 
 
 }
-

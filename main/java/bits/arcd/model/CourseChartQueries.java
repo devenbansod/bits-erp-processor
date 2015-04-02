@@ -7,6 +7,8 @@ import java.sql.*;
 
 import org.apache.commons.lang.StringUtils;
 
+import bits.arcd.main.WindowLoader;
+
 public class CourseChartQueries {
 
 	private String requirementNo;
@@ -35,7 +37,7 @@ public class CourseChartQueries {
 			}
 			r.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("SQL Query errored", e);
 			e.printStackTrace();
 		}
 		if(i>0){
@@ -49,7 +51,6 @@ public class CourseChartQueries {
 	}
 
 	public DBConnector dbConnector = null;	
-	// db_op.batchCSVLoad("D:\\Dropbox");
 
 	public CourseChartQueries(String requirementNo) {
 		super();
@@ -72,9 +73,7 @@ public class CourseChartQueries {
 				this.addSems();
 			}
 		}
-		
-		// Don't forget to close the connections!!!
-//		dbConnector.closeConnections();
+
 	}
 
 
@@ -122,8 +121,6 @@ public class CourseChartQueries {
 		s = s + "-----------------------------------------"
 				+ "-----------------------------------------"
 				+ "---------------------------------------------------------------\n";
-		//		for(Semester sem :this.getCh().getSemsInChart()){
-
 
 		int rem = 1;
 		for ( i = 0; i < this.getSemsInChart().size() - 1; i++) {
@@ -145,7 +142,6 @@ public class CourseChartQueries {
 
 
 					// Add the Compulsory Courses string
-					//					System.out.println(first.getCompulsoryCourses().size());
 					for (int j = 0; j < first.getCompulsoryCourses().size(); j++){
 						if (j < first.getCompulsoryCourses().size()){
 							sem1Courses.add(first.getCompulsoryCourses().get(j).toString());
@@ -235,22 +231,6 @@ public class CourseChartQueries {
 
 					}
 
-					/**
-					// Add the Disp Electives to be done
-					for (int j = 0; j < first.getNoOfDEL(); j++){
-						String temp = "   ------------------------------------------------        DEL          ";	
-						sem1Courses.add(temp);
-
-					}
-
-					for (int j = 0; j < second.getNoOfDEL(); j++){
-						String temp = "   ------------------------------------------------        DEL          ";
-
-						sem2Courses.add(temp);
-
-					}
-
-					 */
 
 					// Add the Open Electives to be done
 					for (int j = 0; j < first.getNoOfOEL(); j++){
@@ -319,27 +299,21 @@ public class CourseChartQueries {
 		}
 
 
-
-		//		return "Chart [Requirement No: " + this.requirementNo + ",\tRequirement Group: " 
-		//		+ this.requirementGroup + ",\tRequirement Description: "
-		//		+ this.requirementDescription +"]\n" + s;
-
 		return s;
 	}
 
 	private void addSems() {		
 		int yearNo = 1, semNo = 1;
 		while(existsSem(requirementNo, yearNo, semNo)) {
+
 			try {
-
 				semsInChart.add(new Semester(yearNo, semNo, requirementNo, this));
-				if(yearNo == 2 && semNo == 2) {
-					addSummerTerm(requirementNo);
-				}
-
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
+				WindowLoader.showExceptionDialog("Semester could not be added", e);
 				e.printStackTrace();
+			}
+			if(yearNo == 2 && semNo == 2) {
+				addSummerTerm(requirementNo);
 			}
 			if(semNo==1){ semNo++; yrNsem[0] = yearNo; yrNsem[1] = semNo;}
 			else {
@@ -353,7 +327,6 @@ public class CourseChartQueries {
 	private void addSummerTerm(String requirementNo) {
 
 		ResultSet rs = dbConnector.addSummerTerm(requirementNo);		
-		//System.out.println(query);
 
 		int i =0;		
 		try {
@@ -373,38 +346,11 @@ public class CourseChartQueries {
 			}
 			rs.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Summer Term could not be added", e);
 			e.printStackTrace();
 		}
 
 	}
-
-
-
-
-
-	//+++++++++++++++++++++++++++++++++++++++++++++++	
-
-	//	public int getNoOfDEL (String req_num, int yearNo, int semNo) {
-	//		ResultSet rs = null; int retVal = 0;		
-	//		
-	//		String sqlQuery = "SELECT min_course FROM "+DBConnector.table_semCharts +
-	//				" WHERE rqrmnt = '"+req_num+"' and descr_3 like 'Year "+yearNo+" Sem "+semNo+"%' "
-	//				+"AND descr_4 like '%isp%%lective%' ";
-	//		
-	//		rs = dbConnector.queryExecutor(sqlQuery, false);
-	//		try {
-	//			while(rs.next()){
-	//				retVal = rs.getInt(1);
-	//			}
-	//		} catch (SQLException e) {
-	//			// TODO Auto-generated catch block
-	//			e.printStackTrace();
-	//		}
-	//
-	//		return retVal;
-	//	}	
-
 
 	public int getNoOfDELType1 (String req_num, int yearNo, int semNo) {
 		ResultSet rs = null; int retVal = 0;
@@ -415,7 +361,7 @@ public class CourseChartQueries {
 				retVal = rs.getInt(1);				
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("SQL Query errored", e);
 			e.printStackTrace();
 		}		
 
@@ -431,7 +377,7 @@ public class CourseChartQueries {
 				retVal = rs.getInt(1);
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("SQL Query errored", e);
 			e.printStackTrace();
 		}
 
@@ -442,7 +388,7 @@ public class CourseChartQueries {
 	public int getNoOfHUEL(String req_num, int yearNo, int semNo)	{
 		ResultSet rs = null;
 		int num = 0;
-		
+
 		rs = dbConnector.getNoOfHUELsType(req_num, yearNo, semNo);
 
 		try {
@@ -450,7 +396,7 @@ public class CourseChartQueries {
 				num = rs.getInt(1);
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("SQL Query errored", e);
 			e.printStackTrace();
 		}		
 		return num;
@@ -458,14 +404,14 @@ public class CourseChartQueries {
 
 	public int getNoOfDEL (String req_num, int yearNo, int semNo) {
 		ResultSet rs = null; int retVal = 0;		
-		
+
 		rs = dbConnector.getNoOfDELs(req_num, yearNo, semNo);
 		try {
 			while(rs.next()){
 				retVal = rs.getInt(1);
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("SQL Query errored", e);
 			e.printStackTrace();
 		}
 
@@ -475,7 +421,7 @@ public class CourseChartQueries {
 	public int getNoOfOEL(String req_num, int yearNo, int semNo) {
 		ResultSet rs = null;
 		int num = 0;
-		
+
 		rs = dbConnector.getNoOfOELs(req_num, yearNo, semNo);
 
 		try {
@@ -483,7 +429,7 @@ public class CourseChartQueries {
 				num = rs.getInt(1);
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("SQL Query errored", e);
 			e.printStackTrace();
 		}		
 		return num;		
@@ -499,7 +445,7 @@ public class CourseChartQueries {
 				req_descr = rs.getString(1);
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("SQL Query errored", e);
 			e.printStackTrace();
 		}		
 		return req_descr;			
@@ -516,10 +462,9 @@ public class CourseChartQueries {
 		try {
 			while(rs.next()) {
 				req_gp = rs.getString(1);
-				//System.out.println(req_gp);
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("SQL Query errored", e);
 			e.printStackTrace();
 		}		
 		return req_gp;			
@@ -528,7 +473,7 @@ public class CourseChartQueries {
 	public boolean existsSem (String req_num, int yearNo, int semNo)	{
 		ResultSet rs = null; boolean retVal = true;
 		// descr_3 string must be created from yearNo and semNo		
-		
+
 		rs = dbConnector.existsSem(req_num, yearNo, semNo);
 		try {
 			while(rs.next()) {
@@ -540,7 +485,7 @@ public class CourseChartQueries {
 				}
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("SQL Query errored", e);
 			e.printStackTrace();
 		}
 		return retVal;
@@ -558,21 +503,21 @@ public class CourseChartQueries {
 	{
 		DBConnector tempConnector = DBConnector.getInstance();
 		String table_name = getTableName(filename);
-		
-		
+
+
 		if (iftruncates)	{
 			String truncateQuery = "TRUNCATE TABLE " + table_name;
 			tempConnector.queryExecutor(truncateQuery, true);
 		}
-		
-		
+
+
 		String loadQuery = "LOAD DATA LOCAL INFILE '" + 
 				csv_path + 
 				"' INTO TABLE "+ table_name +" FIELDS TERMINATED BY ','" + "ENCLOSED BY '\"'" +
 				" LINES TERMINATED BY '\r\n' " + "IGNORE 1 ROWS" +"(" + getColumns(table_name) + ");";
 
 		tempConnector.queryExecutor(loadQuery, false);
-		
+
 	}
 
 	// Keeping this as a static method because it is dependent only only IPAddress, UserName, 
@@ -591,8 +536,8 @@ public class CourseChartQueries {
 			// filter for files with .csv type
 			for (File file : fList) {
 				if (file.isFile() && file.getName().endsWith(".csv")) {
-						importChartsData(file.getAbsolutePath().replace("\\", "\\\\"), file.getName(), true);
-						output.append("\n" + file.getName() + " was added. \n");
+					importChartsData(file.getAbsolutePath().replace("\\", "\\\\"), file.getName(), true);
+					output.append("\n" + file.getName() + " was added. \n");
 				} 
 			}
 			return output.append("\nAbove files got added to the database!").toString();
@@ -631,22 +576,6 @@ public class CourseChartQueries {
 		return semsInChart;
 	}
 
-	private String getTableColumns(String table_name) {
-
-		String s = "";
-
-		if (table_name == dbConnector.table_semCharts)
-			s= "career,	rq_group,Eff_Date,	status_1,descr,rqrmnt,eff_date_2,"
-					+ "status_2,descr_2,line,descr_3,Line_Type, min_units,min_course,"
-					+ "max_units,max_course,dtl_seq,dtl_type,crse_lst,descr_4,course";
-
-		else if (table_name == dbConnector.table_course)
-			return s;
-
-
-		return s;
-	}
-
 	public String getStream1(){
 		return this.stream1;
 	}
@@ -680,7 +609,7 @@ public class CourseChartQueries {
 			}
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("SQL Query errored. Could not set the Streams (eg. A1)", e);
 			e.printStackTrace();
 		}
 
@@ -719,6 +648,7 @@ public class CourseChartQueries {
 
 		else 
 			System.out.println(filename + " file was never used");
+		WindowLoader.showAlertDialog("Invalid File(s)",filename + " file was never used");
 		return retVal;
 	}
 
@@ -759,7 +689,7 @@ public class CourseChartQueries {
 			retVal = "sys_id,campus_id,career,academic_program,"
 					+ "status,career_number,academic_plan,descr,"
 					+ "plan_type,admit_term,req_term";
-		
+
 		else if (tablename.equalsIgnoreCase("terms"))
 			retVal = "career,semester,sem_description ,"
 					+ "sem_short_description,begin_date,end_date";
@@ -775,17 +705,17 @@ public class CourseChartQueries {
 
 		else if (tablename.equalsIgnoreCase("minor_codes"))
 			retVal = "minor_code,program";
-		
+
 		else if (tablename.equalsIgnoreCase("minor_course_list"))
 			retVal = "minor_code,course_id,	type";
-		
+
 		else if (tablename.equalsIgnoreCase("minor_requirements"))
 			retVal = "minor_code,type,min_course,max_course";
-		
+
 		else if (tablename.equalsIgnoreCase("student_minor"))
 			retVal = "serial_no,sys_id,	campus_id,"
 					+ "	student_name,minor_code";
-		
+
 		else
 			System.out.println("The columns related to table " + tablename + " were not found");
 

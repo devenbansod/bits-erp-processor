@@ -4,6 +4,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import bits.arcd.main.WindowLoader;
+
 public class AcadCounselBoard {
 	private String studentId;
 	private EligibilitySheetQueries elSheet;
@@ -16,8 +18,8 @@ public class AcadCounselBoard {
 	private ArrayList<Course> backLogCourses;
 	private int noOfTotalCourses;
 	private int noOfCompletedCourses;
-	
-	
+
+
 	public boolean isBackLog() {
 		return isBackLog;
 	}
@@ -44,7 +46,7 @@ public class AcadCounselBoard {
 
 	//	private ArrayList<Course> eGradeList;
 	private ArrayList<String> reasonList = new ArrayList<String>();
-	
+
 	public boolean iseGradeCondition() {
 		return eGradeCondition;
 	}
@@ -60,7 +62,7 @@ public class AcadCounselBoard {
 	public boolean getIsAcb(){
 		return this.isACB;
 	}
-	
+
 
 	public AcadCounselBoard(String studentId, int term){
 		backLogCourses = new ArrayList<Course>();
@@ -88,7 +90,7 @@ public class AcadCounselBoard {
 		setACB();
 		setBackLog();
 	}
-	
+
 	public String getStudentId() {
 		return studentId;
 	}
@@ -165,11 +167,13 @@ public class AcadCounselBoard {
 		int[] ys = {-1,-1};
 		String query = "SELECT sem_description FROM terms WHERE semester = '" + term + "'";
 		ResultSet rs = null;
+
 		String x = new String();
 		try {
 			rs = dbConnector.queryExecutor(query, false);
 		}
 		catch (Exception e){
+			WindowLoader.showExceptionDialog("Semester Description could not be fetched", e);
 			e.printStackTrace();
 		}
 
@@ -178,7 +182,7 @@ public class AcadCounselBoard {
 				x = rs.getString(1);
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("ResultSet could not be used", e);
 			e.printStackTrace();
 		}
 
@@ -197,8 +201,8 @@ public class AcadCounselBoard {
 		}
 		return ys;
 	}
-	
-	
+
+
 	public String printACB() {
 		String s = "";
 		s = "ID: " +studentId + "\tNAME: " +elSheet.getStudentName()+ "\n" + "REQ. GROUP: " +elSheet.getChart().getRequirementGroup()
@@ -229,28 +233,28 @@ public class AcadCounselBoard {
 			i++;
 			if(c.getCourseCode()==0){
 				String desc = c.getElDescr();
-				
+
 				while(c.getElDescr().length() < 10 )
 					desc = desc + " ";
-							
-				
+
+
 				s = s + "\n\t[" + i + "] " + desc;
 			}else{
 				String printedString = c.getSubject();
-				
+
 				while(printedString.length() < 6)
 					printedString = printedString + " ";
-				
+
 				printedString = printedString + c.getCatalog();
-				
+
 				while(printedString.length() < 11)
 					printedString = printedString + " ";
-				
+
 				printedString = printedString + c.getDescription();
-				
+
 				while(printedString.length() < 38)
 					printedString = printedString + " ";
-				
+
 				s = s + "\n\t[" + i + "] " + printedString;
 			}
 			rem--;
@@ -276,7 +280,7 @@ public class AcadCounselBoard {
 	public int getNoOfTotalCourses() {
 		return noOfTotalCourses;
 	}
-	
+
 	public int getNoOfCompletedCourses() {
 		return noOfCompletedCourses;
 	}
@@ -317,14 +321,13 @@ public class AcadCounselBoard {
 						count++;
 					} else
 						this.backLogCourses.add(c);
-//					System.out.println("Inside getNoOfCOmp: " +i);
 				}
 			}
 		}
 		this.noOfCompletedCourses =  count;
 	}
 
-	
+
 	public int getNoofSems(int[] ys){
 		int i = 0;
 		for(Semester s: elSheet.getChart().getSemsInChart()){
@@ -340,6 +343,5 @@ public class AcadCounselBoard {
 
 		return i;
 	}
-	
-}
 
+}

@@ -16,10 +16,10 @@
             <content>
               <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="573.0" prefWidth="979.0" style="-fx-background-color: #03C9A9;">
                      <children>
-                        <Pane layoutX="14.0" layoutY="106.0" prefHeight="228.0" prefWidth="200.0" style="-fx-background-color: #0489B1;">
+                        <Pane layoutX="14.0" layoutY="106.0" prefHeight="253.0" prefWidth="200.0" style="-fx-background-color: #0489B1;">
                            <children>
                               <TextField fx:id="destFolder" layoutX="12.0" layoutY="93.0" prefHeight="25.0" prefWidth="178.0" promptText="Enter the Destination Folder" />
-                              <Button fx:id="generateAndSave" layoutX="17.0" layoutY="188.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="167.0" text="Generate and Save Charts!" />
+                              <Button fx:id="generateAndSave" layoutX="12.0" layoutY="188.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="167.0" text="Generate and Save Charts!" />
                               <Label layoutX="13.0" layoutY="4.0" prefHeight="20.0" prefWidth="174.0" text="Save Multiple Charts To File" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
@@ -29,6 +29,7 @@
                               <TextField fx:id="reqNumValues" layoutX="12.0" layoutY="154.0" prefHeight="25.0" prefWidth="178.0" promptText="Enter ReqNums (comma-separated)" />
                               <Button fx:id="sourceBrowse" layoutX="15.0" layoutY="64.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="80.0" text="Browse" />
                               <Button fx:id="destBrowse" layoutX="15.0" layoutY="126.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="80.0" text="Browse" />
+                              <Button fx:id="stopButton" layoutX="68.0" layoutY="228.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="65.0" style="-fx-background-color: red;" text="STOP" />
                            </children>
                         </Pane>
                         <Pane layoutX="14.0" layoutY="6.0" prefHeight="93.0" prefWidth="200.0" style="-fx-background-color: #6C7A89;">
@@ -42,9 +43,9 @@
                               </Label>
                            </children>
                         </Pane>
-                        <TextArea fx:id="consoleOutput" layoutX="14.0" layoutY="431.0" prefHeight="128.0" prefWidth="200.0" promptText="Console Messages!" wrapText="true" AnchorPane.bottomAnchor="14.0" AnchorPane.topAnchor="431.0" />
+                        <TextArea fx:id="consoleOutput" layoutX="14.0" layoutY="451.0" prefHeight="108.0" prefWidth="200.0" promptText="Console Messages!" wrapText="true" AnchorPane.bottomAnchor="14.0" AnchorPane.topAnchor="451.0" />
                         <WebView fx:id="browser" layoutX="222.0" layoutY="8.0" prefHeight="548.0" prefWidth="746.0" AnchorPane.bottomAnchor="17.0" AnchorPane.leftAnchor="222.0" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="8.0" />
-                        <Pane layoutX="16.0" layoutY="338.0" prefHeight="88.0" prefWidth="196.0" style="-fx-background-color: #0489B1;">
+                        <Pane layoutX="16.0" layoutY="363.0" prefHeight="88.0" prefWidth="196.0" style="-fx-background-color: #0489B1;">
                            <children>
                               <TextField fx:id="srcFileRefresh" layoutX="11.0" layoutY="24.0" prefHeight="25.0" prefWidth="178.0" promptText="Enter the source file" />
                               <Button fx:id="updateAll" layoutX="106.0" layoutY="55.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="80.0" text="Update" />

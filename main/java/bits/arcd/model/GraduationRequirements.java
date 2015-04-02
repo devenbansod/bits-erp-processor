@@ -81,25 +81,25 @@ public class GraduationRequirements {
 
 				if(c.isGradeComplete() || (c.isInProgress() != null && c.isInProgress().equalsIgnoreCase("Y"))) {
 					
-					// To check if student is still enrolled in courses
 					if(c.isInProgress().equalsIgnoreCase("Y")) {
 						this.stillEnrolled = true;
 					}
-
 					
-					if(!(c.isPS2() || c.is16unitThesis() || c.is9unitThesis() || c.isSummerTermPS1())) {
+					if(!(c.isPS2() || c.is16unitThesis() || c.is9unitThesis() || c.isPS1())) {
 						this.totalCoursesCOIP++;
 						this.totalUnitsCOIP += c.getMaxUnits();						
-					}					
-					else if(c.isOelPS1() || c.isSummerTermPS1()) {
+					}
+					
+					else if(c.isPS1()) {
 						this.noOfPS1++;
 					}
 					else if(c.isPS2()) {					
-						this.noOfPS2++;						
+						this.noOfPS2++;
+						break;
 					}					
 					else if(c.is16unitThesis()) {
 							this.noOf16unitThesis++;
-						}							
+						}					
 					else if(c.is9unitThesis()) {
 						this.noOf9unitThesis++;
 
@@ -115,9 +115,12 @@ public class GraduationRequirements {
 						}
 					}
 
-					if(c.isNamedCourse() || c.isOptional() || c.isSummerTermPS1()) {
-						this.noOfNamedCoursesCOIP++;
-						this.unitsOFnoOfNamedCoursesCOIP+=c.getMaxUnits();						
+					if(c.isNamedCourse() || c.isOptional() || c.isPS1()) {				
+
+						if(c.isGradeComplete() || c.isInProgress().equalsIgnoreCase("Y")){
+							this.noOfNamedCoursesCOIP++;
+							this.unitsOFnoOfNamedCoursesCOIP+=c.getMaxUnits();
+						}
 					}
 
 					else if(c.isHuel()){
@@ -157,17 +160,11 @@ public class GraduationRequirements {
 				}
 
 				else {
+					
 					//lists the named courses to be completed
-					if(c.isNamedCourse() || c.isOptional() || c.isSummerTermPS1()) {
-						
-						if(c.getCatalog() != null && c.getCatalog().equalsIgnoreCase("F421T") 
-								&& c.getSubject().equalsIgnoreCase("BITS") && s.hasPS2()) {
-							// optional thesis. do no add to incomplete course
-						}
-						else {
+					if(c.isNamedCourse() || c.isOptional() || c.isPS1()) {												
 							this.noOfIncompleteNamedCourses++;
-							this.incompleteNamedCourses.add(c);
-						}
+							this.incompleteNamedCourses.add(c);														
 					}					
 				}
 			}
@@ -275,7 +272,7 @@ public class GraduationRequirements {
 
 	private boolean checkTotalCoursework() {
 
-		if(this.totalCoursesCOIP >= 40 && this.totalUnitsCOIP >= 126) {
+		if(this.totalCoursesCOIP > 40 && this.totalUnitsCOIP > 126) {
 			return true;
 		}
 		else {

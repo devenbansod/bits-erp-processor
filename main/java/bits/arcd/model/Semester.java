@@ -47,11 +47,8 @@ public class Semester {
 					rs.getString(25), rs.getInt(26), rs.getInt(26));
 			c.setIsNamedCourse(true);
 			this.compulsoryCourses.add(c);
-//			System.out.println(c.toString());
 			i++;
 		}			
-
-//		System.out.println("Year : " + yearNo + " ,  Sem : " + semNo + ", size : " + i);
 		
 		this.noOfHUEL = chartOps.getNoOfHUEL(requirementNo, yearNo, semNo);
 
@@ -291,16 +288,6 @@ public class Semester {
 
 	public void setPS(Course praticeSchoolOne){
 		this.practiceSchoolOne = praticeSchoolOne;
-	}
-
-	public boolean hasPS2() {
-		for(Course c: this.getAllCourses()) {
-			if(c.getCatalog() != null && c.getCatalog().equalsIgnoreCase("F412") 
-				&& c.getSubject().equalsIgnoreCase("BITS")) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 }

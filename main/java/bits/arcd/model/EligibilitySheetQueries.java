@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import bits.arcd.main.WindowLoader;
 import sun.misc.Perf.GetPerfAction;
 
 public class EligibilitySheetQueries {
@@ -26,7 +27,7 @@ public class EligibilitySheetQueries {
 	private int accumulatedCUP;
 	private int accumulatedUnits;
 	private double calculatedCGPA;
-	
+
 	private int minorUnits;
 	private int minorCUP;
 
@@ -38,7 +39,7 @@ public class EligibilitySheetQueries {
 	public int getAccumulatedUnits() {
 		return accumulatedUnits;
 	}
-	
+
 	private String cgpa;
 	private double cgpaCalculated;
 	private int cgpaCup, cgpaUnits;
@@ -60,7 +61,7 @@ public class EligibilitySheetQueries {
 		accumulatedCUP = 0;
 		minorCUP = 0;
 		minorUnits = 0;
-		
+
 		this.termProducedIn = term;
 		this.studentId = studentId;
 		setSystemId(this.studentId);
@@ -110,7 +111,7 @@ public class EligibilitySheetQueries {
 	public int getMinorCUP() {
 		return minorCUP;
 	}
-	
+
 	public void updateCgpaCupAndUnits() {
 
 		String query = "SELECT grade_points, total FROM student_terms WHERE sys_id = '" + systemId + "' " ;
@@ -126,7 +127,7 @@ public class EligibilitySheetQueries {
 
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error while updating the CGPA Cup and Units", e);
 			e.printStackTrace();
 		}
 	}
@@ -169,7 +170,7 @@ public class EligibilitySheetQueries {
 	public String getStudentName(){
 		return this.studentName;
 	}
-	
+
 	public String getStudentId(){
 		return this.studentId;
 	}
@@ -199,24 +200,24 @@ public class EligibilitySheetQueries {
 
 		s = s + returnCenteredString("ELIGIBLITY SHEET (VIDE A.R. 3.21)") + "\n\n";
 		GraduationRequirements g = new GraduationRequirements(this);
-		
-//		AcadCounselBoard a = new AcadCounselBoard(this);
-//		
+
+		//		AcadCounselBoard a = new AcadCounselBoard(this);
+		//		
 		String statuses = "";
-//		
-//		if ( ! a.getIsAcb()) {
-//			statuses = statuses + "STATUS : NORMAL";
-//		}
-//		else {
-//			statuses = statuses + "STATUS : ACB";
-//		}
+		//		
+		//		if ( ! a.getIsAcb()) {
+		//			statuses = statuses + "STATUS : NORMAL";
+		//		}
+		//		else {
+		//			statuses = statuses + "STATUS : ACB";
+		//		}
 
 		if (g.isLikelyToGraduate())
 			statuses = statuses + " \tLIKELY TO GRADUATE";
 
 		else if (g.isGraduated())
 			statuses = statuses + " \tGRADUATED";
-		
+
 		s = s + returnCenteredString(statuses) + "\n";
 
 		setStudentNameFromDatabase();
@@ -266,14 +267,14 @@ public class EligibilitySheetQueries {
 						}
 
 					}
-					
+
 
 					for (int j = 0; j < second.getCompulsoryCourses().size(); j++){
 						if (j < second.getCompulsoryCourses().size()){
 							sem2Courses.add(second.getCompulsoryCourses().get(j).toString());
 						}
 					}
-					
+
 					// Add the Humanities Courses Done
 					for (int j = 0; j < first.getHumanitiesCourses().size(); j++){
 
@@ -291,7 +292,7 @@ public class EligibilitySheetQueries {
 
 					}
 
-					
+
 
 					// Add the Disp Electives done
 					for (int j = 0; j < first.getDelCourses().size(); j++){
@@ -310,7 +311,7 @@ public class EligibilitySheetQueries {
 
 					}
 
-					
+
 					// Add the Open Electives done
 					for (int j = 0; j < first.getOpenElCourses().size(); j++){
 
@@ -412,10 +413,10 @@ public class EligibilitySheetQueries {
 						temp = temp + "\n";
 
 						s = s + temp;
-						
+
 
 					}
-					
+
 
 					s = s + "-----------------------------------------"
 							+ "-----------------------------------------"
@@ -472,15 +473,15 @@ public class EligibilitySheetQueries {
 		s = s + "ACC CUP : " + this.accumulatedCUP + "\tCGPA CUP : " 
 				+ this.cgpaCup + "\tACC UNITS : " + this.accumulatedUnits
 				+ "\tCGPA UNITS : " + this.cgpaUnits + "";
-		
+
 		if (this.hasMinor(systemId) != null && ! this.hasMinor(systemId).equals("")){
 			s = s + "\tMINOR CUP : " + this.minorCUP 
-				+ "\tMINOR UNITS : " + this.minorUnits 
-				+ "\tMINOR CGPA : " + (double)this.minorCUP/ this.minorUnits;
+					+ "\tMINOR UNITS : " + this.minorUnits 
+					+ "\tMINOR CGPA : " + (double)this.minorCUP/ this.minorUnits;
 		}
-		
+
 		s = s + "\n";
-		
+
 		s = s + "-----------------------------------------"
 				+ "-----------------------------------------"
 				+ "----------------------------------------------------------------------\n";
@@ -505,7 +506,7 @@ public class EligibilitySheetQueries {
 					+ "----------------------------------------------------------------------\n";
 
 		}
-		
+
 		return "\n" + s;
 
 	}
@@ -527,7 +528,7 @@ public class EligibilitySheetQueries {
 				x = rs.getString(1);
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error while updating the Semester and Year from a term", e);
 			e.printStackTrace();
 		}
 
@@ -535,7 +536,7 @@ public class EligibilitySheetQueries {
 		try {
 			rs.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error while closing the ResultSet", e);
 			e.printStackTrace();
 		}
 
@@ -579,7 +580,7 @@ public class EligibilitySheetQueries {
 
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error while updating Course Repeat info", e);
 			e.printStackTrace();
 		}
 
@@ -626,15 +627,15 @@ public class EligibilitySheetQueries {
 					else {
 						c.setOPSC(false);
 					}
-					
+
 
 					if(c.getNumGrade() >-1){
 						calculatedUnits += c.getMaxUnits();
 						accumulatedUnits += c.getMaxUnits();
 						calcultedCUP += c.getMaxUnits()*c.getNumGrade();
-						
+
 					}
-					
+
 					if(c.isRepeat() != null && c.isRepeat().equalsIgnoreCase("Y")){
 						accumulatedUnits += c.getMaxUnits();
 					}
@@ -644,7 +645,7 @@ public class EligibilitySheetQueries {
 
 
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
+				WindowLoader.showExceptionDialog("Error while updating the Compulsory Courses", e);
 				e.printStackTrace();
 			}			
 		}		
@@ -667,7 +668,7 @@ public class EligibilitySheetQueries {
 				this.unaccountedCourses.add(c);				
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error while updating the unaccounted Courses", e);
 			e.printStackTrace();
 		}
 
@@ -675,7 +676,7 @@ public class EligibilitySheetQueries {
 		try {
 			rs.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error while closing the ResultSet", e);
 			e.printStackTrace();
 		}
 
@@ -727,22 +728,21 @@ public class EligibilitySheetQueries {
 					c.setOPSC(true);
 				this.checkForRepeatAndSetFlag(c);
 				c.checkAndSetGradeValidAndGradeComplete();
-				
-				
+
+
 				if(c.getNumGrade() >-1){
 					calculatedUnits += c.getMaxUnits();
 					accumulatedUnits += c.getMaxUnits();
 					calcultedCUP += c.getMaxUnits()*c.getNumGrade();
 					if(c.isRepeat() != null && c.isRepeat().equalsIgnoreCase("Y"))
 						accumulatedUnits += c.getMaxUnits();
-					//System.out.println(c.getDescription() + " : "+c.getGrade() + "  : " + calculatedUnits+" : "+calcultedCUP);;
 				}
 
 				sem.addHumanitiesElectives(c);
 
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error while Adding HUELS", e);
 			e.printStackTrace();
 		}
 
@@ -750,7 +750,7 @@ public class EligibilitySheetQueries {
 		try {
 			r.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error while closing the ResultSet", e);
 			e.printStackTrace();
 		}
 
@@ -810,7 +810,7 @@ public class EligibilitySheetQueries {
 							if(cNew.isRepeat() != null && cNew.isRepeat().equalsIgnoreCase("Y"))
 								accumulatedUnits += c.getMaxUnits();
 						}
-						
+
 						sem.getDelCourses().set(i,cNew);
 						counter++;
 					}
@@ -823,7 +823,7 @@ public class EligibilitySheetQueries {
 
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error while Adding the DELS", e);
 			e.printStackTrace();
 		}			
 
@@ -831,7 +831,7 @@ public class EligibilitySheetQueries {
 		try {
 			r.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error while closing the ResultSet", e);
 			e.printStackTrace();
 		}
 
@@ -898,18 +898,18 @@ public class EligibilitySheetQueries {
 
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error while updating the Open Electives", e);
 			e.printStackTrace();
 		}
-		
+
 
 		try {
 			r.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error while closing the ResultSet", e);
 			e.printStackTrace();
 		}
-		
+
 
 	}
 
@@ -945,15 +945,13 @@ public class EligibilitySheetQueries {
 				this.checkForRepeatAndSetFlag(c);
 				c.checkAndSetGradeValidAndGradeComplete();
 				c.setIsOptional(true);
-				
+
 				if(c.getNumGrade() >-1){
 					calculatedUnits += c.getMaxUnits();
 					accumulatedUnits += c.getMaxUnits();
 					calcultedCUP += c.getMaxUnits()*c.getNumGrade();
 					if(c.isRepeat() != null && c.isRepeat().equalsIgnoreCase("Y"))
 						accumulatedUnits += c.getMaxUnits();
-//					System.out.println(c.getDescription() + " : "+c.getGrade() + "  : " + calculatedUnits+" : "+calcultedCUP);
-
 				}
 
 				sem.setOptionalCourse(c);
@@ -961,7 +959,7 @@ public class EligibilitySheetQueries {
 
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error while updating the Optional Courses of POM/ POE", e);
 			e.printStackTrace();
 		}
 
@@ -969,11 +967,11 @@ public class EligibilitySheetQueries {
 		try {
 			r.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error while closing the ResultSet", e);
 			e.printStackTrace();
 		}
-		
-		
+
+
 	}	
 
 
@@ -984,7 +982,7 @@ public class EligibilitySheetQueries {
 	private void addPracticeSchoolToSem(Semester sem) {	
 
 		ResultSet r = dbConnector.addPS1toSem(systemId);
-		
+
 		try {
 			while (r.next()){			
 
@@ -995,22 +993,22 @@ public class EligibilitySheetQueries {
 
 				this.checkForRepeatAndSetFlag(c);
 				c.checkAndSetGradeValidAndGradeComplete();
-				c.setIsSummerTermPS1(true);
+				c.setIsPS1();
 				sem.setPS(c);
 
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error while adding the Summer Term", e);
 			e.printStackTrace();
 		}
 
 		try {
 			r.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error while closing the ResultSet", e);
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	private void updatePendingElectives(Semester sem, int pendingHuels, int pendingDels, int pendingOels) {		
@@ -1044,10 +1042,10 @@ public class EligibilitySheetQueries {
 
 		try {
 			while(r.next()) {
-				this.cgpa = r.getString(1) ; // Assign value here !!
+				this.cgpa = r.getString(1) ;
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error while updating the CGPA from Database", e);
 			e.printStackTrace();
 		}
 
@@ -1055,12 +1053,12 @@ public class EligibilitySheetQueries {
 		try {
 			r.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error while closing the ResultSet", e);
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	public double getCalculatedCGPA() {
 		return calculatedCGPA;
 	}
@@ -1081,28 +1079,24 @@ public class EligibilitySheetQueries {
 				k =  rs.getString(1);
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error while getting the Requirement Number", e);
 			e.printStackTrace();
 		}
 
-		
+
 
 		try {
 			rs.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error while closing the ResultSet", e);
 			e.printStackTrace();
 		}
-		
+
 		this.requirementNo = k;
 	}
 
 	private void setSystemId(String studentId) {
-		/*
-		SELECT sys_id
-		FROM students
-		WHERE campus_id  = &studentId;
-		 */
+
 		String k = null;
 		ResultSet rs = dbConnector.setSystemId(studentId);
 		try {
@@ -1110,7 +1104,7 @@ public class EligibilitySheetQueries {
 				k = rs.getString(1);
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error while updating the SystemId", e);
 			e.printStackTrace();
 		}
 
@@ -1119,11 +1113,10 @@ public class EligibilitySheetQueries {
 		try {
 			rs.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error while closing the ResultSet", e);
 			e.printStackTrace();
 		}
-		
-		
+
 	}
 
 	public CourseChartQueries getChart() {
@@ -1147,27 +1140,24 @@ public class EligibilitySheetQueries {
 		int term=0 ;
 		try {
 			while (rs.next()){
-				try {
-					term = rs.getInt(1);
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+				term = rs.getInt(1);		
+			}
+		} catch (SQLException e1) {
+			WindowLoader.showExceptionDialog("Error while setting the Previous term", e1);
+			e1.printStackTrace();
 		}
+
 		this.prevTerm = term -1 ;
 
 
 		try {
 			rs.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error while closing the ResultSet", e);
 			e.printStackTrace();
 		}
-		
-		
+
+
 	}
 
 
@@ -1183,21 +1173,18 @@ public class EligibilitySheetQueries {
 				s = rs.getString(1);
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error while getting Admission Term", e);
 			e.printStackTrace();
 		}
-
 
 		try {
 			rs.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error while closing the ResultSet", e);
 			e.printStackTrace();
 		}
-		
-		
-		return s;
 
+		return s;
 
 	}
 
@@ -1212,32 +1199,27 @@ public class EligibilitySheetQueries {
 				s = rs.getString(1);
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error while getting the Printing Term", e);
 			e.printStackTrace();
 		}
-
-		
 
 		try {
 			rs.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error while closing the ResultSet", e);
 			e.printStackTrace();
 		}
-		
+
 		return s;
 
-
 	}
-
-
 
 	public String hasMinor(String sysId){
 		String query ="SELECT * from student_minor where sys_id = '" + sysId + "'";
 		// Use systemID to write query for returning row from 
 		//std_minor table
 		String s = "";
-		
+
 		ResultSet rs = dbConnector.hasMinor(sysId);
 		int i = 0;
 		try {
@@ -1246,18 +1228,18 @@ public class EligibilitySheetQueries {
 				s = s + rs.getString(5);
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error while checking for Minors", e);
 			e.printStackTrace();
 		}
-		
+
 
 		try {
 			rs.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error while closing the ResultSet", e);
 			e.printStackTrace();
 		}
-		
+
 		if(i>0)
 			return s;
 		else 
@@ -1301,18 +1283,18 @@ public class EligibilitySheetQueries {
 
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error while setting the Minor Desc", e);
 			e.printStackTrace();
 		}
-		
+
 
 		try {
 			rs.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error while closing the ResultSet", e);
 			e.printStackTrace();
 		}
-		
+
 
 	}
 
