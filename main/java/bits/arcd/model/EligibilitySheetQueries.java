@@ -730,14 +730,24 @@ public class EligibilitySheetQueries {
 				c.checkAndSetGradeValidAndGradeComplete();
 
 
-				if(c.getNumGrade() >-1){
+				if(c.getNumGrade() > 0){
 					calculatedUnits += c.getMaxUnits();
 					accumulatedUnits += c.getMaxUnits();
 					calcultedCUP += c.getMaxUnits()*c.getNumGrade();
+					accumulatedCUP += c.getMaxUnits()*c.getNumGrade();
 					if(c.isRepeat() != null && c.isRepeat().equalsIgnoreCase("Y"))
 						accumulatedUnits += c.getMaxUnits();
 				}
 
+				if(c.isRepeat() != null && c.isRepeat().equalsIgnoreCase("Y")){
+					accumulatedUnits += c.getMaxUnits();
+					accumulatedCUP += c.getMaxUnits()*c.getFirstGrade();
+					System.out.println(c.getDescription() + " : "+c.getGrade() + "  : " +c.getFirstGrade() + " Units: "+c.getMaxUnits());
+					if(c.isInProgress()!= null && c.isInProgress().equalsIgnoreCase("Y")&&c.getFirstGrade() >0){
+						calculatedUnits += c.getMaxUnits();
+						calcultedCUP += c.getMaxUnits()*c.getFirstGrade();
+					}
+				}
 				sem.addHumanitiesElectives(c);
 
 			}
@@ -802,15 +812,24 @@ public class EligibilitySheetQueries {
 						checkForRepeatAndSetFlag(cNew);
 						cNew.checkAndSetGradeValidAndGradeComplete();
 
-						if(cNew.getNumGrade() >-1){
+						if(cNew.getNumGrade() > 0){
 							calculatedUnits += cNew.getMaxUnits();
 							accumulatedUnits += cNew.getMaxUnits();
 
 							calcultedCUP += cNew.getMaxUnits()*cNew.getNumGrade();
-							if(cNew.isRepeat() != null && cNew.isRepeat().equalsIgnoreCase("Y"))
-								accumulatedUnits += c.getMaxUnits();
+							accumulatedCUP += c.getMaxUnits()*c.getNumGrade();
+							
 						}
 
+						if(c.isRepeat() != null && c.isRepeat().equalsIgnoreCase("Y")){
+							accumulatedUnits += c.getMaxUnits();
+							accumulatedCUP += c.getMaxUnits()*c.getFirstGrade();
+							System.out.println(c.getDescription() + " : "+c.getGrade() + "  : " +c.getFirstGrade() + " Units: "+c.getMaxUnits());
+							if(c.isInProgress()!= null && c.isInProgress().equalsIgnoreCase("Y")&&c.getFirstGrade() >0){
+								calculatedUnits += c.getMaxUnits();
+								calcultedCUP += c.getMaxUnits()*c.getFirstGrade();
+							}
+						}
 						sem.getDelCourses().set(i,cNew);
 						counter++;
 					}
@@ -885,14 +904,25 @@ public class EligibilitySheetQueries {
 
 				this.checkForRepeatAndSetFlag(c);
 				c.checkAndSetGradeValidAndGradeComplete();
-				if(c.getNumGrade() >-1){
+				if(c.getNumGrade() > 0){
 					calculatedUnits += c.getMaxUnits();
 					accumulatedUnits += c.getMaxUnits();
 					calcultedCUP += c.getMaxUnits()*c.getNumGrade();
-					if(c.isRepeat() != null && c.isRepeat().equalsIgnoreCase("Y"))
-						accumulatedUnits += c.getMaxUnits();
+					accumulatedCUP += c.getMaxUnits()*c.getNumGrade();
 
-				}	
+				}
+				
+				if(c.isRepeat() != null && c.isRepeat().equalsIgnoreCase("Y")){
+					accumulatedUnits += c.getMaxUnits();
+					accumulatedCUP += c.getMaxUnits()*c.getFirstGrade();
+					
+					if(c.isInProgress()!= null && c.isInProgress().equalsIgnoreCase("Y")
+					 && c.getFirstGrade() >0)
+					 {
+						calculatedUnits += c.getMaxUnits();
+						calcultedCUP += c.getMaxUnits()*c.getFirstGrade();
+					}
+				}
 				sem.addOpenElectives(c);
 
 
@@ -946,12 +976,22 @@ public class EligibilitySheetQueries {
 				c.checkAndSetGradeValidAndGradeComplete();
 				c.setIsOptional(true);
 
-				if(c.getNumGrade() >-1){
+				if(c.getNumGrade() >0){
 					calculatedUnits += c.getMaxUnits();
 					accumulatedUnits += c.getMaxUnits();
 					calcultedCUP += c.getMaxUnits()*c.getNumGrade();
-					if(c.isRepeat() != null && c.isRepeat().equalsIgnoreCase("Y"))
-						accumulatedUnits += c.getMaxUnits();
+					accumulatedCUP += c.getMaxUnits()*c.getNumGrade();
+					
+				}
+				if(c.isRepeat() != null && c.isRepeat().equalsIgnoreCase("Y")){
+					accumulatedUnits += c.getMaxUnits();
+					accumulatedCUP += c.getMaxUnits()*c.getFirstGrade();
+					
+					if(c.isInProgress()!= null && c.isInProgress().equalsIgnoreCase("Y") && c.getFirstGrade() >0){
+						calculatedUnits += c.getMaxUnits();
+						calcultedCUP += c.getMaxUnits()*c.getFirstGrade();
+					}
+
 				}
 
 				sem.setOptionalCourse(c);
@@ -994,6 +1034,12 @@ public class EligibilitySheetQueries {
 				this.checkForRepeatAndSetFlag(c);
 				c.checkAndSetGradeValidAndGradeComplete();
 				c.setIsPS1();
+				if(c.getNumGrade() >0){
+					calculatedUnits += c.getMaxUnits();
+					accumulatedUnits += c.getMaxUnits();
+					calcultedCUP += c.getMaxUnits()*c.getNumGrade();
+					accumulatedCUP += c.getMaxUnits()*c.getNumGrade();
+				}
 				sem.setPS(c);
 
 			}
@@ -1057,6 +1103,14 @@ public class EligibilitySheetQueries {
 			e.printStackTrace();
 		}
 
+	}
+
+	public int getCalcultedCUP() {
+		return calcultedCUP;
+	}
+
+	public int getCalculatedUnits() {
+		return calculatedUnits;
 	}
 
 	public double getCalculatedCGPA() {
