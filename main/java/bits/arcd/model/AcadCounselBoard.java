@@ -59,9 +59,10 @@ public class AcadCounselBoard {
 	}
 	
 
-	public AcadCounselBoard(String studentId){
+	public AcadCounselBoard(String studentId, int term){
 		setStudentId(studentId);
-		elSheet = new EligibilitySheetQueries(studentId, 1131);
+		elSheet = new EligibilitySheetQueries(studentId, term);
+		System.out.println("Done Obj");
 		setCgpaConstraint();
 
 	}
@@ -87,7 +88,10 @@ public class AcadCounselBoard {
 	public void setCgpaConstraint() {
 		String systemId = elSheet.getSystemId();
 		double cgpa = -1;
-		String query = "SELECT CGPA FROM student_terms st WHERE sys_id = '" +systemId+ "' AND semester = (SELECT MAX(semester) FROM student_terms WHERE sys_id = '" +systemId+ "')";
+		String query = "SELECT CGPA FROM student_terms st "
+				+ "WHERE sys_id = '" +systemId+ "' AND "
+				+ "semester = (SELECT MAX(semester) FROM student_terms "
+				+ "WHERE sys_id = '" + systemId + "')";
 		ResultSet rs = null;
 		try {
 			rs = dbConnector.queryExecutor(query, false);
@@ -179,8 +183,6 @@ public class AcadCounselBoard {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-
 
 		if(x.contains("Summer")){
 			ys[0] = 0;

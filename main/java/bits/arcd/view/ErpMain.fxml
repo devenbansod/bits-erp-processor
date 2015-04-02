@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.*?>
 <?import javafx.scene.web.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
@@ -64,7 +65,39 @@
                 <fx:include fx:id="ELSheet" source="ELSheet.fxml" />
             </content>
         </Tab>
-            <Tab text="Student Requirements" />
+            <Tab text="Student Requirements">
+               <content>
+                  <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="573.0" prefWidth="979.0" style="-fx-background-color: #2572EB;" stylesheets="@JMetroDarkTheme.css">
+                     <children>
+                        <TextArea fx:id="consoleOutputRep" editable="false" layoutX="280.0" layoutY="349.0" prefHeight="216.0" prefWidth="469.0" promptText="Console Output" wrapText="true" AnchorPane.bottomAnchor="8.0" AnchorPane.topAnchor="349.0">
+                           <cursor>
+                              <Cursor fx:constant="TEXT" />
+                           </cursor>
+                        </TextArea>
+                        <Pane layoutX="280.0" layoutY="143.0" prefHeight="209.0" prefWidth="469.0" style="-fx-background-color: black;">
+                           <children>
+                              <TextField fx:id="destFolderReports" layoutX="210.0" layoutY="29.0" prefHeight="25.0" prefWidth="115.0" promptText="Specify Folder!" />
+                              <Label layoutX="71.0" layoutY="29.0" prefHeight="25.0" prefWidth="133.0" stylesheets="@JMetroDarkTheme.css" text="Destination Folder:" textAlignment="CENTER" textFill="WHITE">
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
+                              </Label>
+                              <Button fx:id="browseDestFolderRepButton" layoutX="337.0" layoutY="30.0" mnemonicParsing="false" text="Browse" />
+                              <Button fx:id="generateACBButton" layoutX="83.0" layoutY="93.0" mnemonicParsing="false" text="Generate ACB Report" />
+                              <Button fx:id="generateBLButton" layoutX="257.0" layoutY="93.0" mnemonicParsing="false" text="Generate BL Report" />
+                              <Button fx:id="generateGRButton" layoutX="42.0" layoutY="143.0" mnemonicParsing="false" text="Generate Graduated Students" />
+                              <Button fx:id="generateLikelyGRButton" layoutX="253.0" layoutY="143.0" mnemonicParsing="false" text="Generate Likely to Graduate" />
+                           </children>
+                        </Pane>
+                        <Label layoutX="358.0" layoutY="64.0" prefHeight="25.0" prefWidth="39.0" stylesheets="@JMetroDarkTheme.css" text="Term" textAlignment="CENTER" textFill="#141414">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="inpSemNumRep" layoutX="404.0" layoutY="64.0" prefHeight="25.0" prefWidth="48.0" text="1131" />
+                     </children>
+                  </AnchorPane>
+               </content></Tab>
         </tabs>
       </TabPane>
    </children>

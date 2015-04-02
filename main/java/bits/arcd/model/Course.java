@@ -7,7 +7,8 @@ public class Course {
 	private String catalog ; //eg F111
 	private String description;//Computer Programming
 	private String elDescr; // "HUEL", "A8EL", "B3EL", "EL"
-
+	private int numGrade;
+	
 	private boolean OPSC;
 
 
@@ -539,6 +540,39 @@ public class Course {
 		}
 
 		return false;
+
+	}
+	
+	public int getNumGrade(){
+		String countedGrade = new String();
+		if(this.isRepeat !=null && this.isRepeat.equalsIgnoreCase("Y"))
+			countedGrade = this.grade.substring(this.grade.lastIndexOf("/") + 1);
+		else
+			countedGrade = this.grade;
+		
+		
+		//System.out.println(this.description + ":" + this.grade + ":" +countedGrade);
+		
+		switch(countedGrade){
+		case "A":
+			return 10;
+		case "A-":
+			return 9;
+		case "B":
+			return 8;
+		case "B-":
+			return 7;
+		case "C":
+			return 6;
+		case "C-":
+			return 5;
+		case "D":
+			return 4;
+		case "E":
+			return 2;
+		default:
+			return -1;
+		}
 
 	}
 
