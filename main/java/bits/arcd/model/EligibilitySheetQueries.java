@@ -26,7 +26,7 @@ public class EligibilitySheetQueries {
 	private int accumulatedCUP;
 	private int accumulatedUnits;
 	private double calculatedCGPA;
-	
+
 	private int minorUnits;
 	private int minorCUP;
 
@@ -38,7 +38,7 @@ public class EligibilitySheetQueries {
 	public int getAccumulatedUnits() {
 		return accumulatedUnits;
 	}
-	
+
 	private String cgpa;
 	private double cgpaCalculated;
 	private int cgpaCup, cgpaUnits;
@@ -60,7 +60,7 @@ public class EligibilitySheetQueries {
 		accumulatedCUP = 0;
 		minorCUP = 0;
 		minorUnits = 0;
-		
+
 		this.termProducedIn = term;
 		this.studentId = studentId;
 		setSystemId(this.studentId);
@@ -110,7 +110,7 @@ public class EligibilitySheetQueries {
 	public int getMinorCUP() {
 		return minorCUP;
 	}
-	
+
 	public void updateCgpaCupAndUnits() {
 
 		String query = "SELECT grade_points, total FROM student_terms WHERE sys_id = '" + systemId + "' " ;
@@ -169,7 +169,7 @@ public class EligibilitySheetQueries {
 	public String getStudentName(){
 		return this.studentName;
 	}
-	
+
 	public String getStudentId(){
 		return this.studentId;
 	}
@@ -199,24 +199,24 @@ public class EligibilitySheetQueries {
 
 		s = s + returnCenteredString("ELIGIBLITY SHEET (VIDE A.R. 3.21)") + "\n\n";
 		GraduationRequirements g = new GraduationRequirements(this);
-		
-//		AcadCounselBoard a = new AcadCounselBoard(this);
-//		
+
+		//		AcadCounselBoard a = new AcadCounselBoard(this);
+		//		
 		String statuses = "";
-//		
-//		if ( ! a.getIsAcb()) {
-//			statuses = statuses + "STATUS : NORMAL";
-//		}
-//		else {
-//			statuses = statuses + "STATUS : ACB";
-//		}
+		//		
+		//		if ( ! a.getIsAcb()) {
+		//			statuses = statuses + "STATUS : NORMAL";
+		//		}
+		//		else {
+		//			statuses = statuses + "STATUS : ACB";
+		//		}
 
 		if (g.isLikelyToGraduate())
 			statuses = statuses + " \tLIKELY TO GRADUATE";
 
 		else if (g.isGraduated())
 			statuses = statuses + " \tGRADUATED";
-		
+
 		s = s + returnCenteredString(statuses) + "\n";
 
 		setStudentNameFromDatabase();
@@ -266,14 +266,14 @@ public class EligibilitySheetQueries {
 						}
 
 					}
-					
+
 
 					for (int j = 0; j < second.getCompulsoryCourses().size(); j++){
 						if (j < second.getCompulsoryCourses().size()){
 							sem2Courses.add(second.getCompulsoryCourses().get(j).toString());
 						}
 					}
-					
+
 					// Add the Humanities Courses Done
 					for (int j = 0; j < first.getHumanitiesCourses().size(); j++){
 
@@ -291,7 +291,7 @@ public class EligibilitySheetQueries {
 
 					}
 
-					
+
 
 					// Add the Disp Electives done
 					for (int j = 0; j < first.getDelCourses().size(); j++){
@@ -310,7 +310,7 @@ public class EligibilitySheetQueries {
 
 					}
 
-					
+
 					// Add the Open Electives done
 					for (int j = 0; j < first.getOpenElCourses().size(); j++){
 
@@ -327,14 +327,14 @@ public class EligibilitySheetQueries {
 
 					// Add the Hum Electives to be done
 					for (int j = 0; j < first.getNoOfHUEL(); j++){
-						String temp = "    ................................................           HUEL      ";
+						String temp = "    ................................................            HUEL      ";
 
 						sem1Courses.add(temp);
 
 					}
 
 					for (int j = 0; j < second.getNoOfHUEL(); j++){
-						String temp = "    ................................................           HUEL      ";						
+						String temp = "    ................................................            HUEL      ";						
 						sem2Courses.add(temp);
 
 					}
@@ -412,10 +412,10 @@ public class EligibilitySheetQueries {
 						temp = temp + "\n";
 
 						s = s + temp;
-						
+
 
 					}
-					
+
 
 					s = s + "-----------------------------------------"
 							+ "-----------------------------------------"
@@ -472,15 +472,15 @@ public class EligibilitySheetQueries {
 		s = s + "ACC CUP : " + this.accumulatedCUP + "\tCGPA CUP : " 
 				+ this.cgpaCup + "\tACC UNITS : " + this.accumulatedUnits
 				+ "\tCGPA UNITS : " + this.cgpaUnits + "";
-		
+
 		if (this.hasMinor(systemId) != null && ! this.hasMinor(systemId).equals("")){
 			s = s + "\tMINOR CUP : " + this.minorCUP 
-				+ "\tMINOR UNITS : " + this.minorUnits 
-				+ "\tMINOR CGPA : " + (double)this.minorCUP/ this.minorUnits;
+					+ "\tMINOR UNITS : " + this.minorUnits 
+					+ "\tMINOR CGPA : " + (double)this.minorCUP/ this.minorUnits;
 		}
-		
+
 		s = s + "\n";
-		
+
 		s = s + "-----------------------------------------"
 				+ "-----------------------------------------"
 				+ "----------------------------------------------------------------------\n";
@@ -505,7 +505,7 @@ public class EligibilitySheetQueries {
 					+ "----------------------------------------------------------------------\n";
 
 		}
-		
+
 		return "\n" + s;
 
 	}
@@ -626,17 +626,25 @@ public class EligibilitySheetQueries {
 					else {
 						c.setOPSC(false);
 					}
-					
 
-					if(c.getNumGrade() >-1){
+
+					if(c.getNumGrade() >0){
 						calculatedUnits += c.getMaxUnits();
 						accumulatedUnits += c.getMaxUnits();
 						calcultedCUP += c.getMaxUnits()*c.getNumGrade();
-						
+						accumulatedCUP += c.getMaxUnits()*c.getNumGrade();
+						System.out.println(c.getDescription() + " : Units: "+c.getMaxUnits() + "GRADE :" + c.getGrade() + ":" +c.getNumGrade() 
+								+": "+ getCalculatedUnits()+" : "+ getCalcultedCUP());
 					}
-					
+
 					if(c.isRepeat() != null && c.isRepeat().equalsIgnoreCase("Y")){
 						accumulatedUnits += c.getMaxUnits();
+						accumulatedCUP += c.getMaxUnits()*c.getFirstGrade();
+						System.out.println(c.getDescription() + " : "+c.getGrade() + "  : " +c.getFirstGrade() + " Units: "+c.getMaxUnits());
+						if(c.isInProgress()!= null && c.isInProgress().equalsIgnoreCase("Y")&&c.getFirstGrade() >0){
+							calculatedUnits += c.getMaxUnits();
+							calcultedCUP += c.getMaxUnits()*c.getFirstGrade();
+						}
 					}
 				}				
 
@@ -664,7 +672,10 @@ public class EligibilitySheetQueries {
 				c.setUnaccountedCourse(true);
 				c.setElDescr("UT");
 				c.setIsDoneInPrevTerm(this.prevTerm);
-				this.unaccountedCourses.add(c);				
+				this.unaccountedCourses.add(c);		
+				accumulatedUnits += c.getMaxUnits();
+				accumulatedCUP += c.getMaxUnits()*c.getFirstGrade();
+				System.out.println(c.getDescription() + " : "+c.getGrade() + "  : " +c.getFirstGrade() +" Units: "+c.getMaxUnits());
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -727,15 +738,24 @@ public class EligibilitySheetQueries {
 					c.setOPSC(true);
 				this.checkForRepeatAndSetFlag(c);
 				c.checkAndSetGradeValidAndGradeComplete();
-				
-				
-				if(c.getNumGrade() >-1){
+
+
+				if(c.getNumGrade() >0){
 					calculatedUnits += c.getMaxUnits();
 					accumulatedUnits += c.getMaxUnits();
 					calcultedCUP += c.getMaxUnits()*c.getNumGrade();
-					if(c.isRepeat() != null && c.isRepeat().equalsIgnoreCase("Y"))
-						accumulatedUnits += c.getMaxUnits();
-					//System.out.println(c.getDescription() + " : "+c.getGrade() + "  : " + calculatedUnits+" : "+calcultedCUP);;
+					accumulatedCUP += c.getMaxUnits()*c.getNumGrade();
+					System.out.println(c.getDescription() + " : Units: "+c.getMaxUnits() + "GRADE :" + c.getGrade() + ":" +c.getNumGrade() 
+							+": "+ getCalculatedUnits()+" : "+ getCalcultedCUP());
+				}
+				if(c.isRepeat() != null && c.isRepeat().equalsIgnoreCase("Y")){
+					accumulatedUnits += c.getMaxUnits();
+					accumulatedCUP += c.getMaxUnits()*c.getFirstGrade();
+					System.out.println(c.getDescription() + " : "+c.getGrade() + "  : " +c.getFirstGrade() +" Units: "+c.getMaxUnits());
+					if(c.isInProgress()!= null && c.isInProgress().equalsIgnoreCase("Y") && c.getFirstGrade() >0){
+						calculatedUnits += c.getMaxUnits();
+						calcultedCUP += c.getMaxUnits()*c.getFirstGrade();
+					}
 				}
 
 				sem.addHumanitiesElectives(c);
@@ -802,15 +822,25 @@ public class EligibilitySheetQueries {
 						checkForRepeatAndSetFlag(cNew);
 						cNew.checkAndSetGradeValidAndGradeComplete();
 
-						if(cNew.getNumGrade() >-1){
+						if(cNew.getNumGrade() >0){
 							calculatedUnits += cNew.getMaxUnits();
 							accumulatedUnits += cNew.getMaxUnits();
 
 							calcultedCUP += cNew.getMaxUnits()*cNew.getNumGrade();
-							if(cNew.isRepeat() != null && cNew.isRepeat().equalsIgnoreCase("Y"))
-								accumulatedUnits += c.getMaxUnits();
+							accumulatedCUP += cNew.getMaxUnits()*cNew.getNumGrade();
+							System.out.println(cNew.getDescription() + " : Units: "+cNew.getMaxUnits() + "GRADE :" + cNew.getGrade() + ":" +cNew.getNumGrade() 
+									+": "+ getCalculatedUnits()+" : "+ getCalcultedCUP());
 						}
-						
+						if(cNew.isRepeat() != null && cNew.isRepeat().equalsIgnoreCase("Y")){
+							accumulatedUnits += cNew.getMaxUnits();
+							accumulatedCUP += cNew.getMaxUnits()*cNew.getFirstGrade();
+							System.out.println(cNew.getDescription() + " : "+cNew.getGrade() + "  : " +cNew.getFirstGrade()  +" Units: "+cNew.getMaxUnits());
+							if(cNew.isInProgress()!= null && cNew.isInProgress().equalsIgnoreCase("Y") && cNew.getFirstGrade() >0){
+								calculatedUnits += cNew.getMaxUnits();
+								calcultedCUP += cNew.getMaxUnits()*cNew.getFirstGrade();
+							}
+						}
+
 						sem.getDelCourses().set(i,cNew);
 						counter++;
 					}
@@ -885,12 +915,23 @@ public class EligibilitySheetQueries {
 
 				this.checkForRepeatAndSetFlag(c);
 				c.checkAndSetGradeValidAndGradeComplete();
-				if(c.getNumGrade() >-1){
+				if(c.getNumGrade() >0){
 					calculatedUnits += c.getMaxUnits();
 					accumulatedUnits += c.getMaxUnits();
 					calcultedCUP += c.getMaxUnits()*c.getNumGrade();
-					if(c.isRepeat() != null && c.isRepeat().equalsIgnoreCase("Y"))
-						accumulatedUnits += c.getMaxUnits();
+					accumulatedCUP += c.getMaxUnits()*c.getNumGrade();
+					System.out.println(c.getDescription() + " : Units: "+c.getMaxUnits() + "GRADE :" + c.getGrade() + ":" +c.getNumGrade() 
+							+": "+ getCalculatedUnits()+" : "+ getCalcultedCUP());
+					}
+				if(c.isRepeat() != null && c.isRepeat().equalsIgnoreCase("Y")){
+					accumulatedUnits += c.getMaxUnits();
+					accumulatedCUP += c.getMaxUnits()*c.getFirstGrade();
+					System.out.println(c.getDescription() + " : "+c.getGrade() + "  : " +c.getFirstGrade() +" Units: "+c.getMaxUnits());
+					
+					if(c.isInProgress()!= null && c.isInProgress().equalsIgnoreCase("Y") && c.getFirstGrade() >0){
+						calculatedUnits += c.getMaxUnits();
+						calcultedCUP += c.getMaxUnits()*c.getFirstGrade();
+					}
 
 				}	
 				sem.addOpenElectives(c);
@@ -901,7 +942,7 @@ public class EligibilitySheetQueries {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 
 		try {
 			r.close();
@@ -909,7 +950,7 @@ public class EligibilitySheetQueries {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 
 	}
 
@@ -945,14 +986,24 @@ public class EligibilitySheetQueries {
 				this.checkForRepeatAndSetFlag(c);
 				c.checkAndSetGradeValidAndGradeComplete();
 				c.setIsOptional(true);
-				
-				if(c.getNumGrade() >-1){
+
+				if(c.getNumGrade() >0){
 					calculatedUnits += c.getMaxUnits();
 					accumulatedUnits += c.getMaxUnits();
 					calcultedCUP += c.getMaxUnits()*c.getNumGrade();
-					if(c.isRepeat() != null && c.isRepeat().equalsIgnoreCase("Y"))
-						accumulatedUnits += c.getMaxUnits();
-//					System.out.println(c.getDescription() + " : "+c.getGrade() + "  : " + calculatedUnits+" : "+calcultedCUP);
+					accumulatedCUP += c.getMaxUnits()*c.getNumGrade();
+					System.out.println(c.getDescription() + " : Units: "+c.getMaxUnits() + "GRADE :" + c.getGrade() + ":" +c.getNumGrade() 
+							+": "+ getCalculatedUnits()+" : "+ getCalcultedCUP());
+				}
+				if(c.isRepeat() != null && c.isRepeat().equalsIgnoreCase("Y")){
+					accumulatedUnits += c.getMaxUnits();
+					accumulatedCUP += c.getMaxUnits()*c.getFirstGrade();
+					System.out.println(c.getDescription() + " : "+c.getGrade() + "  : " +c.getFirstGrade() +" Units: "+c.getMaxUnits());
+					
+					if(c.isInProgress()!= null && c.isInProgress().equalsIgnoreCase("Y") && c.getFirstGrade() >0){
+						calculatedUnits += c.getMaxUnits();
+						calcultedCUP += c.getMaxUnits()*c.getFirstGrade();
+					}
 
 				}
 
@@ -972,8 +1023,8 @@ public class EligibilitySheetQueries {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
+
+
 	}	
 
 
@@ -984,7 +1035,7 @@ public class EligibilitySheetQueries {
 	private void addPracticeSchoolToSem(Semester sem) {	
 
 		ResultSet r = dbConnector.addPS1toSem(systemId);
-		
+
 		try {
 			while (r.next()){			
 
@@ -998,6 +1049,20 @@ public class EligibilitySheetQueries {
 				c.setIsSummerTermPS1(true);
 				sem.setPS(c);
 
+				if(c.getNumGrade() >0){
+					calculatedUnits += c.getMaxUnits();
+					accumulatedUnits += c.getMaxUnits();
+					calcultedCUP += c.getMaxUnits()*c.getNumGrade();
+					accumulatedCUP += c.getMaxUnits()*c.getNumGrade();
+					System.out.println(c.getDescription() + " : Units: "+c.getMaxUnits() + "GRADE :" + c.getGrade() + ":" +c.getNumGrade() 
+							+": "+ getCalculatedUnits()+" : "+ getCalcultedCUP());
+				}
+//				if(c.isRepeat() != null && c.isRepeat().equalsIgnoreCase("Y")){
+//					accumulatedUnits += c.getMaxUnits();
+//					accumulatedCUP += c.getMaxUnits()*c.getNumGrade();
+//
+//				}
+
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -1010,7 +1075,7 @@ public class EligibilitySheetQueries {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	private void updatePendingElectives(Semester sem, int pendingHuels, int pendingDels, int pendingOels) {		
@@ -1028,6 +1093,14 @@ public class EligibilitySheetQueries {
 
 	public String getSystemId() {
 		return systemId;
+	}
+
+	public int getCalcultedCUP() {
+		return calcultedCUP;
+	}
+
+	public int getCalculatedUnits() {
+		return calculatedUnits;
 	}
 
 	public String getRequirementNo() {
@@ -1058,9 +1131,9 @@ public class EligibilitySheetQueries {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	public double getCalculatedCGPA() {
 		return calculatedCGPA;
 	}
@@ -1085,7 +1158,7 @@ public class EligibilitySheetQueries {
 			e.printStackTrace();
 		}
 
-		
+
 
 		try {
 			rs.close();
@@ -1093,7 +1166,7 @@ public class EligibilitySheetQueries {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		this.requirementNo = k;
 	}
 
@@ -1122,8 +1195,8 @@ public class EligibilitySheetQueries {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
+
+
 	}
 
 	public CourseChartQueries getChart() {
@@ -1166,8 +1239,8 @@ public class EligibilitySheetQueries {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
+
+
 	}
 
 
@@ -1194,8 +1267,8 @@ public class EligibilitySheetQueries {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
+
+
 		return s;
 
 
@@ -1216,7 +1289,7 @@ public class EligibilitySheetQueries {
 			e.printStackTrace();
 		}
 
-		
+
 
 		try {
 			rs.close();
@@ -1224,7 +1297,7 @@ public class EligibilitySheetQueries {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return s;
 
 
@@ -1237,7 +1310,7 @@ public class EligibilitySheetQueries {
 		// Use systemID to write query for returning row from 
 		//std_minor table
 		String s = "";
-		
+
 		ResultSet rs = dbConnector.hasMinor(sysId);
 		int i = 0;
 		try {
@@ -1249,7 +1322,7 @@ public class EligibilitySheetQueries {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 
 		try {
 			rs.close();
@@ -1257,7 +1330,7 @@ public class EligibilitySheetQueries {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		if(i>0)
 			return s;
 		else 
@@ -1304,7 +1377,7 @@ public class EligibilitySheetQueries {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 
 		try {
 			rs.close();
@@ -1312,7 +1385,7 @@ public class EligibilitySheetQueries {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 
 	}
 

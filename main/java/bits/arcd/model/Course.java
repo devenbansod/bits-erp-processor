@@ -568,11 +568,41 @@ public class Course {
 		case "E":
 			return 2;
 		default:
-			return -1;
+			return 0;
 		}
 
 	}
+	public int getFirstGrade(){
+		String countedGrade = new String();
+		if(this.isRepeat !=null && this.isRepeat.equalsIgnoreCase("Y"))
+			countedGrade = this.grade.substring(0, this.grade.indexOf("/"));
+		else
+			countedGrade = this.grade;
+		
+		
+		//System.out.println(this.description + ":" + this.grade + ":" +countedGrade);
+		
+		switch(countedGrade){
+		case "A":
+			return 10;
+		case "A-":
+			return 9;
+		case "B":
+			return 8;
+		case "B-":
+			return 7;
+		case "C":
+			return 6;
+		case "C-":
+			return 5;
+		case "D":
+			return 4;
+		case "E":
+			return 2;
+		default:
+			return 0;
+		}	
 
-
+	}
 }
 
