@@ -517,6 +517,7 @@ public class Course {
 		return false;
 
 	}
+	
 	public boolean is9unitThesis() {
 
 		if (this.subject.equalsIgnoreCase("BITS")) {
@@ -535,7 +536,7 @@ public class Course {
 	
 	public int getNumGrade(){
 		String countedGrade = new String();
-		if(this.isRepeat !=null && this.isRepeat.equalsIgnoreCase("Y"))
+		if(this.isRepeat != null && this.isRepeat.equalsIgnoreCase("Y"))
 			countedGrade = this.grade.substring(this.grade.lastIndexOf("/") + 1);
 		else
 			countedGrade = this.grade;
@@ -563,5 +564,38 @@ public class Course {
 
 	}
 
+	
+	public int getFirstGrade(){
+		String countedGrade = new String();
+		if(this.isRepeat !=null && this.isRepeat.equalsIgnoreCase("Y")){
+			countedGrade = this.grade.substring(0, this.grade.lastIndexOf("/"));
+		if(countedGrade.contains("/"))
+			 countedGrade = countedGrade.substring(countedGrade.lastIndexOf("/"));
+		}
+		else
+			countedGrade = this.grade;
+		
+		switch(countedGrade){
+		case "A":
+			return 10;
+		case "A-":
+			return 9;
+		case "B":
+			return 8;
+		case "B-":
+			return 7;
+		case "C":
+			return 6;
+		case "C-":
+			return 5;
+		case "D":
+			return 4;
+		case "E":
+			return 2;
+		default:
+			return 0;
+		}	
+
+	}
 
 }

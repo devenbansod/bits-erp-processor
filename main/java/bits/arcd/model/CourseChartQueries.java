@@ -219,14 +219,14 @@ public class CourseChartQueries {
 					// Add the Hum Electives to be done
 
 					for (int j = 0; j < first.getNoOfHUEL(); j++){
-						String temp = "    ................................................          HUEL       ";
+						String temp = "    ................................................            HUEL      ";
 
 						sem1Courses.add(temp);
 
 					}
 
 					for (int j = 0; j < second.getNoOfHUEL(); j++){
-						String temp = "    ................................................          HUEL       ";						
+						String temp = "    ................................................            HUEL       ";						
 						sem2Courses.add(temp);
 
 					}
@@ -234,13 +234,13 @@ public class CourseChartQueries {
 
 					// Add the Open Electives to be done
 					for (int j = 0; j < first.getNoOfOEL(); j++){
-						String temp = "    ................................................          EL         ";
+						String temp = "    ................................................            EL        ";
 						sem1Courses.add(temp);
 
 					}
 
 					for (int j = 0; j < second.getNoOfOEL(); j++){
-						String temp = "    ................................................          EL         ";
+						String temp = "    ................................................            EL        ";
 						sem2Courses.add(temp);
 					}
 
@@ -259,7 +259,7 @@ public class CourseChartQueries {
 
 						}
 						else {
-							temp = temp + "      " + "                                                                         ";
+							temp = temp + "      " + "                                                                          ";
 						}
 
 
@@ -267,7 +267,7 @@ public class CourseChartQueries {
 							temp = temp + sem2Courses.get(j);
 						}
 						else {
-							temp = temp + "                                                                          ";
+							temp = temp + "                                                                           ";
 						}
 
 						temp = temp + "\n";

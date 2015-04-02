@@ -49,7 +49,9 @@ public class DBConnector
 	private PreparedStatement psGetPrintingTerm;
 	private PreparedStatement psHasMinor;
 	private PreparedStatement psSetMinorDesc;
-
+	private PreparedStatement psGetNoOfOELsHigherDegree;
+	private PreparedStatement psGetHigherDegreeELs;
+	
 
 	private DBConnector()	{
 		this.db_host = WindowLoader.IPAddress; this.user_nm = WindowLoader.usernm; 
@@ -60,10 +62,12 @@ public class DBConnector
 			connection = DriverManager.getConnection("jdbc:mysql://"+"localhost:3306"+"/erp_temp?cachePrepStmts=true", user_nm, passwd);
 
 		} catch (SQLException e) {
-			WindowLoader.showExceptionDialog("Error while opening the MySQL Connection", e);
+			WindowLoader.showExceptionDialog("Error while connecting to the "
+					+ "database. Please check whether your database server is running or not!!", e);
 			e.printStackTrace();
 		} catch (InstantiationException e) {
-			WindowLoader.showExceptionDialog("Error while instantianting the JDBC Driver", e);
+			WindowLoader.showExceptionDialog("The java program could not find the appropriate JAR for the class"
+					+ " 'com.mysql.jdbc.Driver'", e);
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
 			WindowLoader.showExceptionDialog("Illegal Access", e);
@@ -81,6 +85,7 @@ public class DBConnector
 		readyGetRequirementDescription();
 		readyGetRequirementGroup();
 		readyExistsSem();
+		readyGetNoOfOELsHigherDegree();
 
 
 		// For EligibilitySheetQueries
@@ -90,6 +95,7 @@ public class DBConnector
 		readyCheckRepeatAndSetFlag();
 		readyGetAdmissionTerm();
 		readyGetELsType();
+		readyGetNoOfOELsHigherDegree();
 		readyGetPrintingTerm();
 		readyGetSemTerm();
 		readyHasMinor();
@@ -102,6 +108,7 @@ public class DBConnector
 		readySetStudentNameFromDatabase();
 		readySetRequirementNo();
 		readySetPrevTerm();
+		readyGetHigherDegreeELs();
 	}
 
 
@@ -191,7 +198,7 @@ public class DBConnector
 			this.psGetCompulsoryCourses = this.connection.prepareStatement("SELECT * FROM "+DBConnector.table_semCharts
 					+ " t, courses c WHERE (t.course = c.course_id or t.course = '') and rqrmnt = ?"
 					+ " and descr_3 like ? "
-					+"AND descr_4 not like '%lective%'"
+					+"AND descr_3 not like '%lective%'"
 					+"AND descr_4 not like '%Opti%'");
 		} catch (SQLException e) {
 			WindowLoader.showExceptionDialog("Error while pre-compiling the Query : readyGetCompulsoryCourses \n", e);
@@ -209,6 +216,21 @@ public class DBConnector
 
 		} catch (SQLException e) {
 			WindowLoader.showExceptionDialog("Error while pre-compiling the Query : readyGetNoOfDELsType1 \n", e);
+			e.printStackTrace();
+		}
+	}
+		
+	
+	private void readyGetNoOfOELsHigherDegree(){
+		try {
+
+			this.psGetNoOfOELsHigherDegree = this.connection.prepareStatement("SELECT min_course FROM "
+					+ ""+DBConnector.table_semCharts +
+					" WHERE rqrmnt = ? and descr_3 like ? "
+					+"AND descr_3 like ?");
+
+		} catch (SQLException e) {
+			WindowLoader.showExceptionDialog("Error while pre-compiling the Query : readyGetNoOfOELSHigherDegree \n", e);
 			e.printStackTrace();
 		}
 	}
@@ -333,15 +355,22 @@ public class DBConnector
 			this.psGetNoOfDELsType1.setString(2, "Year "+ yearNo +" Sem " + semNo + "%");
 			this.psGetNoOfDELsType1.setString(3, "%pen%lective%");
 
-			rs = this.psGetNoOfDELsType1.executeQuery();
+			this.psGetNoOfOELsHigherDegree.setString(1, req_num);
+			this.psGetNoOfOELsHigherDegree.setString(2, "Year "+ yearNo +" Sem " + semNo + "%");
+			this.psGetNoOfOELsHigherDegree.setString(3, "%lective%");
 
+			
+			if (Integer.parseInt(req_num) > 1557)
+				rs = this.psGetNoOfDELsType1.executeQuery();
+			else
+				rs = this.psGetNoOfOELsHigherDegree.executeQuery();
+				
 		} catch (SQLException e) {
 			WindowLoader.showExceptionDialog("Error while executing the Query : getNoOfOELs \n", e);
 			e.printStackTrace();
 		}
 		return rs;
 	}
-
 
 	public ResultSet getNoOfHUELsType(String req_num, int yearNo, int semNo)	{
 		ResultSet rs = null;
@@ -506,6 +535,19 @@ public class DBConnector
 		try {
 			this.psGetELsType = connection.prepareStatement("Select * from req_course_map "
 					+ "where descr_2 like ? and sys_id = ?"
+					+ " and sem_course_decription like ?");
+		} catch (SQLException e) {
+			WindowLoader.showExceptionDialog("Error while pre-compiling the Query : readyGetELsType \n", e);
+			e.printStackTrace();
+		}
+
+	}
+	
+	private void readyGetHigherDegreeELs(){
+
+		try {
+			this.psGetHigherDegreeELs = connection.prepareStatement("Select * from req_course_map "
+					+ "where descr_2 like '%lective%' and sys_id = ?"
 					+ " and sem_course_decription like ?");
 		} catch (SQLException e) {
 			WindowLoader.showExceptionDialog("Error while pre-compiling the Query : readyGetELsType \n", e);
@@ -719,14 +761,21 @@ public class DBConnector
 		return rs;
 	}
 
-	public ResultSet addELTypes( String desc, String sysid, int yearNo, int semNo){
+	public ResultSet addELTypes( String desc, String sysid, String req_num, int yearNo, int semNo){
 		ResultSet rs = null;
 
 		try {
 			psGetELsType.setString(1, desc);
 			psGetELsType.setString(2, sysid);
 			psGetELsType.setString(3, "Year " + yearNo + " Sem " + semNo + "%");
-			rs = psGetELsType.executeQuery();
+			
+			psGetHigherDegreeELs.setString(1, sysid);
+			psGetHigherDegreeELs.setString(2, "Year " + yearNo + " Sem " + semNo + "%");
+			
+			if (Integer.parseInt(req_num) < 1558)
+				rs = psGetHigherDegreeELs.executeQuery();
+			else
+				rs = psGetELsType.executeQuery();
 		} catch (SQLException e) {
 			WindowLoader.showExceptionDialog("Error while executing the Query : addELTypes \n", e);
 			e.printStackTrace();

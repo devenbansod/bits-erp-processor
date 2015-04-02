@@ -201,16 +201,16 @@ public class EligibilitySheetQueries {
 		s = s + returnCenteredString("ELIGIBLITY SHEET (VIDE A.R. 3.21)") + "\n\n";
 		GraduationRequirements g = new GraduationRequirements(this);
 
-		//		AcadCounselBoard a = new AcadCounselBoard(this);
-		//		
+				AcadCounselBoard a = new AcadCounselBoard(this);
+				
 		String statuses = "";
-		//		
-		//		if ( ! a.getIsAcb()) {
-		//			statuses = statuses + "STATUS : NORMAL";
-		//		}
-		//		else {
-		//			statuses = statuses + "STATUS : ACB";
-		//		}
+				
+		if ( ! a.getIsAcb()) {
+			statuses = statuses + "STATUS : NORMAL";
+		}
+		else {
+			statuses = statuses + "STATUS : ACB";
+		}
 
 		if (g.isLikelyToGraduate())
 			statuses = statuses + " \tLIKELY TO GRADUATE";
@@ -235,7 +235,6 @@ public class EligibilitySheetQueries {
 		s = s + "\n-----------------------------------------"
 				+ "-----------------------------------------"
 				+ "----------------------------------------------------------------------\n";
-		//		for(Semester sem :this.getCh().getSemsInChart()){
 
 
 		int rem = 1;
@@ -328,14 +327,14 @@ public class EligibilitySheetQueries {
 
 					// Add the Hum Electives to be done
 					for (int j = 0; j < first.getNoOfHUEL(); j++){
-						String temp = "    ................................................           HUEL      ";
+						String temp = "    ................................................            HUEL      ";
 
 						sem1Courses.add(temp);
 
 					}
 
 					for (int j = 0; j < second.getNoOfHUEL(); j++){
-						String temp = "    ................................................           HUEL      ";						
+						String temp = "    ................................................            HUEL      ";						
 						sem2Courses.add(temp);
 
 					}
@@ -629,15 +628,21 @@ public class EligibilitySheetQueries {
 					}
 
 
-					if(c.getNumGrade() >-1){
+
+					if(c.getNumGrade() > 0){
 						calculatedUnits += c.getMaxUnits();
 						accumulatedUnits += c.getMaxUnits();
 						calcultedCUP += c.getMaxUnits()*c.getNumGrade();
-
+						accumulatedCUP += c.getMaxUnits()*c.getNumGrade();
 					}
 
 					if(c.isRepeat() != null && c.isRepeat().equalsIgnoreCase("Y")){
 						accumulatedUnits += c.getMaxUnits();
+						accumulatedCUP += c.getMaxUnits()*c.getFirstGrade();
+						if(c.isInProgress()!= null && c.isInProgress().equalsIgnoreCase("Y")&&c.getFirstGrade() >0){
+							calculatedUnits += c.getMaxUnits();
+							calcultedCUP += c.getMaxUnits()*c.getFirstGrade();
+						}
 					}
 				}				
 
@@ -690,7 +695,7 @@ public class EligibilitySheetQueries {
 
 		int[] semYear = getSemTerm(term);
 
-		ResultSet r = dbConnector.addELTypes("%um%lective%", systemId, yearNo, semNo);
+		ResultSet r = dbConnector.addELTypes("%um%lective%", systemId, this.requirementNo, yearNo, semNo);
 		try {
 			while(r.next())
 			{
@@ -773,7 +778,7 @@ public class EligibilitySheetQueries {
 
 		int[] semYear = getSemTerm(term);
 
-		ResultSet r = dbConnector.addELTypes("%Disp%lective%", systemId, yearNo, semNo);
+		ResultSet r = dbConnector.addELTypes("%Disp%lective%", systemId, this.requirementNo, yearNo, semNo);
 
 
 		try {
@@ -817,17 +822,17 @@ public class EligibilitySheetQueries {
 							accumulatedUnits += cNew.getMaxUnits();
 
 							calcultedCUP += cNew.getMaxUnits()*cNew.getNumGrade();
-							accumulatedCUP += c.getMaxUnits()*c.getNumGrade();
+							accumulatedCUP += cNew.getMaxUnits()*cNew.getNumGrade();
 							
 						}
 
-						if(c.isRepeat() != null && c.isRepeat().equalsIgnoreCase("Y")){
-							accumulatedUnits += c.getMaxUnits();
-							accumulatedCUP += c.getMaxUnits()*c.getFirstGrade();
-							System.out.println(c.getDescription() + " : "+c.getGrade() + "  : " +c.getFirstGrade() + " Units: "+c.getMaxUnits());
-							if(c.isInProgress()!= null && c.isInProgress().equalsIgnoreCase("Y")&&c.getFirstGrade() >0){
-								calculatedUnits += c.getMaxUnits();
-								calcultedCUP += c.getMaxUnits()*c.getFirstGrade();
+						if(cNew.isRepeat() != null && cNew.isRepeat().equalsIgnoreCase("Y")){
+							accumulatedUnits += cNew.getMaxUnits();
+							accumulatedCUP += cNew.getMaxUnits()*cNew.getFirstGrade();
+							if(cNew.isInProgress()!= null && cNew.isInProgress().equalsIgnoreCase("Y")
+									&& cNew.getFirstGrade() >0){
+								calculatedUnits += cNew.getMaxUnits();
+								calcultedCUP += cNew.getMaxUnits() * cNew.getFirstGrade();
 							}
 						}
 						sem.getDelCourses().set(i,cNew);
@@ -866,7 +871,7 @@ public class EligibilitySheetQueries {
 
 		int[] semYear = getSemTerm(term);
 
-		ResultSet r = dbConnector.addELTypes("%Open%lective%", systemId, yearNo, semNo);
+		ResultSet r = dbConnector.addELTypes("%Open%lective%", systemId, this.requirementNo, yearNo, semNo);
 
 		try {
 			while(r.next()){
