@@ -200,16 +200,16 @@ public class EligibilitySheetQueries {
 		s = s + returnCenteredString("ELIGIBLITY SHEET (VIDE A.R. 3.21)") + "\n\n";
 		GraduationRequirements g = new GraduationRequirements(this);
 		
-		AcadCounselBoard a = new AcadCounselBoard(this);
-		
+//		AcadCounselBoard a = new AcadCounselBoard(this);
+//		
 		String statuses = "";
-		
-		if ( ! a.getIsAcb()) {
-			statuses = statuses + "STATUS : NORMAL";
-		}
-		else {
-			statuses = statuses + "STATUS : ACB";
-		}
+//		
+//		if ( ! a.getIsAcb()) {
+//			statuses = statuses + "STATUS : NORMAL";
+//		}
+//		else {
+//			statuses = statuses + "STATUS : ACB";
+//		}
 
 		if (g.isLikelyToGraduate())
 			statuses = statuses + " \tLIKELY TO GRADUATE";

@@ -74,27 +74,33 @@
                               <Cursor fx:constant="TEXT" />
                            </cursor>
                         </TextArea>
-                        <Pane layoutX="280.0" layoutY="143.0" prefHeight="209.0" prefWidth="469.0" style="-fx-background-color: black;">
+                        <Pane layoutX="280.0" layoutY="85.0" prefHeight="264.0" prefWidth="469.0" style="-fx-background-color: black;">
                            <children>
-                              <TextField fx:id="destFolderReports" layoutX="210.0" layoutY="29.0" prefHeight="25.0" prefWidth="115.0" promptText="Specify Folder!" />
-                              <Label layoutX="71.0" layoutY="29.0" prefHeight="25.0" prefWidth="133.0" stylesheets="@JMetroDarkTheme.css" text="Destination Folder:" textAlignment="CENTER" textFill="WHITE">
+                              <TextField fx:id="destFolderReports" layoutX="210.0" layoutY="99.0" prefHeight="25.0" prefWidth="115.0" promptText="Specify Folder!" />
+                              <Label layoutX="71.0" layoutY="99.0" prefHeight="25.0" prefWidth="133.0" stylesheets="@JMetroDarkTheme.css" text="Destination Folder:" textAlignment="CENTER" textFill="WHITE">
                                  <font>
                                     <Font size="15.0" />
                                  </font>
                               </Label>
-                              <Button fx:id="browseDestFolderRepButton" layoutX="337.0" layoutY="30.0" mnemonicParsing="false" text="Browse" />
-                              <Button fx:id="generateACBButton" layoutX="83.0" layoutY="93.0" mnemonicParsing="false" text="Generate ACB Report" />
-                              <Button fx:id="generateBLButton" layoutX="257.0" layoutY="93.0" mnemonicParsing="false" text="Generate BL Report" />
-                              <Button fx:id="generateGRButton" layoutX="42.0" layoutY="143.0" mnemonicParsing="false" text="Generate Graduated Students" />
-                              <Button fx:id="generateLikelyGRButton" layoutX="253.0" layoutY="143.0" mnemonicParsing="false" text="Generate Likely to Graduate" />
+                              <Button fx:id="browseDestFolderRepButton" layoutX="337.0" layoutY="100.0" mnemonicParsing="false" text="Browse" />
+                              <Button fx:id="generateACBButton" layoutX="83.0" layoutY="163.0" mnemonicParsing="false" text="Generate ACB Report" />
+                              <Button fx:id="generateBLButton" layoutX="257.0" layoutY="163.0" mnemonicParsing="false" text="Generate BL Report" />
+                              <Button fx:id="generateGRButton" layoutX="42.0" layoutY="213.0" mnemonicParsing="false" text="Generate Graduated Students" />
+                              <Button fx:id="generateLikelyGRButton" layoutX="253.0" layoutY="213.0" mnemonicParsing="false" text="Generate Likely to Graduate" />
+                              <TextField fx:id="IdNoFilter" layoutX="208.0" layoutY="45.0" prefHeight="25.0" prefWidth="178.0" promptText="Enter the Filter" />
+                              <Label layoutX="98.0" layoutY="45.0" prefHeight="25.0" prefWidth="96.0" stylesheets="@JMetroDarkTheme.css" text="ID No. Filter :" textAlignment="CENTER" textFill="WHITE">
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
+                              </Label>
                            </children>
                         </Pane>
-                        <Label layoutX="358.0" layoutY="64.0" prefHeight="25.0" prefWidth="39.0" stylesheets="@JMetroDarkTheme.css" text="Term" textAlignment="CENTER" textFill="#141414">
+                        <Label layoutX="358.0" layoutY="52.0" prefHeight="25.0" prefWidth="39.0" stylesheets="@JMetroDarkTheme.css" text="Term" textAlignment="CENTER" textFill="#141414">
                            <font>
                               <Font size="15.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="inpSemNumRep" layoutX="404.0" layoutY="64.0" prefHeight="25.0" prefWidth="48.0" text="1131" />
+                        <TextField fx:id="inpSemNumRep" layoutX="404.0" layoutY="52.0" prefHeight="25.0" prefWidth="48.0" text="1131" />
                      </children>
                   </AnchorPane>
                </content></Tab>

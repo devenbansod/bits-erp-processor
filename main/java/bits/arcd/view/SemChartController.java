@@ -78,6 +78,7 @@ public class SemChartController {
 
 
 	@FXML public TextField inpSemNumRep;
+	@FXML public TextField IdNoFilter;
 	@FXML public TextField destFolderReports;
 	@FXML public Button browseDestFolderRepButton;
 	@FXML public Button generateACBButton;
@@ -85,6 +86,7 @@ public class SemChartController {
 	@FXML public Button generateGRButton;
 	@FXML public Button generateLikelyGRButton;
 	@FXML public TextArea consoleOutputRep;
+	
 
 
 	private CourseChartQueries chartQueries;
@@ -313,13 +315,12 @@ public class SemChartController {
 		generateACBButton.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e) {
 
-				threadSafeConsoleOutputRep("Processing .... Please wait .....\n");
+				threadSafeConsoleOutputRep("Processing .... Please wait .....\nGenerating ACB Report\n");
 
 				Thread thread = new Thread(){
 					public void run(){				
 						DBConnector db = DBConnector.getInstance();
-						String query = "SeLECT * FROM students where campus_id >= '201100000000'";
-
+						String query = "SeLECT * FROM students where campus_id like '" + IdNoFilter.getText() + "'";
 						Date d = new Date();
 
 						String formattedDate = convertToProperString(d.toString());
@@ -345,7 +346,7 @@ public class SemChartController {
 										Integer.parseInt(inpSemNumRep.getText()));
 								if (a.getIsAcb()) {
 								
-//									bw.write(a.getAcb());
+//									bw.write(a.printACB());
 									threadSafeConsoleOutputRep("\n" + (new Date()).toString() 
 											+ " : Wrote " + rs.getString(2) + "\n");
 								}
@@ -364,6 +365,73 @@ public class SemChartController {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
+						threadSafeConsoleOutputRep("Exported the ACB Report to : \n" + f_Out.getAbsolutePath());
+					}
+					
+					
+				};
+				thread.start();
+
+			}
+		});
+
+		
+		generateBLButton.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent e) {
+
+				threadSafeConsoleOutputRep("Processing .... Please wait .....\nGenerating BL Report\n");
+
+				Thread thread = new Thread(){
+					public void run(){				
+						DBConnector db = DBConnector.getInstance();
+						String query = "SeLECT * FROM students where campus_id like '" + IdNoFilter.getText() + "'";
+
+						Date d = new Date();
+
+						String formattedDate = convertToProperString(d.toString());
+
+						final File f_Out = new File(destFolder.getText() + "\\BL_" + formattedDate + ".txt");
+
+						FileWriter fw = null;
+						BufferedWriter bw = null;
+
+						try {
+							fw = new FileWriter(f_Out.getAbsoluteFile(), true);
+							bw = new BufferedWriter(fw);
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+
+						ResultSet rs = db.queryExecutor(query, false);
+
+						try {
+							while(rs.next()){
+								AcadCounselBoard a = new AcadCounselBoard(rs.getString(2), 
+										Integer.parseInt(inpSemNumRep.getText()));
+								if (a.isBackLog()) {
+								
+									bw.write(a.printBackLog());
+									threadSafeConsoleOutputRep("\n" + (new Date()).toString() 
+											+ " : Wrote " + rs.getString(2) + "\n");
+								}
+								else {
+									threadSafeConsoleOutputRep("\n..");
+								}
+							}
+
+							bw.close();
+							rs.close();
+							fw.close();
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						
+						threadSafeConsoleOutputRep("Exported the BL Report to : \n" + f_Out.getAbsolutePath());
 					}
 					
 				};
