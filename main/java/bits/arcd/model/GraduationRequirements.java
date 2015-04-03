@@ -78,6 +78,10 @@ public class GraduationRequirements {
 		System.out.println();
 	}
 	
+	public EligibilitySheetQueries getELSheet() {
+		return this.elSheet;
+	}
+	
 	private void loopThroughSemesters(EligibilitySheetQueries elsheet){
 
 		for(Semester s: elsheet.getChart().getSemsInChart()) {
