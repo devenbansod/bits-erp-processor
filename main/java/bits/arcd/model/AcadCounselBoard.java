@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import javafx.beans.property.SimpleStringProperty;
 import bits.arcd.main.WindowLoader;
 
 public class AcadCounselBoard {
@@ -18,6 +19,12 @@ public class AcadCounselBoard {
 	private ArrayList<Course> backLogCourses;
 	private int noOfTotalCourses;
 	private int noOfCompletedCourses;
+	
+	
+	// These variables are for JavaFX 8 real time table view!!
+	private  SimpleStringProperty fxIDNum;
+    private  SimpleStringProperty fxName;
+    private  SimpleStringProperty fxCGPA;
 
 
 	public boolean isBackLog() {
@@ -104,7 +111,13 @@ public class AcadCounselBoard {
 	}
 
 	public void setCgpaConstraint() {
-		Double cgpa = Double.parseDouble(elSheet.getCgpa());
+		String cgpaString = elSheet.getCgpa();
+		if (cgpaString == null) {
+			this.cgpaCondition = false;
+			return;
+		}
+		
+		Double cgpa = Double.parseDouble(cgpaString);
 		if(cgpa <= 4.5){
 			this.cgpaCondition = true;
 		} else {
@@ -343,6 +356,30 @@ public class AcadCounselBoard {
 		}
 
 		return i;
+	}
+
+	public SimpleStringProperty getFxIDNum() {
+		return fxIDNum;
+	}
+
+	public void setFxIDNum(String IDNum) {
+		this.fxIDNum = new SimpleStringProperty(IDNum);
+	}
+
+	public SimpleStringProperty getFxName() {
+		return fxName;
+	}
+
+	public void setFxName(String name) {
+		this.fxName = new SimpleStringProperty(name);
+	}
+
+	public SimpleStringProperty getFxCGPA() {
+		return fxCGPA;
+	}
+
+	public void setFxCGPA(String cgpa) {
+		this.fxCGPA = new SimpleStringProperty(cgpa);
 	}
 
 }

@@ -646,9 +646,10 @@ public class CourseChartQueries {
 		else if (filename.equalsIgnoreCase("std_minor.csv"))
 			retVal = "student_minor";
 
-		else 
+		else {
 			System.out.println(filename + " file was never used");
-		WindowLoader.showAlertDialog("Invalid File(s)",filename + " file was never used");
+			WindowLoader.showAlertDialog("Invalid File(s)",filename + " file was never used");
+		}
 		return retVal;
 	}
 

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="573.0" prefWidth="979.0" style="-fx-background-color: #666699;" stylesheets="@JMetroDarkTheme.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bits.arcd.view.StudentReqsController">
+	<children>
+		<TextArea fx:id="consoleOutput" editable="false" layoutX="263.0" layoutY="7.0" prefHeight="559.0" prefWidth="705.0" promptText="Console Output" style="-fx-text-fill: black;" wrapText="true" AnchorPane.bottomAnchor="7.0" AnchorPane.leftAnchor="263.0" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="7.0">
+			<cursor>
+				<Cursor fx:constant="TEXT" />
+			</cursor>
+         <font>
+            <Font size="17.0" />
+         </font>
+		</TextArea>
+		<Pane layoutX="5.0" layoutY="158.0" prefHeight="152.0" prefWidth="248.0" style="-fx-background-color: #330066;">
+			<children>
+				<Button fx:id="generateBLButton" layoutX="69.0" layoutY="39.0" mnemonicParsing="false" text="Generate BL Report" />
+				<Button fx:id="generateGRButton" layoutX="37.0" layoutY="64.0" mnemonicParsing="false" text="Generate Graduated Students" />
+				<Button fx:id="generateACBButton" layoutX="65.0" layoutY="14.0" mnemonicParsing="false" text="Generate ACB Report" />
+            <Button fx:id="generateLikelyGRButton" layoutX="41.0" layoutY="89.0" mnemonicParsing="false" text="Generate Likely To Graduate" />
+      		<Button fx:id="stopButton" layoutX="102.0" layoutY="120.0" mnemonicParsing="false" style="-fx-background-color: #f7505a; -fx-text-fill: White; -fx-font-weight: bold;" text="Stop" />
+			</children>
+		</Pane>
+		<Pane layoutX="4.0" layoutY="7.0" prefHeight="145.0" prefWidth="248.0" style="-fx-background-color: #0099ff;">
+			<children>
+				<TextField fx:id="destFolder" layoutX="4.0" layoutY="31.0" prefHeight="25.0" prefWidth="181.0" promptText="20XXA8PSXXXP" />
+				<Label layoutX="5.0" layoutY="2.0" prefHeight="25.0" prefWidth="192.0" stylesheets="@JMetroDarkTheme.css" text="Enter the Destination Folder:" textAlignment="CENTER" textFill="WHITE">
+					<font>
+						<Font size="15.0" />
+					</font>
+				</Label>
+				<Button fx:id="browseDestFolderButton" layoutX="3.0" layoutY="56.0" mnemonicParsing="false" text="Browse" />
+            <TextField fx:id="IdNoFilter" layoutX="118.0" layoutY="83.0" prefHeight="25.0" prefWidth="119.0" promptText="20XXA8PSXXXP" />
+            <TextField fx:id="inpSemNum" layoutX="118.0" layoutY="111.0" prefHeight="25.0" prefWidth="119.0" text="1131" />
+            <Label layoutX="14.0" layoutY="83.0" prefHeight="25.0" prefWidth="75.0" stylesheets="@JMetroDarkTheme.css" text="ID Filter:" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <Label layoutX="14.0" layoutY="111.0" prefHeight="25.0" prefWidth="75.0" stylesheets="@JMetroDarkTheme.css" text="Term:" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+			</children>
+		</Pane>
+	</children>
+</AnchorPane>

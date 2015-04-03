@@ -33,6 +33,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBoxBuilder;
@@ -77,6 +78,10 @@ public class ELSheetController {
 	@FXML public Button browseSourceFileButton;
 	@FXML public Button browseDestFolderButton;
 	@FXML public Button generateButton;
+	@FXML public CheckBox separateFilesELSheet;
+
+	@FXML public Button stopButton;
+	private boolean continueProc = true;
 
 	private WebEngine webEngine;
 
@@ -101,7 +106,7 @@ public class ELSheetController {
 	 * Initializes the controller class. This method is automatically called
 	 * after the fxml file has been loaded. Called after constructor
 	 */
-	@SuppressWarnings({ "restriction", "restriction", "restriction" })
+
 	@FXML
 	private void initialize() {
 		// Load the welcome page in WebView
@@ -123,14 +128,7 @@ public class ELSheetController {
 					if (idNum.getText().length() == 12){
 
 						threadSafeConsoleOutput("Processing, Please wait.........");
-						Platform.runLater(new Runnable() {
-							public void run() {
-								FileSystem tempfs = FileSystems.getDefault();
-								Path path = tempfs.getPath("src/main/resources/html_res/Wait.html");
-								webEngine.load("file:///"+path.toAbsolutePath().toString());
-							}
-						});
-
+						loadWaitAnim();
 						Thread temp = new Thread(){
 							public void run(){
 								loadSingleELSheet(idNum.getText());
@@ -143,14 +141,7 @@ public class ELSheetController {
 					else if (idNum.getText().length() != 12 && idNum.getText().contains("%")) {
 
 						threadSafeConsoleOutput("Processing, Please wait.........");
-						Platform.runLater(new Runnable() {
-							public void run() {
-								FileSystem tempfs = FileSystems.getDefault();
-								Path path = tempfs.getPath("src/main/resources/html_res/Wait.html");
-								webEngine.load("file:///"+path.toAbsolutePath().toString());
-							}
-						});
-
+						loadWaitAnim();
 						Thread temp = new Thread(){
 							public void run(){
 								loadELSheetsLike(idNum.getText());
@@ -265,22 +256,33 @@ public class ELSheetController {
 			public void handle(ActionEvent e) {
 
 				threadSafeConsoleOutput("Processing, Please wait.........");
-				Platform.runLater(new Runnable() {
-					public void run() {
-						FileSystem tempfs = FileSystems.getDefault();
-						Path path = tempfs.getPath("src/main/resources/html_res/Wait.html");
-						webEngine.load("file:///"+path.toAbsolutePath().toString());
-					}
-				});
+				loadWaitAnim();
 				Thread thread = new Thread(){
 					public void run(){
 						threadSafeConsoleOutput(CourseChartQueries.batchCSVChartsLoad(refreshFolder.getText()));
-						putWelcomeHTML();	
+						loadHomeAnim();
 					}
 				};
 				thread.start();
 
 
+			}
+		});
+
+		// Terminate any currently executing loops
+		stopButton.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent e) {
+				if (stopButton.getText().equalsIgnoreCase("Stop")){
+					continueProc = false;
+					stopButton.setText("Unlock the Processor");
+				}
+					
+				else{
+					stopButton.setText("Stop");
+					continueProc = true;
+				}
+					
+				
 			}
 		});
 
@@ -312,13 +314,7 @@ public class ELSheetController {
 		final File f_Out = new File(destFolder.getText() + "\\EL_SHEETS_" + formattedDate + ".txt");
 
 		threadSafeConsoleOutput("Processing, Please wait.........");
-		Platform.runLater(new Runnable() {
-			public void run() {
-				FileSystem tempfs = FileSystems.getDefault();
-				Path path = tempfs.getPath("src/main/resources/html_res/Wait.html");
-				webEngine.load("file:///"+path.toAbsolutePath().toString());
-			}
-		});
+
 
 		if( f.isFile() && f2.isDirectory()) {
 
@@ -354,26 +350,22 @@ public class ELSheetController {
 		}
 		threadSafeConsoleOutput("Finished!..........");
 
-		putWelcomeHTML();
+		loadHomeAnim();
 
 	}
 
-	public void putWelcomeHTML(){
-		Platform.runLater(new Runnable() {
-			public void run() {
 
-				FileSystem tempfs = FileSystems.getDefault();
-				Path path = tempfs.getPath("src/main/resources/html_res/Welcome.html");
-				webEngine.load("file:///"+path.toAbsolutePath().toString());
-			}
-		});
-	}
 
 
 	private void batchProcessELSheetsHelper(ArrayList<String> idNos, File f){
 
 		FileWriter fw = null;
 		BufferedWriter bw = null;
+		
+		File f_separate = null;
+		FileWriter fw_s = null;
+		BufferedWriter bw_s = null;
+		
 		try {
 			fw = new FileWriter(f.getAbsoluteFile(), true);
 			bw = new BufferedWriter(fw);
@@ -386,26 +378,43 @@ public class ELSheetController {
 		}
 
 		for(int j = 0; j < idNos.size(); j++) {
+			if (continueProc)	{
+				if (! inpSemNum.getText().equals("")){
+					EligibilitySheetQueries e = new EligibilitySheetQueries(idNos.get(j), Integer.parseInt(inpSemNum.getText()));
+					String s = e.toString();
 
-			if (! inpSemNum.getText().equals("")){
-				EligibilitySheetQueries e = new EligibilitySheetQueries(idNos.get(j), Integer.parseInt(inpSemNum.getText()));
-				String s = e.toString();
+					try {
+						if (separateFilesELSheet.isSelected()) {
+							f_separate = new File(destFolder.getText() + "\\" + e.getStudentId() + ".txt");
+							if (!f_separate.exists()) {
+								f_separate.createNewFile();
+							}
+							fw_s = new FileWriter(f_separate);
+							bw_s = new BufferedWriter(fw_s);
+							bw_s.write(s);
+							bw_s.write("\f");
+							bw_s.close();
+							fw_s.close();
+							threadSafeConsoleOutput("\n" + (new Date()).toString() 
+									+ " : Wrote " + idNos.get(j).toString() + " to " + f_separate.getAbsolutePath() + "\n");
+						}
 
-				try {
-					bw.write(s);
-					bw.write("\f");
-				} catch (IOException e1) {
+						else {
+							bw.write(s);
+							bw.write("\f");
+							
+							threadSafeConsoleOutput("\n" + (new Date()).toString() 
+									+ " : Wrote " + idNos.get(j).toString() + " to " + f.getAbsolutePath() + "\n");
+						}
+					} catch (IOException e1) {
 
-					e1.printStackTrace();
+						e1.printStackTrace();
+					}
+
+					threadSafeConsoleOutput("\n" + (new Date()).toString() 
+							+ " : Wrote " + idNos.get(j).toString() + "\n");
 				}
-
-				threadSafeConsoleOutput("\n" + (new Date()).toString() 
-						+ " : Wrote " + idNos.get(j).toString() + "\n");
 			}
-
-			threadSafeConsoleOutput("\n\n" + (new Date()).toString() + " : Exported the EL Sheets into " 
-					+ f.getAbsolutePath() + "\n");
-
 		}
 
 
@@ -418,7 +427,7 @@ public class ELSheetController {
 		}
 
 		threadSafeConsoleOutput("\n" + (new Date()).toString() 
-				+ " : File written inside : " + destFolder.getText() + "\n");
+				+ " : File(s) written inside : " + destFolder.getText() + "\n");
 	}
 
 	public void loadSingleELSheet(String idNum) {
@@ -467,12 +476,22 @@ public class ELSheetController {
 		}
 	}
 
-	public void loadHomeAnim(){
+	public void loadHomeAnim()	{
 		Platform.runLater(new Runnable() {
 			public void run() {
 
 				FileSystem tempfs = FileSystems.getDefault();
 				Path path = tempfs.getPath("src/main/resources/html_res/Welcome.html");
+				webEngine.load("file:///"+path.toAbsolutePath().toString());
+			}
+		});
+	}
+
+	public void loadWaitAnim()	{
+		Platform.runLater(new Runnable() {
+			public void run() {
+				FileSystem tempfs = FileSystems.getDefault();
+				Path path = tempfs.getPath("src/main/resources/html_res/Wait.html");
 				webEngine.load("file:///"+path.toAbsolutePath().toString());
 			}
 		});
@@ -577,8 +596,9 @@ public class ELSheetController {
 		if(f2.isDirectory()) {
 			batchProcessELSheetsHelper(idNos, f_Out);
 		}
-
-		putWelcomeHTML();
+		
+		WindowLoader.showAlertDialog("Export Completed", "Process of Export successfully completed");
+		loadHomeAnim();
 
 	}
 }

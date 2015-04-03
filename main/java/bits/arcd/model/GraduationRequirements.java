@@ -37,6 +37,13 @@ public class GraduationRequirements {
 	private boolean graduated = false;
 	private boolean stillEnrolled = false;	
 	private String graduationStatus;	
+	
+	private ArrayList<String> reasons = new ArrayList<String>();	
+
+	private int unitsOfHuelProjects;
+	private int unitsOfDelType1Projects;
+	private int unitsOfDelType2Projects;
+	private int unitsOfOelProjects;
 
 	public GraduationRequirements(String studentId) {
 		super();
@@ -44,16 +51,16 @@ public class GraduationRequirements {
 		this.elSheet = new EligibilitySheetQueries(studentId, 1131);
 		loopThroughSemesters(elSheet);
 		setGraduationFields();
-//		debugger();
+//		debugger();	
 	}
-	
+
 	public GraduationRequirements(EligibilitySheetQueries e) {
 		super();
 		this.elSheet = e;
 		this.studentId = e.getStudentId();
 		loopThroughSemesters(elSheet);		
 		setGraduationFields();
-//		debugger();
+//		debugger();		
 	}
 
 	private void debugger() {
@@ -70,7 +77,7 @@ public class GraduationRequirements {
 		System.out.println("graduationStatus  =" + this.graduationStatus);
 		System.out.println();
 	}
-
+	
 	private void loopThroughSemesters(EligibilitySheetQueries elsheet){
 
 		for(Semester s: elsheet.getChart().getSemsInChart()) {
@@ -125,6 +132,7 @@ public class GraduationRequirements {
 						this.unitsOFnoOfHuelsCOIP+=c.getMaxUnits();
 						if(c.getIsProjectTypeCourse()){
 							this.noOFHuelProjects++;
+							this.unitsOfHuelProjects+=c.getMaxUnits();
 						}
 					}
 
@@ -135,6 +143,7 @@ public class GraduationRequirements {
 							this.unitsOfnoOfDelsType1COIP+=c.getMaxUnits();
 							if(c.getIsProjectTypeCourse()){
 								this.noOfDelType1Projects++;
+								this.unitsOfDelType1Projects+=c.getMaxUnits();
 							}
 						}
 
@@ -143,6 +152,7 @@ public class GraduationRequirements {
 							this.unitsOfnoOfDelsType2COIP+=c.getMaxUnits();
 							if(c.getIsProjectTypeCourse()){
 								this.noOfDelType2Projects++;
+								this.unitsOfDelType2Projects+=c.getMaxUnits();
 							}
 						}
 					}			
@@ -152,6 +162,7 @@ public class GraduationRequirements {
 						this.unitsOfnoOfOelsCOIP+=c.getMaxUnits();
 						if(c.getIsProjectTypeCourse()){
 							this.noOfOelProjects++;
+							this.unitsOfOelProjects+=c.getMaxUnits();
 						}
 					}
 				}
@@ -174,10 +185,18 @@ public class GraduationRequirements {
 		}
 	}
 	
-	private void setGraduationFields() {		
+	private void setGraduationFields() {	
 		
-		if(checkForNamedCourses() && checkForHUEL() && checkForDEL() && checkForOEL() 
-				&& checkTotalCoursework() && checkPSThesisConditions()) {
+		boolean namedCoursesCondition = checkForNamedCourses();
+		boolean huelCondition = checkForHUEL();
+		boolean delCondition = checkForDEL();
+		boolean oelCondition = checkForOEL();
+		boolean totalCourseworkCondition = checkTotalCoursework();
+		boolean psThesisCondition = checkPSThesisConditions();
+		boolean totalProjCoursesCondition = checkforTotalProjectCourses();
+		
+		if(namedCoursesCondition && huelCondition && delCondition && oelCondition 
+				&& totalCourseworkCondition && psThesisCondition && totalProjCoursesCondition) {
 			this.likelyToGraduate = true;
 		}
 		else {
@@ -197,26 +216,70 @@ public class GraduationRequirements {
 		}
 	}	
 
+	private boolean checkforTotalProjectCourses() {
+		
+		int totalNoOfProjectCourses = this.noOFHuelProjects + this.noOfDelType1Projects + this.noOfDelType2Projects
+									+ this.noOfOelProjects;
+		int totalUnitsOfProjectCourses = this.unitsOfHuelProjects + this.unitsOfDelType1Projects
+										+ this.unitsOfDelType2Projects + this.unitsOfOelProjects;
+		String rs = "";
+		if(totalNoOfProjectCourses > 5) {
+			
+			rs += " Total Project Type Courses: " + totalNoOfProjectCourses + " > 5(max).";	
+			reasons.add(rs);
+		}
+		
+		if(totalUnitsOfProjectCourses > 15) {
+			rs += " Total units of Project Type Courses: " + totalUnitsOfProjectCourses
+					+ " > 15(max).";
+			reasons.add(rs);
+		}
+		
+		if(totalNoOfProjectCourses > 5 || totalUnitsOfProjectCourses > 15) {
+			return false;			
+		}
+		else {
+			return true;
+		}
+		
+	}
+
 	private boolean checkForNamedCourses() {
 		if(noOfIncompleteNamedCourses == 0) {
 			return true;
 		}
 		else {
-			return false;
+			String rs = "Named courses not complete. "+ this.incompleteNamedCourses.size() 
+						+ " incomplete named course(s).";
+			reasons.add(rs);
+			return false;			
 		}
 
 	}
 
 	private boolean checkForHUEL(){
-		if((this.noOfHuelsCOIP< 3) || (this.noOFHuelProjects >1) 
-				|| (this.unitsOFnoOfHuelsCOIP<8)){
+		if((this.noOfHuelsCOIP< 3) || (this.unitsOFnoOfHuelsCOIP<8) 
+				||(this.noOFHuelProjects >1) || (this.unitsOfHuelProjects > 3)){
+			
+			String rs = "Humanities electives not complete. (" + this.noOfHuelsCOIP + "/3 courses, " 
+					+ this.unitsOFnoOfHuelsCOIP + "/8 units) done.";
+			if(this.noOFHuelProjects >1) {
+				rs += " Number of HUEL Projects: " + this.noOFHuelProjects + "> 1";
+			}
+			else if(this.unitsOfHuelProjects > 3) {
+				rs += " Units of HUEL Project(s): " + this.unitsOfHuelProjects + "> 3";
+			}
+			
+			reasons.add(rs);
 			return false;
 		}
 		else return true;
 	}
 
 	private boolean checkForDEL(){
-
+		
+		boolean delType1Satisfied=false, delType2Satisfied=false;
+		
 		String delStream1 = elSheet.getChart().getStream1();		
 		int[] cu = getNumCoursesAndUnitsforDELs(delStream1);		
 		int noOfDelType1Courses = cu[0];
@@ -236,17 +299,59 @@ public class GraduationRequirements {
 			noOfDelType2Units = cu2[1];
 		}
 
-		if((this.noOfDelsType1COIP< noOfDelType1Courses) || (this.unitsOfnoOfDelsType1COIP< noOfDelType1Units)){			
-			return false;
+		if((this.noOfDelsType1COIP< noOfDelType1Courses) || (this.unitsOfnoOfDelsType1COIP< noOfDelType1Units)
+				|| (this.noOfDelType1Projects > 3) || (this.unitsOfDelType1Projects > 9)){	
+			
+			String rs = delStream1 + " Discipline electives not complete. (" + this.noOfDelsType1COIP + "/" 
+					+ noOfDelType1Courses + " courses, " + this.unitsOfnoOfDelsType1COIP + "/"
+					+ noOfDelType1Units + " units) done.";
+			
+			if(this.noOfDelType1Projects > 3) {
+				rs += " Number of " + delStream1 +"EL Projects: " + this.noOfDelType1Projects + "> 3";
+			}
+			else if(this.unitsOfDelType1Projects > 9) {
+				rs += " Units of " + delStream1 + "EL Projects: " + this.unitsOfDelType1Projects + "> 9";
+			}
+			
+			reasons.add(rs);
+			
+			delType1Satisfied = false;
 		}
-		if((elSheet.getChart().getStream2() != null) && ((this.noOfDelsType2COIP< noOfDelType2Courses)
-				|| (this.unitsOfnoOfDelsType2COIP< noOfDelType2Units))){			
-			return false;
+		
+		else {
+			delType1Satisfied = true;
+		}
+		
+		if((elSheet.getChart().getStream2() != null) && 
+				((this.noOfDelsType2COIP< noOfDelType2Courses) || (this.unitsOfnoOfDelsType2COIP< noOfDelType2Units)
+						|| (this.noOfDelType2Projects > 3) || (this.unitsOfDelType2Projects > 9) )){	
+			
+			String rs = delStream2 + " Discipline electives not complete. (" + this.noOfDelsType2COIP + "/" 
+					+ noOfDelType2Courses + " courses, " + this.unitsOfnoOfDelsType2COIP + "/"
+					+ noOfDelType2Units + " units) done.";
+			
+			if(this.noOfDelType2Projects > 3) {
+				rs += " Number of " + delStream2 +"EL Projects: " + this.noOfDelType2Projects + "> 3";
+			}
+			else if(this.unitsOfDelType2Projects > 9) {
+				rs += " Units of " + delStream2 + "EL Projects: " + this.unitsOfDelType2Projects + "> 9";
+			}
+
+			reasons.add(rs);
+			delType2Satisfied = false;
 		}
 
 		else {		
+			delType2Satisfied = true;
+		}
+		
+		if(delType1Satisfied && delType2Satisfied) {
 			return true;
 		}
+		else {
+			return false;
+		}
+			
 	}
 
 	private boolean checkForOEL(){
@@ -265,7 +370,22 @@ public class GraduationRequirements {
 		noOfOelsReq += this.noOfExtraEl;
 		unitsOfOelsReq += this.unitOfExtraEl;
 		
-		if( (this.noOfOelsCOIP< noOfOelsReq) || (this.unitsOfnoOfOelsCOIP<unitsOfOelsReq)){
+		if( (this.noOfOelsCOIP< noOfOelsReq) || (this.unitsOfnoOfOelsCOIP<unitsOfOelsReq)
+				|| (this.noOfOelProjects > 3) || (this.unitsOfOelProjects > 9)){
+			
+			String rs = "Open electives not complete. (" + this.noOfOelsCOIP + "/" 
+					+ noOfOelsReq + " courses, " + this.unitsOfnoOfOelsCOIP + "/"
+					+ unitsOfOelsReq + " units) done.";
+			
+			if(this.noOfOelProjects > 3) {
+				rs += " Number of Open Elective Projects: " + this.noOfOelProjects + "> 3";
+			}
+			else if(this.unitsOfDelType2Projects > 9) {
+				rs += " Units of Open Elective Projects: " + this.unitsOfOelProjects + "> 9";
+			}
+
+			reasons.add(rs);
+			
 			return false;
 		}
 		else {
@@ -275,10 +395,15 @@ public class GraduationRequirements {
 
 	private boolean checkTotalCoursework() {
 
-		if(this.totalCoursesCOIP >= 40 && this.totalUnitsCOIP >= 126) {
+		if(this.totalCoursesCOIP >= 40 && this.totalUnitsCOIP >= 126) {			
 			return true;
 		}
 		else {
+			
+			String rs = "Total coursework not complete. (" + this.totalCoursesCOIP + "/40 courses, "
+					+ this.totalUnitsCOIP + "/126 units) done.";
+			
+			reasons.add(rs);		
 			return false;
 		}
 	}
@@ -290,15 +415,25 @@ public class GraduationRequirements {
 				
 				return true;
 			}
-			else
+			else {
+				
+				String rs = "PS/TS conditions not satisfied.";
+				reasons.add(rs);
+				
 				return false;
+			}
 		}
 		else {
 			if(this.noOfPS2+this.noOf16unitThesis + this.noOf9unitThesis>1) {			
 				return true;
 			}
-			else
+			else {
+				
+				String rs = "PS/TS conditions not satisfied.";
+				reasons.add(rs);
+				
 				return false;
+			}
 		}
 	}
 
@@ -414,6 +549,10 @@ public class GraduationRequirements {
 	
 	public String getGraduationStatus() {
 		return graduationStatus;
+	}
+	
+	public ArrayList<String> getReasons() {
+		return reasons;
 	}
 
 }
