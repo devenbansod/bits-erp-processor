@@ -6,6 +6,18 @@
         Dark Metro style sheet for use in JavaFX applications
 */
 
+/* 
+ *  ----------------------------- ADDED BY GHAZI -----------------------------------
+ */
+ 
+
+#round-red {
+    -fx-background-color: linear-gradient(#ff5400, #be1d00);
+    -fx-background-radius: 30;
+    -fx-background-insets: 0;
+    -fx-text-fill: white;
+}
+
 .background{
     -fx-background-color: #1d1d1d;
 }
@@ -28,55 +40,24 @@
  * Push Button                                                                 *
  *                                                                             *
  ******************************************************************************/
+.button{
+    -fx-background-color: rgba(205,205,205,0.7);
+    -fx-background-radius: 15 15 15 15;
+    -fx-background-insets: 2 2 2 2 ;
+    
+}
 
-.button {
-    -fx-padding: 2 11 2 11;   
-    -fx-border-color: #e2e2e2;
-    -fx-border-width: 2;
-
-    -fx-background-radius: 0;
-
-    -fx-background-color: #1d1d1d;
-  
-     -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
-    -fx-font-size: 9pt;
-    -fx-text-fill: #d8d8d8;
+.button:pressed{
+    -fx-background-color: rgba(180,180,180,0.7);
 }
 
 .button:hover{
-    -fx-background-color: #3a3a3a;
+    -fx-background-color: rgba(235,235,235,0.7);
 }
 
-.button:pressed, .button:default:hover:pressed
-{
-  -fx-background-color: white;
-  -fx-text-fill: #1d1d1d;
-}
-
-.button:focused
-{
-    -fx-border-color: white, white;
-    -fx-border-width: 1, 1;
-    -fx-border-style: solid, segments(1, 1);
-    -fx-border-radius: 0, 0;
-    -fx-border-insets: 1 1 1 1, 0;
-}
-
-.button:disabled, .button:default:disabled
-{
-    -fx-opacity: 0.4;
-    -fx-background-color: #1d1d1d;
-    -fx-text-fill: white;
-}
-
-.button:default
-{
-    -fx-background-color: #008287;
-    -fx-text-fill: #ffffff;
-}
-
-.button:default:hover{
-    -fx-background-color: #219297;
+.button:focused{
+    -fx-background-color: rgba(205,205,205,0.7);
+  
 }
 
 /*******************************************************************************

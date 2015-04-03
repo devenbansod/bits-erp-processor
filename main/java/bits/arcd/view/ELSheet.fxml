@@ -9,61 +9,58 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="573.0" prefWidth="979.0" style="-fx-background-color: #2572EB;" stylesheets="@JMetroDarkTheme.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bits.arcd.view.ELSheetController">
-   <children>
-      <WebView fx:id="browser" layoutX="204.0" layoutY="33.0" prefHeight="533.0" prefWidth="772.0" AnchorPane.bottomAnchor="7.0" AnchorPane.leftAnchor="204.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="33.0" />
-      <TextArea fx:id="consoleOutput" editable="false" layoutX="5.0" layoutY="372.0" prefHeight="194.0" prefWidth="199.0" promptText="Console Output" wrapText="true" AnchorPane.bottomAnchor="7.0" AnchorPane.topAnchor="372.0">
-         <cursor>
-            <Cursor fx:constant="TEXT" />
-         </cursor></TextArea>
-      <TextField fx:id="inpSemNum" layoutX="387.0" layoutY="2.0" prefHeight="25.0" prefWidth="48.0" text="1131" />
-      <Label layoutX="348.0" layoutY="2.0" prefHeight="25.0" prefWidth="39.0" stylesheets="@JMetroDarkTheme.css" text="Term" textAlignment="CENTER" textFill="#141414">
-         <font>
-            <Font size="15.0" />
-         </font>
-      </Label>
-      <Pane layoutX="4.0" layoutY="98.0" prefHeight="186.0" prefWidth="199.0" style="-fx-background-color: black;">
-         <children>
-            <TextField fx:id="sourceIdNosCSV" layoutX="6.0" layoutY="31.0" prefHeight="25.0" prefWidth="115.0" promptText="Specify CSV of Student IDs" />
-            <Label layoutX="50.0" layoutY="2.0" prefHeight="25.0" prefWidth="115.0" stylesheets="@JMetroDarkTheme.css" text="Batch Process:" textAlignment="CENTER" textFill="WHITE">
-               <font>
-                  <Font size="15.0" />
-               </font>
-            </Label>
-            <TextField fx:id="destFolder" layoutX="8.0" layoutY="89.0" prefHeight="25.0" prefWidth="115.0" promptText="Specify Folder!" />
-            <Label layoutX="11.0" layoutY="64.0" prefHeight="25.0" prefWidth="133.0" stylesheets="@JMetroDarkTheme.css" text="Destination Folder:" textAlignment="CENTER" textFill="WHITE">
-               <font>
-                  <Font size="15.0" />
-               </font>
-            </Label>
-            <Button fx:id="browseSourceFileButton" layoutX="127.0" layoutY="32.0" mnemonicParsing="false" text="Browse" />
-            <Button fx:id="browseDestFolderButton" layoutX="129.0" layoutY="90.0" mnemonicParsing="false" text="Browse" />
-            <Button fx:id="generateButton" layoutX="47.0" layoutY="141.0" mnemonicParsing="false" text="Generate EL Sheets" />
-         </children>
-      </Pane>
-      <Pane layoutX="4.0" layoutY="278.0" prefHeight="94.0" prefWidth="199.0" style="-fx-background-color: #2E8DEF;">
-         <children>
-            <Label layoutX="21.0" layoutY="6.0" prefHeight="10.0" prefWidth="160.0" stylesheets="@JMetroDarkTheme.css" text="Reload CSVs into Table:" textAlignment="CENTER" textFill="#141414">
-               <font>
-                  <Font size="15.0" />
-               </font>
-            </Label>
-            <Button fx:id="reloadButton" layoutX="72.0" layoutY="64.0" mnemonicParsing="false" text="Reload!" />
-         </children>
-      </Pane>
-      <Pane layoutX="4.0" layoutY="7.0" prefHeight="94.0" prefWidth="199.0" style="-fx-background-color: #008287;">
-         <children>
-            <Button fx:id="getElSheetButton" layoutX="56.0" layoutY="64.0" mnemonicParsing="false" text="Get EL Sheet" />
-            <TextField fx:id="idNum" layoutX="36.0" layoutY="27.0" prefHeight="25.0" prefWidth="133.0" promptText="20XXA8PSXXXP" />
-            <Label layoutX="23.0" layoutY="2.0" prefHeight="25.0" prefWidth="160.0" stylesheets="@JMetroDarkTheme.css" text="Enter Your ID Number:" textAlignment="CENTER" textFill="WHITE">
-               <font>
-                  <Font size="15.0" />
-               </font>
-            </Label>
-         </children>
-      </Pane>
-      <Button fx:id="refreshBrowseButton" layoutX="129.0" layoutY="309.0" mnemonicParsing="false" text="Browse" />
-      <TextField fx:id="refreshFolder" layoutX="12.0" layoutY="308.0" prefHeight="25.0" prefWidth="115.0" promptText="Specify Folder!" />
-      <Button layoutX="669.0" layoutY="3.0" mnemonicParsing="false" style="-fx-background-color: RED;" text="Stop" textFill="#1e0000" />
-   </children>
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="573.0" prefWidth="979.0" style="-fx-background-color: #b0e0e6;" stylesheets="@JMetroDarkTheme.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bits.arcd.view.ELSheetController">
+	<children>
+		<WebView fx:id="browser" layoutX="209.0" layoutY="7.0" prefHeight="559.0" prefWidth="767.0" AnchorPane.bottomAnchor="7.0" AnchorPane.leftAnchor="209.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="7.0" />
+		<TextArea fx:id="consoleOutput" editable="false" layoutX="5.0" layoutY="388.0" prefHeight="178.0" prefWidth="199.0" promptText="Console Output" wrapText="true" AnchorPane.bottomAnchor="7.0" AnchorPane.topAnchor="388.0">
+			<cursor>
+				<Cursor fx:constant="TEXT" />
+			</cursor>
+		</TextArea>
+		<TextField fx:id="inpSemNum" layoutX="45.0" layoutY="93.0" prefHeight="25.0" prefWidth="48.0" text="1131" />
+		<Label layoutX="6.0" layoutY="93.0" prefHeight="25.0" prefWidth="39.0" stylesheets="@JMetroDarkTheme.css" text="Term:" textAlignment="CENTER">
+			<font>
+				<Font size="15.0" />
+			</font>
+		</Label>
+		<Pane layoutX="5.0" layoutY="123.0" prefHeight="159.0" prefWidth="199.0" style="-fx-background-color: #20b2aa;">
+			<children>
+				<TextField fx:id="sourceIdNosCSV" layoutX="6.0" layoutY="31.0" prefHeight="25.0" prefWidth="115.0" promptText="Specify CSV of Student IDs" />
+				<Label layoutX="50.0" layoutY="2.0" prefHeight="25.0" prefWidth="115.0" stylesheets="@JMetroDarkTheme.css" text="Batch Process:" textAlignment="CENTER" textFill="WHITE">
+					<font>
+						<Font size="15.0" />
+					</font>
+				</Label>
+				<TextField fx:id="destFolder" layoutX="6.0" layoutY="64.0" prefHeight="25.0" prefWidth="115.0" promptText="Specify Folder!" />
+				<Button fx:id="browseDestFolderButton" layoutX="131.0" layoutY="67.0" mnemonicParsing="false" text="Browse" />
+				<Button fx:id="generateButton" layoutX="41.0" layoutY="120.0" mnemonicParsing="false" text="Generate EL Sheets" />
+				<Button fx:id="browseSourceFileButton" layoutX="131.0" layoutY="31.0" mnemonicParsing="false" text="Browse" />
+            <CheckBox fx:id="separateFilesELSheet" layoutX="61.0" layoutY="94.0" mnemonicParsing="false" text="Separate Files" />
+			</children>
+		</Pane>
+		<Pane layoutX="6.0" layoutY="288.0" prefHeight="94.0" prefWidth="199.0" style="-fx-background-color: #20b2aa;">
+			<children>
+				<Label layoutX="21.0" layoutY="6.0" prefHeight="10.0" prefWidth="160.0" stylesheets="@JMetroDarkTheme.css" text="Reload CSVs into Table:" textAlignment="CENTER" textFill="#141414">
+					<font>
+						<Font size="15.0" />
+					</font>
+				</Label>
+				<Button fx:id="reloadButton" layoutX="7.0" layoutY="55.0" mnemonicParsing="false" text="Reload!" />
+				<TextField fx:id="refreshFolder" layoutX="7.0" layoutY="27.0" prefHeight="25.0" prefWidth="115.0" promptText="Specify Folder!" />
+				<Button fx:id="refreshBrowseButton" layoutX="122.0" layoutY="25.0" mnemonicParsing="false" text="Browse" />
+			</children>
+		</Pane>
+		<Pane layoutX="4.0" layoutY="7.0" prefHeight="86.0" prefWidth="199.0" style="-fx-background-color: #46c6e2;">
+			<children>
+				<TextField fx:id="idNum" layoutX="36.0" layoutY="27.0" prefHeight="25.0" prefWidth="133.0" promptText="20XXA8PSXXXP" />
+				<Label layoutX="23.0" layoutY="2.0" prefHeight="25.0" prefWidth="160.0" stylesheets="@JMetroDarkTheme.css" text="Enter Your ID Number:" textAlignment="CENTER" textFill="WHITE">
+					<font>
+						<Font size="15.0" />
+					</font>
+				</Label>
+				<Button fx:id="getElSheetButton" layoutX="58.0" layoutY="54.0" mnemonicParsing="false" text="Get EL Sheet" />
+			</children>
+		</Pane>
+		<Button fx:id="stopButton" layoutX="162.0" layoutY="93.0" mnemonicParsing="false" style="-fx-background-color: #f7505a; -fx-text-fill: White; -fx-font-weight: bold;" text="Stop" />
+	</children>
 </AnchorPane>

@@ -27,6 +27,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.web.WebEngine;
@@ -38,10 +39,11 @@ import javafx.stage.Stage;
 
 import java.util.prefs.Preferences;
 
-@SuppressWarnings("restriction")
+
 public class SemChartController {
 
 	// Reference to the main application.
+	@SuppressWarnings("unused")
 	private WindowLoader mainApp; 
 	@FXML public TextField reqNum;
 	@FXML public Button getChart; 
@@ -50,7 +52,8 @@ public class SemChartController {
 	@FXML public TextField destFolder;
 	@FXML public Button sourceBrowse;
 	@FXML public Button destBrowse;
-	@FXML public TextField reqNumValues;
+	@FXML public CheckBox separateFiles;
+
 	@FXML public Button generateAndSave;
 
 
@@ -61,20 +64,16 @@ public class SemChartController {
 	@FXML public TextArea consoleOutput;
 
 
-	@FXML public TextField inpSemNumRep;
-	@FXML public TextField IdNoFilter;
-	@FXML public TextField destFolderReports;
-	@FXML public Button browseDestFolderRepButton;
-	@FXML public Button generateACBButton;
-	@FXML public Button generateBLButton;
-	@FXML public Button generateGRButton;
-	@FXML public Button generateLikelyGRButton;
-	@FXML public TextArea consoleOutputRep;
-	
-
+	@FXML public Button stopButton;
+	private boolean continueProc = true;
 
 	final String userhome = System.getProperty("user.home");
 	private WebEngine webEngine;
+
+	// Changed to requirementGroup ------------ USE THIS NEW TEXTFIELD TO GENERATE CHARTS FOR 
+	// ---------------------	A PARTICULAR GROUP  --------------------------------
+
+	@FXML public TextField reqGroup;
 
 	public SemChartController()	{
 
@@ -84,7 +83,7 @@ public class SemChartController {
 	 * Initializes the controller class. This method is automatically called
 	 * after the fxml file has been loaded. Called after constructor
 	 */
-	@SuppressWarnings("restriction")
+
 	@FXML
 	private void initialize() {
 		// Load the welcome page in WebView
@@ -92,27 +91,22 @@ public class SemChartController {
 		FileSystem tempfs = FileSystems.getDefault();
 		Path path = tempfs.getPath("src/main/resources/html_res/Welcome.html");
 		webEngine.load("file:///"+path.toAbsolutePath().toString());
-		
+
 		sourceFile.setText(getSettings("sourceFileCSV"));
 		destFolder.setText(getSettings("destFolder"));
 		srcFileRefresh.setText(getSettings("sourceCSVs"));
-		destFolderReports.setText(getSettings("destFolderRep"));
-		
+
+
 		// Implement listeners for various buttons
 		getChart.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e) {
+
+
 				if (reqNum.getText() != null && !reqNum.getText().equals("") 
-						&& strictNumCheck(reqNum.getText().trim()))	{
-					//System.out.println(reqNum.getText());
-					//mainApp.showSemChart(reqNum.getText());
+						&& strictNumCheck(reqNum.getText().trim()) && reqGroup.getText().equals(""))	{
+
 					threadSafeConsoleOutput("Processing, Please wait.........");
-					Platform.runLater(new Runnable() {
-						public void run() {
-							FileSystem tempfs = FileSystems.getDefault();
-							Path path = tempfs.getPath("src/main/resources/html_res/Wait.html");
-							webEngine.load("file:///"+path.toAbsolutePath().toString());
-						}
-					});
+					loadWaitAnim();
 
 					Thread temp = new Thread (){
 						@Override
@@ -121,12 +115,46 @@ public class SemChartController {
 								loadSingleChart(reqNum.getText());
 							} catch (Exception e) {
 								WindowLoader.showExceptionDialog("Error occured while processing the Chart", e);
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						}
 					};
 					temp.start();
+				}
+
+				else if (reqGroup.getText() != null && ! reqGroup.getText().equals("")
+						&& strictNumCheck(reqGroup.getText().trim()) && reqNum.getText().equals("")) {
+					threadSafeConsoleOutput("Processing, Please wait.........");
+					loadWaitAnim();
+
+					Thread temp = new Thread (){
+						@Override
+						public void run() {
+							try {
+								ArrayList<String> reqNums = new ArrayList<String>();
+
+								String query = "Select DISTINCT rqrmnt from charts where rq_group = '" + reqGroup.getText() + "'";
+								ResultSet rs = DBConnector.getInstance().queryExecutor(query, false);
+								while (rs.next()) {
+									reqNums.add(rs.getString(1));
+								}
+
+								File file = new File(destFolder.getText() + "\\Output_Charts_" + reqGroup.getText() + ".txt");
+
+								if (!file.exists()) {
+									file.createNewFile();
+								}
+
+								batchProcessChartsHelper(reqNums, file);
+							} catch (Exception e) {
+								WindowLoader.showExceptionDialog("Error occured while processing the Chart", e);
+								e.printStackTrace();
+							}
+						}
+					};
+					temp.start();
+
+
 				}
 				else {
 					WindowLoader.showAlertDialog("Invalid Requirement Number", "Please input a valid requirment number");
@@ -213,17 +241,11 @@ public class SemChartController {
 			public void handle(ActionEvent e) {
 
 				threadSafeConsoleOutput("Processing, Please wait.........");
-				Platform.runLater(new Runnable() {
-					public void run() {
-						FileSystem tempfs = FileSystems.getDefault();
-						Path path = tempfs.getPath("src/main/resources/html_res/Wait.html");
-						webEngine.load("file:///"+path.toAbsolutePath().toString());
-					}
-				});
+				loadWaitAnim();
 				Thread thread = new Thread(){
 					public void run(){
 						threadSafeConsoleOutput(CourseChartQueries.batchCSVChartsLoad(srcFileRefresh.getText()));
-						putWelcomeHTML();
+						loadHomeAnim();
 					}
 				};
 				thread.start();
@@ -238,21 +260,17 @@ public class SemChartController {
 				// window!
 
 				threadSafeConsoleOutput("Processing, Please wait.........");
-				Platform.runLater(new Runnable() {
-					public void run() {
-						FileSystem tempfs = FileSystems.getDefault();
-						Path path = tempfs.getPath("src/main/resources/html_res/Wait.html");
-						webEngine.load("file:///"+path.toAbsolutePath().toString());
-					}
-				});
+				loadWaitAnim();
 				Thread thread = new Thread(){
 					public void run(){
 
 						if (! sourceFile.getText().equals("")){
-							batchProcessCharts(sourceFile.getText());
+							batchProcessChartsFromFile(sourceFile.getText());
 							WindowLoader.showAlertDialog("Processing done", "The Export of Charts Data was completed");
 							threadSafeConsoleOutput("Processing Done!\n");
 						}
+
+						/**
 						else if(! reqNumValues.getText().equals("")) {
 							String[] reqNums = reqNumValues.getText().split(",");
 
@@ -261,7 +279,8 @@ public class SemChartController {
 							File f_Out = new File(destFolder.getText() + ""
 									+ "\\Output_Charts_" + formattedDate + ".txt");
 							batchProcessChartsHelper(new ArrayList<String>(Arrays.asList(reqNums)), f_Out);
-						}
+						}**/
+
 					}
 				};
 				thread.start();
@@ -269,160 +288,22 @@ public class SemChartController {
 			}
 		});
 
-
-
-		// For Reports Tab
-
-		browseDestFolderRepButton.setOnAction(new EventHandler<ActionEvent>() {
+		// Terminate any currently executing loops
+		stopButton.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e) {
-				DirectoryChooser chooser = new DirectoryChooser();
-
-				chooser.setTitle("Select the Folder for Output");
-				File defaultDirectory = new File("C://");
-				chooser.setInitialDirectory(defaultDirectory);				
-
-
-				File selectedFile = chooser.showDialog(new Stage());
-
-				if (selectedFile != null)	{
-					destFolderReports.setText(selectedFile.getAbsolutePath());
-					setSettings("destFolderRep", selectedFile.getAbsolutePath());
+				if (stopButton.getText().equalsIgnoreCase("Stop")){
+					continueProc = false;
+					stopButton.setText("Unlock the Processor");
 				}
-				else {
-					threadSafeConsoleOutput("Please choose a valid folder!!");
+					
+				else{
+					stopButton.setText("Stop");
+					continueProc = true;
 				}
+					
+				
 			}
 		});
-
-
-		generateACBButton.setOnAction(new EventHandler<ActionEvent>() {
-			public void handle(ActionEvent e) {
-
-				threadSafeConsoleOutputRep("Processing .... Please wait .....\nGenerating ACB Report\n");
-
-				Thread thread = new Thread(){
-					public void run(){				
-						DBConnector db = DBConnector.getInstance();
-						String query = "SeLECT * FROM students where campus_id like '" + IdNoFilter.getText() + "'";
-						Date d = new Date();
-
-						String formattedDate = convertToProperString(d.toString());
-
-						final File f_Out = new File(destFolder.getText() + "\\ACB_" + formattedDate + ".txt");
-
-						FileWriter fw = null;
-						BufferedWriter bw = null;
-
-						try {
-							fw = new FileWriter(f_Out.getAbsoluteFile(), true);
-							bw = new BufferedWriter(fw);
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-
-						ResultSet rs = db.queryExecutor(query, false);
-
-						try {
-							while(rs.next()){
-								AcadCounselBoard a = new AcadCounselBoard(rs.getString(2), 
-										Integer.parseInt(inpSemNumRep.getText()));
-								if (a.getIsAcb()) {
-								
-//									bw.write(a.printACB());
-									threadSafeConsoleOutputRep("\n" + (new Date()).toString() 
-											+ " : Wrote " + rs.getString(2) + "\n");
-								}
-								else {
-									threadSafeConsoleOutputRep("\n..");
-								}
-							}
-
-							bw.close();
-							rs.close();
-							fw.close();
-						} catch (SQLException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-						threadSafeConsoleOutputRep("Exported the ACB Report to : \n" + f_Out.getAbsolutePath());
-					}
-					
-					
-				};
-				thread.start();
-
-			}
-		});
-
-		
-		generateBLButton.setOnAction(new EventHandler<ActionEvent>() {
-			public void handle(ActionEvent e) {
-
-				threadSafeConsoleOutputRep("Processing .... Please wait .....\nGenerating BL Report\n");
-
-				Thread thread = new Thread(){
-					public void run(){				
-						DBConnector db = DBConnector.getInstance();
-						String query = "SeLECT * FROM students where campus_id like '" + IdNoFilter.getText() + "'";
-
-						Date d = new Date();
-
-						String formattedDate = convertToProperString(d.toString());
-
-						final File f_Out = new File(destFolder.getText() + "\\BL_" + formattedDate + ".txt");
-
-						FileWriter fw = null;
-						BufferedWriter bw = null;
-
-						try {
-							fw = new FileWriter(f_Out.getAbsoluteFile(), true);
-							bw = new BufferedWriter(fw);
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-
-						ResultSet rs = db.queryExecutor(query, false);
-
-						try {
-							while(rs.next()){
-								AcadCounselBoard a = new AcadCounselBoard(rs.getString(2), 
-										Integer.parseInt(inpSemNumRep.getText()));
-								if (a.isBackLog()) {
-								
-									bw.write(a.printBackLog());
-									threadSafeConsoleOutputRep("\n" + (new Date()).toString() 
-											+ " : Wrote " + rs.getString(2) + "\n");
-								}
-								else {
-									threadSafeConsoleOutputRep("\n..");
-								}
-							}
-
-							bw.close();
-							rs.close();
-							fw.close();
-						} catch (SQLException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-						
-						threadSafeConsoleOutputRep("Exported the BL Report to : \n" + f_Out.getAbsolutePath());
-					}
-					
-				};
-				thread.start();
-
-			}
-		});
-
 	}
 
 	public void threadSafeConsoleOutput(final String output)	{
@@ -434,19 +315,19 @@ public class SemChartController {
 		});
 	}
 
-	public void threadSafeConsoleOutputRep(final String output)	{
+	public void loadWaitAnim()	{
 		Platform.runLater(new Runnable() {
 			public void run() {
-				consoleOutputRep.setText(consoleOutputRep.getText() + "" + output);
-				consoleOutputRep.end();
+				FileSystem tempfs = FileSystems.getDefault();
+				Path path = tempfs.getPath("src/main/resources/html_res/Wait.html");
+				webEngine.load("file:///"+path.toAbsolutePath().toString());
 			}
 		});
 	}
 
-	public void putWelcomeHTML(){
+	public void loadHomeAnim(){
 		Platform.runLater(new Runnable() {
 			public void run() {
-
 				FileSystem tempfs = FileSystems.getDefault();
 				Path path = tempfs.getPath("src/main/resources/html_res/Welcome.html");
 				webEngine.load("file:///"+path.toAbsolutePath().toString());
@@ -519,7 +400,7 @@ public class SemChartController {
 		}
 	}
 
-	public void batchProcessCharts (String SourceFile)	{
+	public void batchProcessChartsFromFile (String SourceFile)	{
 
 		File f = new File(SourceFile);
 		File f2 = new File(destFolder.getText());
@@ -528,7 +409,7 @@ public class SemChartController {
 		String formattedDate = convertToProperString(d.toString());
 		File f_Out = new File(destFolder.getText() + "\\Output_Charts_" + formattedDate + ".txt");
 
-		if( f.isFile() && f2.isDirectory()) {
+		if( f2.isDirectory()) {
 
 
 			if (!f.exists()) {
@@ -565,7 +446,7 @@ public class SemChartController {
 		}
 		threadSafeConsoleOutput("Finished!..........");
 
-		putWelcomeHTML();
+		loadHomeAnim();
 	}
 
 
@@ -573,8 +454,13 @@ public class SemChartController {
 
 		FileWriter fw = null;
 		BufferedWriter bw = null;
+		
+		File f_separate = null;
+		FileWriter fw_s = null;
+		BufferedWriter bw_s = null;
+		
 		try {
-			fw = new FileWriter(f.getAbsoluteFile(), true);
+			fw = new FileWriter(f);
 			bw = new BufferedWriter(fw);
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
@@ -583,43 +469,60 @@ public class SemChartController {
 
 		for(int j = 0; j < reqNos.size(); j++) {
 
-			CourseChartQueries c = null;
-			try {
-				c = new CourseChartQueries(reqNos.get(j));
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			if (continueProc)	{
+				CourseChartQueries c = null;
+				try {
+					c = new CourseChartQueries(reqNos.get(j));
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				String s = c.toString();
+
+				try {
+
+					if (separateFiles.isSelected()) {
+						f_separate = new File(destFolder.getText() + "\\" + c.getRequirementNo() + ".txt");
+						if (!f_separate.exists()) {
+							f_separate.createNewFile();
+						}
+						fw_s = new FileWriter(f_separate);
+						bw_s = new BufferedWriter(fw_s);
+						bw_s.write(s);
+						bw_s.write("\f");
+						bw_s.close();
+						fw_s.close();
+						threadSafeConsoleOutput("\n" + (new Date()).toString() 
+								+ " : Wrote " + reqNos.get(j).toString() + " to " + f_separate.getAbsolutePath() + "\n");
+					}
+
+					else {
+						bw.write(s);
+						bw.write("\f");
+						
+						threadSafeConsoleOutput("\n" + (new Date()).toString() 
+								+ " : Wrote " + reqNos.get(j).toString() + " to " + f.getAbsolutePath() + "\n");
+					}
+				} catch (IOException e) {
+
+					e.printStackTrace();
+				}
+
+
 			}
-			String s = c.toString();
-
-
-			try {
-				bw.write(s);
-				bw.write("\f");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-
-			threadSafeConsoleOutput("\n" + (new Date()).toString() 
-					+ " : Wrote " + reqNos.get(j).toString() + "\n");
 
 		}
-
-		threadSafeConsoleOutput("\n\n" + (new Date()).toString() + " : Exported the Chart Data into " 
-				+ f.getAbsolutePath() + "\n");
 
 		try {
 			bw.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			WindowLoader.showExceptionDialog("BufferWriter could not be closed", e);
 			e.printStackTrace();
 		}
 		WindowLoader.showAlertDialog("Process finished", "The Export process is completed");
 		threadSafeConsoleOutput("\n" + (new Date()).toString() 
 				+ " : File written inside : " + destFolder.getText() + "\n");
+		loadHomeAnim();
 	}
 
 

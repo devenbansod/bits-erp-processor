@@ -59,7 +59,7 @@ public class DBConnector
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			Properties p = new Properties();
-			connection = DriverManager.getConnection("jdbc:mysql://"+"localhost:3306"+"/erp_temp?cachePrepStmts=true", user_nm, passwd);
+			connection = DriverManager.getConnection(db_host+"erp_temp?cachePrepStmts=true", user_nm, passwd);
 
 		} catch (SQLException e) {
 			WindowLoader.showExceptionDialog("Error while connecting to the "
