@@ -24,11 +24,6 @@ import java.util.Scanner;
 import java.util.prefs.Preferences;
 
 import org.apache.commons.lang.StringUtils;
-import org.docx4j.Docx4J;
-import org.docx4j.Docx4jProperties;
-import org.docx4j.convert.out.HTMLSettings;
-import org.docx4j.openpackaging.exceptions.Docx4JException;
-import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;

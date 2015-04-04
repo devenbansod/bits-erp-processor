@@ -57,18 +57,25 @@ public class DBConnector
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			Properties p = new Properties();
-			connection = DriverManager.getConnection("jdbc:mysql://"+"localhost:3306"+"/erp_temp?cachePrepStmts=true", user_nm, passwd);
+			connection = DriverManager.getConnection(WindowLoader.IPAddress+"erp_temp?cachePrepStmts=true", user_nm, passwd);
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error while connecting to the "
+					+ "database. Please check whether your database server is running or not!!", e);
 			e.printStackTrace();
 		} catch (InstantiationException e) {
+			WindowLoader.showExceptionDialog("The java program could not find the appropriate JAR for the class"
+					+ " 'com.mysql.jdbc.Driver'", e);
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
+			WindowLoader.showExceptionDialog("The java program could not find the appropriate JAR for the class"
+					+ " 'com.mysql.jdbc.Driver'", e);
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
+			WindowLoader.showExceptionDialog("The java program could not find the appropriate JAR for the class"
+					+ " 'com.mysql.jdbc.Driver'", e);
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -117,7 +124,7 @@ public class DBConnector
 		try {
 			connection.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error occured while closing the connections to SQL Server!!", e);
 			e.printStackTrace();
 		}
 	}
@@ -129,7 +136,9 @@ public class DBConnector
 		try {
 			connection = DriverManager.getConnection(db_host+db_name, user_nm, passwd);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			WindowLoader.showExceptionDialog("Error while connecting to the "
+					+ "database. Please check whether your database server is running or not!!", e);
+			e.printStackTrace();
 			e.printStackTrace();
 		}
 	}
