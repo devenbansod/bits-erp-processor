@@ -9,6 +9,10 @@ import org.apache.commons.lang.StringUtils;
 
 import bits.arcd.main.WindowLoader;
 
+import com.itextpdf.testutils.ITextTest;
+
+
+
 public class CourseChartQueries {
 
 	private String requirementNo;
@@ -29,7 +33,7 @@ public class CourseChartQueries {
 	}
 
 	public boolean checkIfHasOptional(){
-		ResultSet r = dbConnector.checkOptional(this.requirementNo);
+		ResultSet r = dbConnector.checkOptional(this.requirementNo, this.effe_date);
 		int i=0;
 		try {
 			while(r.next()){
@@ -50,7 +54,8 @@ public class CourseChartQueries {
 		this.yrNsem = yrNsem;
 	}
 
-	public DBConnector dbConnector = null;	
+	public DBConnector dbConnector = null;
+	public String effe_date = null;	
 
 	public CourseChartQueries(String requirementNo) {
 		super();
@@ -62,6 +67,32 @@ public class CourseChartQueries {
 		dbConnector = DBConnector.getInstance();
 		this.requirementNo = requirementNo;
 
+		reqGroupCheck = getRequirementGroup(requirementNo).trim();
+		// Proceed after passing the following checks only!!
+		if (reqGroupCheck != null && !(reqGroupCheck.equals("")))	{
+			// Is a number check
+			if (StringUtils.isNumeric(reqGroupCheck))	{
+				requirementGroup = Integer.parseInt(getRequirementGroup(requirementNo));
+				requirementDescription = getRequirementDescription(requirementNo);		
+				this.setStreams(requirementNo);
+				this.addSems();
+			}
+		}
+
+	}
+	
+	
+	public CourseChartQueries(String requirementNo, String effe_date) {
+		super();
+
+		// This number will be used for checking whether a valid requirementNo was passed
+		// or not. If it is equal to 0, do nothing, else proceed.......
+		requirementGroup = 0;
+
+		dbConnector = DBConnector.getInstance();
+		this.requirementNo = requirementNo;
+		this.effe_date = effe_date;
+		
 		reqGroupCheck = getRequirementGroup(requirementNo).trim();
 		// Proceed after passing the following checks only!!
 		if (reqGroupCheck != null && !(reqGroupCheck.equals("")))	{
@@ -107,7 +138,7 @@ public class CourseChartQueries {
 
 		s = s + returnCenteredString("BITS Pilani") + "\n";
 
-		s = s + returnCenteredString("CHART FROM 2011 ONWARDS")  + "\n";
+		s = s + returnCenteredString("CHART FROM " + this.effe_date + " ONWARDS")  + "\n";
 
 		String details = "REQ. NO : " + this.requirementNo + "   REQ. GROUP : "  + this.requirementGroup 
 				+ "   REQ. DESCRIPTION : " + this.requirementDescription;
@@ -326,7 +357,7 @@ public class CourseChartQueries {
 
 	private void addSummerTerm(String requirementNo) {
 
-		ResultSet rs = dbConnector.addSummerTerm(requirementNo);		
+		ResultSet rs = dbConnector.addSummerTerm(requirementNo, this.effe_date);		
 
 		int i =0;		
 		try {
@@ -355,7 +386,7 @@ public class CourseChartQueries {
 	public int getNoOfDELType1 (String req_num, int yearNo, int semNo) {
 		ResultSet rs = null; int retVal = 0;
 
-		rs = dbConnector.getNoOfDELsType1(req_num, yearNo, semNo, this.stream1);
+		rs = dbConnector.getNoOfDELsType1(req_num, yearNo, semNo, this.stream1, this.effe_date);
 		try {
 			while(rs.next()){
 				retVal = rs.getInt(1);				
@@ -371,7 +402,7 @@ public class CourseChartQueries {
 	public int getNoOfDELType2 (String req_num, int yearNo, int semNo) {
 		ResultSet rs = null; int retVal = 0;		
 
-		rs = dbConnector.getNoOfDELsType1(req_num, yearNo, semNo, this.stream2);
+		rs = dbConnector.getNoOfDELsType1(req_num, yearNo, semNo, this.stream2, this.effe_date);
 		try {
 			while(rs.next()){
 				retVal = rs.getInt(1);
@@ -389,7 +420,7 @@ public class CourseChartQueries {
 		ResultSet rs = null;
 		int num = 0;
 
-		rs = dbConnector.getNoOfHUELsType(req_num, yearNo, semNo);
+		rs = dbConnector.getNoOfHUELsType(req_num, yearNo, semNo, this.effe_date);
 
 		try {
 			while(rs.next()){
@@ -405,7 +436,7 @@ public class CourseChartQueries {
 	public int getNoOfDEL (String req_num, int yearNo, int semNo) {
 		ResultSet rs = null; int retVal = 0;		
 
-		rs = dbConnector.getNoOfDELs(req_num, yearNo, semNo);
+		rs = dbConnector.getNoOfDELs(req_num, yearNo, semNo, this.effe_date);
 		try {
 			while(rs.next()){
 				retVal = rs.getInt(1);
@@ -422,7 +453,7 @@ public class CourseChartQueries {
 		ResultSet rs = null;
 		int num = 0;
 
-		rs = dbConnector.getNoOfOELs(req_num, yearNo, semNo);
+		rs = dbConnector.getNoOfOELs(req_num, yearNo, semNo, this.effe_date);
 
 		try {
 			while(rs.next()){
@@ -438,7 +469,7 @@ public class CourseChartQueries {
 	public String getRequirementDescription(String req_num) {
 		ResultSet rs = null;
 		String req_descr = "";
-		rs = dbConnector.getRequirementDescription(req_num);
+		rs = dbConnector.getRequirementDescription(req_num, this.effe_date);
 
 		try {
 			while(rs.next()) {
@@ -457,7 +488,7 @@ public class CourseChartQueries {
 		String sqlQuery = "SELECT rq_group FROM "+DBConnector.table_semCharts +
 				" WHERE rqrmnt = " + req_num +
 				" LIMIT 1;";
-		rs = dbConnector.getRequirementGroup(req_num);
+		rs = dbConnector.getRequirementGroup(req_num, this.effe_date);
 
 		try {
 			while(rs.next()) {
@@ -474,7 +505,7 @@ public class CourseChartQueries {
 		ResultSet rs = null; boolean retVal = true;
 		// descr_3 string must be created from yearNo and semNo		
 
-		rs = dbConnector.existsSem(req_num, yearNo, semNo);
+		rs = dbConnector.existsSem(req_num, yearNo, semNo, this.effe_date);
 		try {
 			while(rs.next()) {
 				if (rs.getInt(1)==0)	{

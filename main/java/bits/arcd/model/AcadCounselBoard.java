@@ -237,23 +237,32 @@ public class AcadCounselBoard {
 		int i = 0;
 		int rem = this.getNoOfTotalCourses() - this.getNoOfCompletedCourses();
 		String s = "";
-		s = "ID: " +studentId + "\tNAME: " +elSheet.getStudentName()+ "\n" + "REQ. GROUP: " +elSheet.getChart().getRequirementGroup() 
-				+ "\tREQ. NO: "+ elSheet.getRequirementNo() + "\tREQ. DESCRIPTION: " +elSheet.getChart().getRequirementDescription()
-				+"\n";
-		s = s + "No. of Courses Completed: " + this.getNoOfCompletedCourses() +"\n";
-		s = s + "No. of Courses to be done: " + this.getNoOfTotalCourses() +"\n";
-		s = s + "Backlog Courses: " + backLogCourses.size();
+		
+		s = "SYSTEM ID : " + this.elSheet.getSystemId() + "\t ID: " +studentId + "\tNAME: " +elSheet.getStudentName() + "\t";
+		
+		
+		s = s + "\tBacklog Courses\n";
+		
+		
 		for(Course c : this.backLogCourses){
 			i++;
+			
+			for (int j = 0; j < 70; j++){
+				s = s + " ";
+			}
+			
+			
 			if(c.getCourseCode()==0){
 				String desc = c.getElDescr();
 
 				while(c.getElDescr().length() < 10 )
 					desc = desc + " ";
+				
 
-
-				s = s + "\n\t[" + i + "] " + desc;
-			}else{
+				s = s + "\t[" + i + "] " + desc;
+			}
+			
+			else{
 				String printedString = c.getSubject();
 
 				while(printedString.length() < 6)
@@ -269,7 +278,7 @@ public class AcadCounselBoard {
 				while(printedString.length() < 38)
 					printedString = printedString + " ";
 
-				s = s + "\n\t[" + i + "] " + printedString;
+				s = s + "\t[" + i + "] " + printedString + "\n";
 			}
 			rem--;
 
@@ -287,7 +296,13 @@ public class AcadCounselBoard {
 			}
 
 		}
-		s = s + "\n---------------------------------------------------------\n";		
+		
+		s = s + "\n";
+		for (int j = 0; j < 125; j++){			
+			s = s + "-";
+		}
+		s = s + "\n";
+//		s = s + "\n---------------------------------------------------------\n";		
 		return s;
 	}
 

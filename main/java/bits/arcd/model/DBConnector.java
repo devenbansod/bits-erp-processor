@@ -52,6 +52,7 @@ public class DBConnector
 	private PreparedStatement psSetMinorDesc;
 	private PreparedStatement psGetNoOfOELsHigherDegree;
 	private PreparedStatement psGetHigherDegreeELs;
+	private PreparedStatement psGetEffectiveDate;
 	
 
 	private DBConnector()	{
@@ -111,6 +112,7 @@ public class DBConnector
 		readySetRequirementNo();
 		readySetPrevTerm();
 		readyGetHigherDegreeELs();
+		readyGetEffectiveDate();
 	}
 
 
@@ -178,7 +180,8 @@ public class DBConnector
 		try {
 			this.psAddSummerTerm = this.connection.prepareStatement("select * from " + table_semCharts + "  t, "
 					+ "courses c WHERE (t.course = c.course_id or t.course = '') and rqrmnt = ?"
-					+ " and descr_3 like '%ummer%erm%'");
+					+ " and descr_3 like '%ummer%erm%'"
+					+ "AND eff_date_2 = ?");
 		} catch (SQLException e) {
 			WindowLoader.showExceptionDialog("Error while pre-compiling the Query : readyAddSummerTerm \n", e);
 			e.printStackTrace();
@@ -188,7 +191,8 @@ public class DBConnector
 	private void readyCheckIsOptional(){
 		try {
 			this.psCheckIsOptional = this.connection.prepareStatement("SELECT descr_4 FROM charts "
-					+ "WHERE rqrmnt = ? AND descr_4 LIKE '%Opti%'");
+					+ "WHERE rqrmnt = ? AND descr_4 LIKE '%Opti%'"
+					+ "AND eff_date_2 = ?");
 		} catch (SQLException e) {
 			WindowLoader.showExceptionDialog("Error while pre-compiling the Query : readyCheckIsOptional \n", e);
 			e.printStackTrace();
@@ -200,8 +204,9 @@ public class DBConnector
 			this.psGetCompulsoryCourses = this.connection.prepareStatement("SELECT * FROM "+DBConnector.table_semCharts
 					+ " t, courses c WHERE (t.course = c.course_id or t.course = '') and rqrmnt = ?"
 					+ " and descr_3 like ? "
-					+"AND descr_3 not like '%lective%'"
-					+"AND descr_4 not like '%Opti%'");
+					+"AND descr_3 not like '%lective%' "
+					+"AND descr_4 not like '%Opti%' "
+					+ "AND eff_date_2 = ?");
 		} catch (SQLException e) {
 			WindowLoader.showExceptionDialog("Error while pre-compiling the Query : readyGetCompulsoryCourses \n", e);
 			e.printStackTrace();
@@ -214,7 +219,8 @@ public class DBConnector
 			this.psGetNoOfDELsType1 = this.connection.prepareStatement("SELECT min_course FROM "
 					+ ""+DBConnector.table_semCharts +
 					" WHERE rqrmnt = ? and descr_3 like ? "
-					+"AND descr_4 like ?");
+					+"AND descr_4 like ?"
+					+ " AND eff_date_2 = ?");
 
 		} catch (SQLException e) {
 			WindowLoader.showExceptionDialog("Error while pre-compiling the Query : readyGetNoOfDELsType1 \n", e);
@@ -229,7 +235,8 @@ public class DBConnector
 			this.psGetNoOfOELsHigherDegree = this.connection.prepareStatement("SELECT min_course FROM "
 					+ ""+DBConnector.table_semCharts +
 					" WHERE rqrmnt = ? and descr_3 like ? "
-					+"AND descr_3 like ?");
+					+"AND descr_3 like ?"
+					+ " AND eff_date_2 = ?");
 
 		} catch (SQLException e) {
 			WindowLoader.showExceptionDialog("Error while pre-compiling the Query : readyGetNoOfOELSHigherDegree \n", e);
@@ -242,7 +249,8 @@ public class DBConnector
 
 			this.psExistsSem = this.connection.prepareStatement("SELECT COUNT(*) FROM "+
 					DBConnector.table_semCharts + " WHERE rqrmnt = ? "
-					+ "and descr_3 like ?");
+					+ "and descr_3 like ?"
+					+ "AND eff_date_2 = ?");
 
 		} catch (SQLException e) {
 			WindowLoader.showExceptionDialog("Error while pre-compiling the Query : readyExistsSem \n", e);
@@ -256,7 +264,8 @@ public class DBConnector
 		try {
 
 			this.psGetRequirementDescription = this.connection.prepareStatement("SELECT descr FROM "+DBConnector.table_semCharts +
-					" WHERE rqrmnt = ? LIMIT 1");
+					" WHERE rqrmnt = ? "
+					+ "AND eff_date_2 = ? LIMIT 1");
 
 		} catch (SQLException e) {
 			WindowLoader.showExceptionDialog("Error while pre-compiling the Query : readyGetRequirementDescription \n", e);
@@ -269,7 +278,8 @@ public class DBConnector
 		try {
 
 			this.psGetRequirementGroup = this.connection.prepareStatement("SELECT rq_group FROM "+DBConnector.table_semCharts +
-					" WHERE rqrmnt = ? LIMIT 1");
+					" WHERE rqrmnt = ? "
+					+ "AND eff_date_2 = ? LIMIT 1");
 
 		} catch (SQLException e) {
 			WindowLoader.showExceptionDialog("Error while pre-compiling the Query : readyGetRequirementGroup \n", e);
@@ -281,13 +291,15 @@ public class DBConnector
 
 
 	// Methods to be used from CourseChartQueries
-	public ResultSet addSummerTerm(String requirementNo) {
+	public ResultSet addSummerTerm(String requirementNo , String effe_date) {
 
 		ResultSet rs = null;
 		try {
 
 			this.psAddSummerTerm.setString(1, requirementNo);
 
+			this.psAddSummerTerm.setString(2,effe_date);
+			
 			rs = this.psAddSummerTerm.executeQuery();
 
 		} catch (SQLException e) {
@@ -299,12 +311,14 @@ public class DBConnector
 	}
 
 
-	public ResultSet checkOptional(String requirementNo) {
+	public ResultSet checkOptional(String requirementNo, String effe_date) {
 
 		ResultSet rs = null;
 		try {
 			this.psCheckIsOptional.setString(1, requirementNo);
 
+			this.psCheckIsOptional.setString(2,effe_date);
+			
 			rs = this.psCheckIsOptional.executeQuery();
 
 		} catch (SQLException e) {
@@ -317,7 +331,7 @@ public class DBConnector
 
 
 
-	public ResultSet getNoOfDELsType1(String req_num, int yearNo, int semNo, String stream1)	{
+	public ResultSet getNoOfDELsType1(String req_num, int yearNo, int semNo, String stream1, String effe_date)	{
 		ResultSet rs = null;
 
 		try {
@@ -325,6 +339,8 @@ public class DBConnector
 			this.psGetNoOfDELsType1.setString(2, "Year "+ yearNo +" Sem " + semNo + "%");
 			this.psGetNoOfDELsType1.setString(3, stream1 + "%isp%lective%");
 
+			this.psGetNoOfDELsType1.setString(4,effe_date);
+			
 			rs = this.psGetNoOfDELsType1.executeQuery();
 
 		} catch (SQLException e) {
@@ -334,13 +350,15 @@ public class DBConnector
 		return rs;
 	}
 
-	public ResultSet getNoOfDELs(String req_num, int yearNo, int semNo)	{
+	public ResultSet getNoOfDELs(String req_num, int yearNo, int semNo, String effe_date)	{
 		ResultSet rs = null;
 		try {
 			this.psGetNoOfDELsType1.setString(1, req_num);
 			this.psGetNoOfDELsType1.setString(2, "Year "+ yearNo +" Sem " + semNo + "%");
 			this.psGetNoOfDELsType1.setString(3, "%isp%lective%");
 
+			this.psGetNoOfDELsType1.setString(4,effe_date);
+			
 			rs = this.psGetNoOfDELsType1.executeQuery();
 
 		} catch (SQLException e) {
@@ -350,7 +368,7 @@ public class DBConnector
 		return rs;
 	}
 
-	public ResultSet getNoOfOELs(String req_num, int yearNo, int semNo)	{
+	public ResultSet getNoOfOELs(String req_num, int yearNo, int semNo, String effe_date)	{
 		ResultSet rs = null;
 		try {
 			this.psGetNoOfDELsType1.setString(1, req_num);
@@ -361,6 +379,8 @@ public class DBConnector
 			this.psGetNoOfOELsHigherDegree.setString(2, "Year "+ yearNo +" Sem " + semNo + "%");
 			this.psGetNoOfOELsHigherDegree.setString(3, "%lective%");
 
+			this.psGetNoOfDELsType1.setString(4,effe_date);
+			this.psGetNoOfOELsHigherDegree.setString(4,effe_date);
 			
 			if (Integer.parseInt(req_num) > 1557)
 				rs = this.psGetNoOfDELsType1.executeQuery();
@@ -374,14 +394,15 @@ public class DBConnector
 		return rs;
 	}
 
-	public ResultSet getNoOfHUELsType(String req_num, int yearNo, int semNo)	{
+	public ResultSet getNoOfHUELsType(String req_num, int yearNo, int semNo, String effe_date)	{
 		ResultSet rs = null;
 
 		try {
 			this.psGetNoOfDELsType1.setString(1, req_num);
 			this.psGetNoOfDELsType1.setString(2, "Year "+ yearNo +" Sem " + semNo + "%");
 			this.psGetNoOfDELsType1.setString(3, "%um%lective%");
-
+			this.psGetNoOfDELsType1.setString(4,effe_date);
+			
 			rs = this.psGetNoOfDELsType1.executeQuery();
 
 		} catch (SQLException e) {
@@ -391,12 +412,12 @@ public class DBConnector
 		return rs;
 	}
 
-	public ResultSet getRequirementDescription(String req_num)	{
+	public ResultSet getRequirementDescription(String req_num, String effe_date)	{
 		ResultSet rs = null;
 
 		try {
 			this.psGetRequirementDescription.setString(1, req_num);
-
+			this.psGetRequirementDescription.setString(2,effe_date);
 			rs = this.psGetRequirementDescription.executeQuery();
 
 		} catch (SQLException e) {
@@ -406,12 +427,14 @@ public class DBConnector
 		return rs;
 	}
 
-	public ResultSet getRequirementGroup(String req_num)	{
+	public ResultSet getRequirementGroup(String req_num, String effe_date)	{
 		ResultSet rs = null;
 
 		try {
 			this.psGetRequirementGroup.setString(1, req_num);
 
+			this.psGetRequirementGroup.setString(2,effe_date);
+			
 			rs = this.psGetRequirementGroup.executeQuery();
 
 		} catch (SQLException e) {
@@ -421,13 +444,15 @@ public class DBConnector
 		return rs;
 	}
 
-	public ResultSet existsSem(String req_num, int yearNo, int semNo)	{
+	public ResultSet existsSem(String req_num, int yearNo, int semNo, String effe_date)	{
 		ResultSet rs = null;
 
 		try {
 			this.psExistsSem.setString(1, req_num);
 			this.psExistsSem.setString(2, "Year "+ yearNo +" Sem " + semNo + "%");
 
+			this.psExistsSem.setString(3,effe_date);
+			
 			rs = this.psExistsSem.executeQuery();
 
 		} catch (SQLException e) {
@@ -438,12 +463,16 @@ public class DBConnector
 	}
 
 
-	public ResultSet getCompulsoryCoursesForOneSem(String req_num, int yearNo, int semNo)	{
+	public ResultSet getCompulsoryCoursesForOneSem(String req_num, int yearNo, int semNo, String effe_date)	{
 		ResultSet rs = null;
-		//System.out.println(sqlQuery);
+	
 		try {
 			this.psGetCompulsoryCourses.setString(1, req_num);
 			this.psGetCompulsoryCourses.setString(2, "Year "+ yearNo +" Sem " + semNo + "%");
+			
+			this.psGetCompulsoryCourses.setString(3,effe_date);
+			
+			
 			rs = this.psGetCompulsoryCourses.executeQuery();
 
 		} catch (SQLException e) {
@@ -666,6 +695,19 @@ public class DBConnector
 	}
 
 
+	
+	private void readyGetEffectiveDate(){
+		try {
+			this.psGetEffectiveDate = connection.prepareStatement("SELECT max(eff_date_2) from charts where eff_date_2 <= "
+				+ "	(SELECT min(begin_date) FROM erp_temp.terms join student_programs "
+				+ "on terms.semester = student_programs.admit_term "
+				+ "where campus_id = ? ) AND rqrmnt = ?");
+			
+		} catch (SQLException e) {
+			WindowLoader.showExceptionDialog("Error while pre-compiling the Query : readyGetEffectiveDate \n", e);
+			e.printStackTrace();
+		}
+	}
 
 
 	// Public methods to be called from EligibilitySheetQueries
@@ -924,5 +966,25 @@ public class DBConnector
 		return rs;
 	}
 
+	
+	
+	public ResultSet getEffectiveDate( String studentId, String reqNum ) {
+		
+		ResultSet rs = null;
+		
+		try {
+			psGetEffectiveDate.setString(1, studentId);
+			psGetEffectiveDate.setString(2, reqNum);
+			
+			rs = psGetEffectiveDate.executeQuery();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return rs;
+		
+	}
+	
 
 }

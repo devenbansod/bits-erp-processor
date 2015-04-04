@@ -408,13 +408,28 @@ public class SemChartController {
 					file.createNewFile();
 				}
 
-
-				CourseChartQueries c = new CourseChartQueries(reqNum);
-				String s = c.toString();
-
 				FileWriter fw = new FileWriter(file.getAbsoluteFile());
 				BufferedWriter bw = new BufferedWriter(fw);
-				bw.write(s);
+
+
+				String queryForEffDate = "SELECT DISTINCT eff_date_2 from charts where rqrmnt = '" + reqNum + "'";
+				
+				DBConnector db = DBConnector.getInstance();
+				
+				ResultSet rs = db.queryExecutor(queryForEffDate, false);
+				
+				while (rs.next()){
+					
+					CourseChartQueries c = new CourseChartQueries(reqNum, rs.getString(1));
+					
+					String s = c.toString();
+
+					bw.write(s);
+
+				}
+
+				rs.close();
+				
 				bw.close();
 
 				threadSafeConsoleOutput("\n\n" + (new Date()).toString() + " : Finished Processing !\n");
@@ -431,7 +446,6 @@ public class SemChartController {
 					}
 				});
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				WindowLoader.showExceptionDialog("Error occured", e);
 				e.printStackTrace();
 			}

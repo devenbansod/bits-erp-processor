@@ -35,11 +35,10 @@ public class Semester {
 		this.yearNo = yearNo;
 		this.semNo = semNo;
 		this.requirementNo = requirementNo;
-
-		ResultSet rs =  chartOps.dbConnector.getCompulsoryCoursesForOneSem(requirementNo, yearNo, semNo);		
+		
+		ResultSet rs =  chartOps.dbConnector.getCompulsoryCoursesForOneSem(requirementNo, yearNo, semNo, chartOps.effe_date);
 
 		int i = 0;
-		
 		
 		
 		while(rs.next()) {		
@@ -90,6 +89,9 @@ public class Semester {
 		// will be created and added to the arraylist. This query will run in loop till all the courses that have the 
 		// same semName written beside it in the database have been added to the semester object
 	}
+	
+	
+		
 
 
 	public void addHumanitiesElectives (Course c) {

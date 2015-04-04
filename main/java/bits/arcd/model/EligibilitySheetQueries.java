@@ -47,13 +47,13 @@ public class EligibilitySheetQueries {
 	private int termProducedIn;
 
 	private ArrayList<Course> unaccountedCourses = new ArrayList<Course>();
+	private String effe_date;
 
 
 
 	public EligibilitySheetQueries(String studentId, int term) {
 
 		dbConnector = DBConnector.getInstance();
-
 
 		calcultedCUP = 0;
 		calculatedUnits = 0;
@@ -67,7 +67,10 @@ public class EligibilitySheetQueries {
 		setSystemId(this.studentId);
 		setRequirementNo(this.studentId);
 		setCgpa();
-		chart = new CourseChartQueries(requirementNo);
+		
+		this.effe_date = getEffectiveDate(this.studentId);
+		
+		chart = new CourseChartQueries(requirementNo, this.effe_date);
 
 		setPrevTerm(this.studentId);
 
@@ -101,6 +104,26 @@ public class EligibilitySheetQueries {
 
 
 
+
+	private String getEffectiveDate(String studentId) {
+
+		
+		ResultSet rs = dbConnector.getEffectiveDate(studentId, this.getRequirementNo());
+		String retVal = null;
+		
+		try {
+			while(rs.next()) {
+				retVal = rs.getString(1);
+			}
+			
+			
+		} catch (SQLException e) {
+			WindowLoader.showExceptionDialog("Error Occured while getting the Effective Date", e);
+			e.printStackTrace();
+		}
+		
+		return retVal;
+	}
 
 	// Methods	
 
