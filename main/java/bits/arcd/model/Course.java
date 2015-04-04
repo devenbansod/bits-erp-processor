@@ -40,7 +40,7 @@ public class Course {
 
 	private boolean projectTypeCourse;
 
-	private boolean isOptional, isSummerTermPS1;
+	private boolean isOptional, isPS1;
 
 	public boolean isGradeValid() {
 		return gradeValid;
@@ -268,6 +268,10 @@ public class Course {
 
 
 			return retval;
+			//		return "\nCourse [courseId=" + courseCode + ", subject=" + subject
+			//				+ ", catalog=" + catalog + ", description= " + description
+			//				+ ", minUnits= " + minUnits + ", maxUnits= " + maxUnits + ", grade= "+ grade +
+			//				", Previous Term= " + doneInPrevSem + ", Project Type Course= " + projectTypeCourse + "]"+"\n";
 		}
 	}
 
@@ -281,11 +285,16 @@ public class Course {
 
 		// set correct grade for repeat
 		if(this.isRepeat() != null && this.isRepeat().equalsIgnoreCase("Y")) {
+
+			//			System.out.println(this.description + " is repeated.\n");
+
 			countedGrade = this.grade.substring(this.grade.lastIndexOf("/") + 1);
+			//			System.out.println(countedGrade);
 		}
 
 		for(int i=0; i < completeGrades.length; i++) {
 			if(countedGrade != null && countedGrade.equalsIgnoreCase(completeGrades[i])) {
+				//				System.out.println("1");
 				this.gradeValid = true;
 				this.gradeComplete = true;
 				return;
@@ -294,6 +303,7 @@ public class Course {
 
 		for(int i=0; i<incompleteGrades.length; i++) {
 			if(countedGrade != null && countedGrade.equalsIgnoreCase(incompleteGrades[i])) {
+				//				System.out.println("2");
 				this.gradeValid = true;
 				this.gradeComplete = false;
 				return;
@@ -461,6 +471,27 @@ public class Course {
 		this.isOptional = isOptional;
 	}
 
+	public void setIsPS1() {
+		
+		if( this.catalog != null && this.catalog.equalsIgnoreCase("F221") && this.subject.equalsIgnoreCase("BITS") )
+		{
+			this.isPS1 = true ;
+		}
+		else {
+			this.isPS1 = false ;
+		}		
+	}
+
+	public boolean isPS1(){
+		if( this.catalog != null && this.catalog.equalsIgnoreCase("F221") && this.subject.equalsIgnoreCase("BITS") )
+		{
+			return true ;
+		}
+		else {
+			return false ;
+		}		
+	}
+
 	public boolean isPS2() {
 
 		if (this.subject.equalsIgnoreCase("BITS")) {
@@ -496,7 +527,6 @@ public class Course {
 		return false;
 
 	}
-	
 	public boolean is9unitThesis() {
 
 		if (this.subject.equalsIgnoreCase("BITS")) {
@@ -515,44 +545,27 @@ public class Course {
 	
 	public int getNumGrade(){
 		String countedGrade = new String();
-		if(this.isRepeat != null && this.isRepeat.equalsIgnoreCase("Y"))
-			countedGrade = this.grade.substring(this.grade.lastIndexOf("/") + 1);
-		else
-			countedGrade = this.grade;
-				
-		switch(countedGrade){
-		case "A":
-			return 10;
-		case "A-":
-			return 9;
-		case "B":
-			return 8;
-		case "B-":
-			return 7;
-		case "C":
-			return 6;
-		case "C-":
-			return 5;
-		case "D":
-			return 4;
-		case "E":
-			return 2;
-		default:
-			return -1;
-		}
-
-	}
-
-	
-	public int getFirstGrade(){
-		String countedGrade = new String();
+		boolean isValidGrade = false;
 		if(this.isRepeat !=null && this.isRepeat.equalsIgnoreCase("Y")){
-			countedGrade = this.grade.substring(0, this.grade.lastIndexOf("/"));
-		if(countedGrade.contains("/"))
-			 countedGrade = countedGrade.substring(countedGrade.lastIndexOf("/"));
+			//countedGrade = grade.substring(0, grade.lastIndexOf("/"));
+			countedGrade = grade;
+			String[] grds = countedGrade.split("/");
+			int size = grds.length;
+			while(!isValidGrade && size>0){
+				size--;
+				if(grds[size]!=null &(grds[size].equalsIgnoreCase("A") || grds[size].equalsIgnoreCase("A-") || grds[size].equalsIgnoreCase("B")
+						|| grds[size].equalsIgnoreCase("B-") || grds[size].equalsIgnoreCase("C") || grds[size].equalsIgnoreCase("C-") 
+						|| grds[size].equalsIgnoreCase("D") || grds[size].equalsIgnoreCase("E") || grds[size].equalsIgnoreCase("NC"))){
+					isValidGrade = true;
+					countedGrade = grds[size];
+				}
+			}
 		}
 		else
-			countedGrade = this.grade;
+			countedGrade = grade;
+		
+		
+		//System.out.println(this.description + ":" + this.grade + ":" +countedGrade);
 		
 		switch(countedGrade){
 		case "A":
@@ -573,27 +586,34 @@ public class Course {
 			return 2;
 		default:
 			return 0;
+		}
+
+	}
+	public static int getAccGrade(String switchGrade){
+		//System.out.println(this.description + ":" + this.grade + ":" +countedGrade);
+		switch(switchGrade){
+		case "A":
+			return 10;
+		case "A-":
+			return 9;
+		case "B":
+			return 8;
+		case "B-":
+			return 7;
+		case "C":
+			return 6;
+		case "C-":
+			return 5;
+		case "D":
+			return 4;
+		case "E":
+			return 2;
+		case "NC":
+			return 0;
+		default:
+			return -1;
 		}	
 
 	}
-
-	public void setIsSummerTerm(boolean isPS1){
-		this.isSummerTermPS1 = isPS1;
-	}
-	
-	
-	public boolean isSummerTermPS1() {
-		
-		return this.isSummerTermPS1;
-	}
-	
-	public boolean isOelPS1() {
-		if (!this.isSummerTermPS1 && this.catalog != null 
-				&& this.catalog.equalsIgnoreCase("F221") 
-				&& this.subject.equalsIgnoreCase("BITS"))
-		return true;
-	
-		return false;
-	}
-
 }
+
