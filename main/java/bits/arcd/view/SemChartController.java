@@ -39,6 +39,8 @@ import javafx.stage.Stage;
 
 import java.util.prefs.Preferences;
 
+import javax.xml.soap.Text;
+
 
 public class SemChartController {
 
@@ -67,6 +69,15 @@ public class SemChartController {
 	@FXML public Button stopButton;
 	private boolean continueProc = true;
 
+	
+	@FXML public Button saveDBSettings;
+	@FXML public TextField hostIp;
+	@FXML public TextField mysqlUser;
+	@FXML public TextField mysqlPassword;
+	@FXML public TextField databaseName;
+	
+	
+	
 	final String userhome = System.getProperty("user.home");
 	private WebEngine webEngine;
 
@@ -96,6 +107,12 @@ public class SemChartController {
 		destFolder.setText(getSettings("destFolder"));
 		srcFileRefresh.setText(getSettings("sourceCSVs"));
 
+		
+		hostIp.setText(getSettings("hostIp"));
+		mysqlUser.setText(getSettings("mysqlUser"));
+		mysqlPassword.setText(getSettings("mysqlPassword"));
+		databaseName.setText(getSettings("databaseName"));
+		
 
 		// Implement listeners for various buttons
 		getChart.setOnAction(new EventHandler<ActionEvent>() {
@@ -299,6 +316,31 @@ public class SemChartController {
 				else{
 					stopButton.setText("Stop");
 					continueProc = true;
+				}
+					
+				
+			}
+		});
+		
+		saveDBSettings.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent e) {
+				if (! hostIp.getText().equalsIgnoreCase("") 
+						&& ! mysqlUser.getText().equals("") 
+						&& ! mysqlPassword.getText().equals("")
+						&& ! databaseName.getText().equals("")) {
+					
+					setSettings("hostIp", hostIp.getText());
+					setSettings("mysqlUser", mysqlUser.getText());
+					setSettings("mysqlPassword", mysqlPassword.getText());
+					setSettings("databaseName", databaseName.getText());
+					
+					WindowLoader.showAlertDialog("Settings saved", "The Database settings are saved. "
+							+ "Please restart the Software to let it take effects");
+					
+				}
+				
+				else {
+					WindowLoader.showAlertDialog("Invalid Values", "Please enter valid values");
 				}
 					
 				
@@ -580,7 +622,7 @@ public class SemChartController {
 
 	}
 
-	private String getSettings(String key) {
+	public static String getSettings(String key) {
 		Preferences prefs = Preferences.userNodeForPackage(WindowLoader.class);
 
 		String value = prefs.get(key, null);

@@ -118,7 +118,7 @@ public class StudentReqsController {
 										Integer.parseInt(inpSemNum.getText()));
 								if (a.getIsAcb()) {
 
-									//									bw.write(a.printACB());
+									bw.write(a.printACB());
 									threadSafeConsoleOutputRep("\n" + (new Date()).toString() 
 											+ " : Wrote " + rs.getString(2) + "\n");
 								}

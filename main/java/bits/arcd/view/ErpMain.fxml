@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.paint.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.web.*?>
@@ -73,11 +74,32 @@
 						<fx:include fx:id="ELSheet" source="ELSheet.fxml" />
 					</content>
 				</Tab>
-				<Tab fx:id="tabStudentReq" text="Student Requirements">
+				<Tab fx:id="tabStudentReq" text="Reports Generation">
 					<content>
 						<fx:include fx:id="StudentReqs" source="StudentReqs.fxml" />
 					</content>
 				</Tab>
+            <Tab text="Setup Options">
+              <content>
+                  <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="573.0" prefWidth="979.0" style="-fx-background-color: #03C9A9;">
+                     <children>
+                        <Pane layoutX="321.0" layoutY="85.0" prefHeight="251.0" prefWidth="360.0" style="-fx-background-color: #6C7A89;">
+                           <children>
+                              <TextField fx:id="hostIp" layoutX="159.0" layoutY="31.0" prefHeight="25.0" prefWidth="178.0" promptText="Host IP (Ex. 172.7.27.9)" />
+                              <Button fx:id="saveDBSettings" layoutX="122.0" layoutY="199.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="143.0" text="Save New Settings" />
+                              <TextField fx:id="mysqlUser" layoutX="159.0" layoutY="70.0" prefHeight="25.0" prefWidth="178.0" promptText="MySQL Username" />
+                              <Label layoutX="21.0" layoutY="31.0" prefHeight="26.0" prefWidth="110.0" text="Host IP Address" textFill="#07f024" />
+                              <Label layoutX="21.0" layoutY="70.0" prefHeight="26.0" prefWidth="110.0" text="MySQL Username" textFill="#07f024" />
+                              <Label layoutX="21.0" layoutY="113.0" prefHeight="26.0" prefWidth="110.0" text="MySQL Password" textFill="#07f024" />
+                              <Label layoutX="22.0" layoutY="151.0" prefHeight="26.0" prefWidth="110.0" text="Database Name" textFill="#07f024" />
+                              <TextField fx:id="databaseName" layoutX="159.0" layoutY="151.0" prefHeight="25.0" prefWidth="178.0" promptText="Database Name" />
+                              <PasswordField fx:id="mysqlPassword" layoutX="159.0" layoutY="113.0" prefHeight="25.0" prefWidth="178.0" promptText="MySQL Password" />
+                           </children>
+                        </Pane>
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
 			</tabs>
 		</TabPane>
 	</children>

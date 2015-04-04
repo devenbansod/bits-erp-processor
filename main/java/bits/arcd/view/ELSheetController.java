@@ -1,7 +1,5 @@
 package bits.arcd.view;
 
-//import static org.junit.Assert.*;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -26,7 +24,6 @@ import java.util.Scanner;
 import java.util.prefs.Preferences;
 
 import org.apache.commons.lang.StringUtils;
-//import org.junit.Test;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -398,6 +395,10 @@ public class ELSheetController {
 							bw_s.write("\f");
 							bw_s.close();
 							fw_s.close();
+							
+							if (e.getCalculatedCGPA() != Double.parseDouble(e.getCgpa())){
+								threadSafeConsoleOutput("\n*** ERROR *** : Calculated and ERP CGPA Mismatch");
+							}
 							threadSafeConsoleOutput("\n" + (new Date()).toString() 
 									+ " : Wrote " + idNos.get(j).toString() + " to " + f_separate.getAbsolutePath() + "\n");
 						}
@@ -450,37 +451,23 @@ public class ELSheetController {
 
 			if (! inpSemNum.getText().equals("")){
 
-				EligibilitySheetQueries c = new EligibilitySheetQueries(idNum, Integer.parseInt(inpSemNum.getText()));
-				String s = c.toString();
-				CourseChartQueries ch =c.getChart();
-				if(ch.getStream2()==null ) {
-					if(c.getStudentName().indexOf("PS")>0) {
-						if(ch.getSemsInChart().size()<9)
-						WindowLoader.showAlertDialog("Chart has lesser semesters than expected", 
-								"Students does not have 8+1(PS) sems");
-					}
-					else {	if(ch.getSemsInChart().size()<8)
-						WindowLoader.showAlertDialog("Chart has lesser semesters than expected", 
-								"Students does not have 8 sems");
-					}
-					
-				}
-				else {	if(ch.getSemsInChart().size()<10)
-					WindowLoader.showAlertDialog("Chart has lesser semesters than expected", 
-							"Students does not have 10 sems");
-				}
-				
+				EligibilitySheetQueries e = new EligibilitySheetQueries(idNum, Integer.parseInt(inpSemNum.getText()));
+				String s = e.toString();
 
 				FileWriter fw = new FileWriter(file.getAbsoluteFile());
 				BufferedWriter bw = new BufferedWriter(fw);
 				bw.write(s);
 				bw.close();
 
+				if (e.getCalculatedCGPA() != Double.parseDouble(e.getCgpa())){
+					threadSafeConsoleOutput("\n*** ERROR *** : Calculated and ERP CGPA Mismatch");
+				}
+				
 				threadSafeConsoleOutput("\n\n" + (new Date()).toString() + " : Finished Processing !\n");
 
 				threadSafeConsoleOutput("\n\n" + (new Date()).toString() + " : Exported the EL Sheet Data into " 
 						+ file.getAbsolutePath() + "\n");
-
+				
 
 				final String contentURL = new URL("file:///" +  file.getAbsolutePath()).toExternalForm();
 

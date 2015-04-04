@@ -75,6 +75,8 @@ public class WindowLoader extends Application {
 		});
 	}
 	
+	
+	
 	@SuppressWarnings("restriction")
 	public static void showExceptionDialog	(final String friendlyMessage, final Exception e)	{
 		Platform.runLater(new Runnable() {

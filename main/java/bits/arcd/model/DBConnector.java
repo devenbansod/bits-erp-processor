@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 import bits.arcd.main.WindowLoader;
+import bits.arcd.view.SemChartController;
 
 public class DBConnector
 {
@@ -54,12 +55,13 @@ public class DBConnector
 	
 
 	private DBConnector()	{
-		this.db_host = WindowLoader.IPAddress; this.user_nm = WindowLoader.usernm; 
-		this.passwd = WindowLoader.passwd;
+		this.db_host = SemChartController.getSettings("hostIp"); this.user_nm = SemChartController.getSettings("mysqlUser"); 
+		this.passwd = SemChartController.getSettings("mysqlPassword");
+		this.db_name = SemChartController.getSettings("databaseName");
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			Properties p = new Properties();
-			connection = DriverManager.getConnection(db_host+"erp_temp?cachePrepStmts=true", user_nm, passwd);
+			connection = DriverManager.getConnection("jdbc:mysql://" + db_host + "/" + db_name + "?cachePrepStmts=true", user_nm, passwd);
 
 		} catch (SQLException e) {
 			WindowLoader.showExceptionDialog("Error while connecting to the "
@@ -134,7 +136,7 @@ public class DBConnector
 	 */
 	public void reopenConnections()	{
 		try {
-			connection = DriverManager.getConnection(db_host+db_name, user_nm, passwd);
+			connection = DriverManager.getConnection("jdbc:mysql://" + db_host + "/" + db_name, user_nm, passwd);
 		} catch (SQLException e) {
 			WindowLoader.showExceptionDialog("Error while getting the MySQL Connection", e);
 			e.printStackTrace();

@@ -515,44 +515,23 @@ public class Course {
 	
 	public int getNumGrade(){
 		String countedGrade = new String();
-		if(this.isRepeat != null && this.isRepeat.equalsIgnoreCase("Y"))
-			countedGrade = this.grade.substring(this.grade.lastIndexOf("/") + 1);
-		else
-			countedGrade = this.grade;
-				
-		switch(countedGrade){
-		case "A":
-			return 10;
-		case "A-":
-			return 9;
-		case "B":
-			return 8;
-		case "B-":
-			return 7;
-		case "C":
-			return 6;
-		case "C-":
-			return 5;
-		case "D":
-			return 4;
-		case "E":
-			return 2;
-		default:
-			return -1;
-		}
-
-	}
-
-	
-	public int getFirstGrade(){
-		String countedGrade = new String();
-		if(this.isRepeat !=null && this.isRepeat.equalsIgnoreCase("Y")){
-			countedGrade = this.grade.substring(0, this.grade.lastIndexOf("/"));
-		if(countedGrade.contains("/"))
-			 countedGrade = countedGrade.substring(countedGrade.lastIndexOf("/"));
-		}
-		else
-			countedGrade = this.grade;
+		boolean isValidGrade = false;
+		//if(this.isRepeat !=null && this.isRepeat.equalsIgnoreCase("Y")){
+			countedGrade = grade;
+			String[] grds = countedGrade.split("/");
+			int size = grds.length;
+			while(!isValidGrade && size>0){
+				size--;
+				if(grds[size]!=null &(grds[size].equalsIgnoreCase("A") || grds[size].equalsIgnoreCase("A-") || grds[size].equalsIgnoreCase("B")
+						|| grds[size].equalsIgnoreCase("B-") || grds[size].equalsIgnoreCase("C") || grds[size].equalsIgnoreCase("C-") 
+						|| grds[size].equalsIgnoreCase("D") || grds[size].equalsIgnoreCase("E") || grds[size].equalsIgnoreCase("NC"))){
+					isValidGrade = true;
+					countedGrade = grds[size];
+				}
+			}
+//		}
+//		else
+//			countedGrade = grade;
 		
 		switch(countedGrade){
 		case "A":
@@ -573,6 +552,33 @@ public class Course {
 			return 2;
 		default:
 			return 0;
+		}
+
+	}
+
+	
+	public static int getAccGrade(String switchGrade){
+		switch(switchGrade){
+		case "A":
+			return 10;
+		case "A-":
+			return 9;
+		case "B":
+			return 8;
+		case "B-":
+			return 7;
+		case "C":
+			return 6;
+		case "C-":
+			return 5;
+		case "D":
+			return 4;
+		case "E":
+			return 2;
+		case "NC":
+			return 0;
+		default:
+			return -1;
 		}	
 
 	}
