@@ -47,6 +47,7 @@ public class EligibilitySheetQueries {
 	private int termProducedIn;
 
 	private ArrayList<Course> unaccountedCourses = new ArrayList<Course>();
+	private int countOfCharts;
 
 
 
@@ -1127,11 +1128,13 @@ public class EligibilitySheetQueries {
 			rs = dbConnector.setRequirementNo(studentId);
 		}
 		catch (Exception e){
+			WindowLoader.showExceptionDialog("Error while getting the Requirement Number", e);
 			e.printStackTrace();
 		}
 
 		try {
 			while (rs.next()){
+				countOfCharts++;
 				k =  rs.getString(1);
 			}
 		} catch (SQLException e) {
@@ -1149,6 +1152,10 @@ public class EligibilitySheetQueries {
 		}
 
 		this.requirementNo = k;
+		if(countOfCharts!=1) {
+			WindowLoader.showAlertDialog("Number of charts mapped to student not equal to 1"
+					, ""+countOfCharts+" Mapped to student");
+		}
 	}
 
 	private void setSystemId(String studentId) {
