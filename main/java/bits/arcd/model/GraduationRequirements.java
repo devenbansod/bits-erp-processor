@@ -45,6 +45,20 @@ public class GraduationRequirements {
 	private int unitsOfDelType2Projects;
 	private int unitsOfOelProjects;
 
+	private int noOfCoreMinorsComplete;
+	private int noOfElectiveMinorsComplete;
+	private int unitsOfCoreMinorsComplete;
+	private int unitsOfElectiveMinorsComplete;
+	
+	boolean namedCoursesCondition;
+	boolean huelCondition;
+	boolean delCondition;
+	boolean oelCondition;
+	boolean totalCourseworkCondition;
+	boolean psThesisCondition;
+	boolean totalProjCoursesCondition;
+	boolean minorComplete;
+	
 	public GraduationRequirements(String studentId) {
 		super();
 		this.studentId = studentId;
@@ -191,13 +205,14 @@ public class GraduationRequirements {
 	
 	private void setGraduationFields() {	
 		
-		boolean namedCoursesCondition = checkForNamedCourses();
-		boolean huelCondition = checkForHUEL();
-		boolean delCondition = checkForDEL();
-		boolean oelCondition = checkForOEL();
-		boolean totalCourseworkCondition = checkTotalCoursework();
-		boolean psThesisCondition = checkPSThesisConditions();
-		boolean totalProjCoursesCondition = checkforTotalProjectCourses();
+		namedCoursesCondition = checkForNamedCourses();
+		huelCondition = checkForHUEL();
+		delCondition = checkForDEL();
+		oelCondition = checkForOEL();
+		totalCourseworkCondition = checkTotalCoursework();
+		psThesisCondition = checkPSThesisConditions();
+		totalProjCoursesCondition = checkforTotalProjectCourses();
+		minorComplete = false;
 		
 		if(namedCoursesCondition && huelCondition && delCondition && oelCondition 
 				&& totalCourseworkCondition && psThesisCondition && totalProjCoursesCondition) {
@@ -213,6 +228,10 @@ public class GraduationRequirements {
 			}
 			else {
 				this.graduationStatus = "G"; // G = Graduated or cleared 9.01 clause
+				if(elSheet.hasMinor(elSheet.getSystemId()) != null
+						&& !elSheet.hasMinor(elSheet.getSystemId()).equalsIgnoreCase("")) {
+					minorComplete = checkIfMinorComplete();					
+				}
 			}
 		}
 		else {
@@ -356,6 +375,57 @@ public class GraduationRequirements {
 			return false;
 		}
 			
+	}
+	
+	private boolean checkIfMinorComplete() {
+		for(Course c: elSheet.getCoreMinors()) {			
+			if(c.isGradeComplete()) {
+				this.noOfCoreMinorsComplete++;
+				this.unitsOfCoreMinorsComplete+=c.getMaxUnits();
+			}		
+		}
+		for(Course c: elSheet.getElectiveMinors()) {	
+			if(c.isGradeComplete()) {
+				this.noOfElectiveMinorsComplete++;
+				this.unitsOfElectiveMinorsComplete+=c.getMaxUnits();
+			}	
+		}
+		
+		int noOfCoreMinorsRequired=0, unitsOfCoreMinorsRequired=0,
+				noOfElectiveMinorsRequired=0, unitsOfElectiveMinorsRequired=0;
+		
+		String minorCode = elSheet.hasMinor(elSheet.getSystemId());		
+		String query = "select * from minor_requirements where minor_code = '"+ minorCode +"';";		
+		DBConnector db = DBConnector.getInstance();	
+		ResultSet rs = db.queryExecutor(query, false);
+		
+		try {
+			while(rs.next()) {
+				if(rs.getString(2) != null && rs.getString(2).equalsIgnoreCase("CR")) {
+					noOfCoreMinorsRequired = rs.getInt(3);
+					unitsOfCoreMinorsRequired = rs.getInt(4);
+				}
+				else if(rs.getString(2) != null && rs.getString(2).equalsIgnoreCase("EL")) {
+					noOfElectiveMinorsRequired = rs.getInt(3);
+					unitsOfElectiveMinorsRequired = rs.getInt(4);
+				}				
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		double minorCgpa = elSheet.getMinorCUP() / elSheet.getMinorUnits();
+		
+		if((this.noOfCoreMinorsComplete < noOfCoreMinorsRequired) 
+				|| (this.unitsOfCoreMinorsComplete < unitsOfCoreMinorsRequired)
+				|| (this.noOfElectiveMinorsComplete < noOfElectiveMinorsRequired)
+				|| (this.unitsOfElectiveMinorsComplete < unitsOfElectiveMinorsRequired)
+				|| 	(minorCgpa < 4.5)) {
+			return false;
+		}
+		else
+			return true;		
 	}
 
 	private boolean checkForOEL(){

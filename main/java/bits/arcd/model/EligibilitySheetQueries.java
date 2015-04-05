@@ -49,7 +49,10 @@ public class EligibilitySheetQueries {
 	private ArrayList<Course> unaccountedCourses = new ArrayList<Course>();
 	private String effe_date;
 
+	private ArrayList<Course> coreMinors = new ArrayList<Course>();
+	private ArrayList<Course> electiveMinors = new ArrayList<Course>();
 
+	private int countOfCharts;
 
 	public EligibilitySheetQueries(String studentId, int term) {
 
@@ -67,9 +70,9 @@ public class EligibilitySheetQueries {
 		setSystemId(this.studentId);
 		setRequirementNo(this.studentId);
 		setCgpa();
-		
+
 		this.effe_date = getEffectiveDate(this.studentId);
-		
+
 		chart = new CourseChartQueries(requirementNo, this.effe_date);
 
 		setPrevTerm(this.studentId);
@@ -107,21 +110,21 @@ public class EligibilitySheetQueries {
 
 	private String getEffectiveDate(String studentId) {
 
-		
+
 		ResultSet rs = dbConnector.getEffectiveDate(studentId, this.getRequirementNo());
 		String retVal = null;
-		
+
 		try {
 			while(rs.next()) {
 				retVal = rs.getString(1);
 			}
-			
-			
+
+
 		} catch (SQLException e) {
 			WindowLoader.showExceptionDialog("Error Occured while getting the Effective Date", e);
 			e.printStackTrace();
 		}
-		
+
 		return retVal;
 	}
 
@@ -223,10 +226,10 @@ public class EligibilitySheetQueries {
 		s = s + returnCenteredString("ELIGIBLITY SHEET (VIDE A.R. 3.21)") + "\n\n";
 		GraduationRequirements g = new GraduationRequirements(this);
 
-				AcadCounselBoard a = new AcadCounselBoard(this);
-				
+		AcadCounselBoard a = new AcadCounselBoard(this);
+
 		String statuses = "";
-				
+
 		if ( ! a.getIsAcb()) {
 			statuses = statuses + "STATUS : NORMAL";
 		}
@@ -492,8 +495,8 @@ public class EligibilitySheetQueries {
 		}
 
 		s = s + "ACC CUP : " + this.accumulatedCUP + "\tCGPA CUP : " 
-				+ this.cgpaCup + "\tACC UNITS : " + this.accumulatedUnits
-				+ "\tCGPA UNITS : " + this.cgpaUnits + "";
+				+ this.cgpaCup + "\tCAL CUP: " + this.calcultedCUP +"\tACC UNITS : " + this.accumulatedUnits
+				+ "\tCGPA UNITS : " + this.cgpaUnits + "\tCAL UNITS: " +this.calculatedUnits;
 
 		if (this.hasMinor(systemId) != null && ! this.hasMinor(systemId).equals("")){
 			s = s + "\tMINOR CUP : " + this.minorCUP 
@@ -651,7 +654,7 @@ public class EligibilitySheetQueries {
 
 					updateCalculatedUnitsAndCUP(c);
 					updateAccumulatedUnitsAndCUP(c);
-					
+
 				}				
 
 
@@ -790,7 +793,7 @@ public class EligibilitySheetQueries {
 						cNew.setElDescr(s);
 
 						this.checkForRepeatAndSetFlag(cNew);
-					
+
 						int years = this.getChart().getSemsInChart().size() / 2;
 
 						if (yearNo == semYear[0] && semNo == semYear[1] 
@@ -863,7 +866,7 @@ public class EligibilitySheetQueries {
 				if (s != null && ! s.equals("")){
 					setMinorDesc(c,s);
 					if(!(c.getElDescr()==null)) {
-						c.setElDescr("EL" +  "/" + c.getElDescr() );
+						c.setElDescr("EL" +  " " + c.getElDescr() );
 					}
 					else {
 						c.setElDescr("EL");
@@ -982,7 +985,7 @@ public class EligibilitySheetQueries {
 				this.checkForRepeatAndSetFlag(c);
 				c.checkAndSetGradeValidAndGradeComplete();
 				c.setIsSummerTerm(true);
-				
+
 				updateCalculatedUnitsAndCUP(c);
 				updateAccumulatedUnitsAndCUP(c);
 				sem.setPS(c);
@@ -1012,27 +1015,28 @@ public class EligibilitySheetQueries {
 		pendingOels = sem.getNoOfOEL() - sem.getNumOfOellCompleted();		
 		sem.setNoOfOEL(pendingOels);		
 	}
-	
-	
+
+
 	private void updateCalculatedUnitsAndCUP(Course c){
 		if(c.getNumGrade() >0){
 			calculatedUnits += c.getMaxUnits();
 			calcultedCUP += c.getMaxUnits()*c.getNumGrade();
 		}
 	}
-	
+
 	private void updateAccumulatedUnitsAndCUP(Course c){
 		String g = c.getGrade();
 		String[] gArray = g.split("/");
-		for(String gr : gArray){
-			if(Course.getAccGrade(gr) > -1){
+		for(int i = 0; i < gArray.length; i++){
+			if(Course.getAccGrade(gArray[i]) > 0){
 				this.accumulatedUnits += c.getMaxUnits();
-				this.accumulatedCUP += c.getMaxUnits()*Course.getAccGrade(gr);
+				this.accumulatedCUP += c.getMaxUnits()*Course.getAccGrade(gArray[i]);
+				
 			}
 		}
 	}
-	
-	
+
+
 
 	// getters and setters
 
@@ -1080,7 +1084,7 @@ public class EligibilitySheetQueries {
 	}
 
 	public double getCalculatedCGPA() {
-				
+
 		double cgpaRet = Math.round(calculatedCGPA * 1000.0) / 1000.0;
 		return cgpaRet;
 	}
@@ -1093,11 +1097,13 @@ public class EligibilitySheetQueries {
 			rs = dbConnector.setRequirementNo(studentId);
 		}
 		catch (Exception e){
+			WindowLoader.showExceptionDialog("Error while getting the Requirement Number", e);
 			e.printStackTrace();
 		}
 
 		try {
 			while (rs.next()){
+				countOfCharts++;
 				k =  rs.getString(1);
 			}
 		} catch (SQLException e) {
@@ -1112,6 +1118,11 @@ public class EligibilitySheetQueries {
 		} catch (SQLException e) {
 			WindowLoader.showExceptionDialog("Error while closing the ResultSet", e);
 			e.printStackTrace();
+		}
+		
+		if(countOfCharts!=1) {
+			WindowLoader.showAlertDialog("Number of charts mapped to student not equal to 1"
+					, ""+countOfCharts+" Mapped to student");
 		}
 
 		this.requirementNo = k;
@@ -1288,7 +1299,13 @@ public class EligibilitySheetQueries {
 				}
 				desc =	s.substring(0, indexOfP);
 				if(desc.equalsIgnoreCase(check)){
-					desc += rs.getString(3).substring(0, 1);
+					String typeMinorCourse = rs.getString(3).substring(0, 2);
+					if(typeMinorCourse!=null && typeMinorCourse.equalsIgnoreCase("CR"))
+						coreMinors.add(c);
+					else 
+						if(typeMinorCourse!=null && typeMinorCourse.equalsIgnoreCase("EL"))
+							electiveMinors.add(c);
+					desc += typeMinorCourse;
 					c.setElDescr(desc);
 					if (c.isInProgress() == null || ! c.isInProgress().equals("Y")) {
 						minorUnits += c.getMaxUnits();
@@ -1319,5 +1336,14 @@ public class EligibilitySheetQueries {
 
 
 	}
+
+	public ArrayList<Course> getCoreMinors() {
+		return coreMinors;
+	}
+
+	public ArrayList<Course> getElectiveMinors() {
+		return electiveMinors;
+	}
+
 
 }

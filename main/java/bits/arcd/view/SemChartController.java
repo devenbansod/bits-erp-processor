@@ -69,15 +69,15 @@ public class SemChartController {
 	@FXML public Button stopButton;
 	private boolean continueProc = true;
 
-	
+
 	@FXML public Button saveDBSettings;
 	@FXML public TextField hostIp;
 	@FXML public TextField mysqlUser;
 	@FXML public TextField mysqlPassword;
 	@FXML public TextField databaseName;
-	
-	
-	
+
+
+
 	final String userhome = System.getProperty("user.home");
 	private WebEngine webEngine;
 
@@ -107,12 +107,12 @@ public class SemChartController {
 		destFolder.setText(getSettings("destFolder"));
 		srcFileRefresh.setText(getSettings("sourceCSVs"));
 
-		
+
 		hostIp.setText(getSettings("hostIp"));
 		mysqlUser.setText(getSettings("mysqlUser"));
 		mysqlPassword.setText(getSettings("mysqlPassword"));
 		databaseName.setText(getSettings("databaseName"));
-		
+
 
 		// Implement listeners for various buttons
 		getChart.setOnAction(new EventHandler<ActionEvent>() {
@@ -122,14 +122,14 @@ public class SemChartController {
 				if (reqNum.getText() != null && !reqNum.getText().equals("") 
 						&& strictNumCheck(reqNum.getText().trim()) && reqGroup.getText().equals(""))	{
 
-					threadSafeConsoleOutput("Processing, Please wait.........");
+					threadSafeConsoleOutput("\nProcessing, Please wait.........");
 					loadWaitAnim();
 
 					Thread temp = new Thread (){
 						@Override
 						public void run() {
 							try {
-								loadSingleChart(reqNum.getText());
+								loadSingleChart(reqNum.getText().trim());
 							} catch (Exception e) {
 								WindowLoader.showExceptionDialog("Error occured while processing the Chart", e);
 								e.printStackTrace();
@@ -141,7 +141,7 @@ public class SemChartController {
 
 				else if (reqGroup.getText() != null && ! reqGroup.getText().equals("")
 						&& strictNumCheck(reqGroup.getText().trim()) && reqNum.getText().equals("")) {
-					threadSafeConsoleOutput("Processing, Please wait.........");
+					threadSafeConsoleOutput("\nProcessing, Please wait.........");
 					loadWaitAnim();
 
 					Thread temp = new Thread (){
@@ -150,7 +150,7 @@ public class SemChartController {
 							try {
 								ArrayList<String> reqNums = new ArrayList<String>();
 
-								String query = "Select DISTINCT rqrmnt from charts where rq_group = '" + reqGroup.getText() + "'";
+								String query = "Select DISTINCT rqrmnt from charts where rq_group = '" + reqGroup.getText().trim() + "'";
 								ResultSet rs = DBConnector.getInstance().queryExecutor(query, false);
 								while (rs.next()) {
 									reqNums.add(rs.getString(1));
@@ -257,7 +257,7 @@ public class SemChartController {
 		updateAll.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e) {
 
-				threadSafeConsoleOutput("Processing, Please wait.........");
+				threadSafeConsoleOutput("\nProcessing, Please wait.........");
 				loadWaitAnim();
 				Thread thread = new Thread(){
 					public void run(){
@@ -276,7 +276,7 @@ public class SemChartController {
 				// Launch it in a separate thread, so that it doesn't hang the main
 				// window!
 
-				threadSafeConsoleOutput("Processing, Please wait.........");
+				threadSafeConsoleOutput("\nProcessing, Please wait.........");
 				loadWaitAnim();
 				Thread thread = new Thread(){
 					public void run(){
@@ -284,7 +284,7 @@ public class SemChartController {
 						if (! sourceFile.getText().equals("")){
 							batchProcessChartsFromFile(sourceFile.getText());
 							WindowLoader.showAlertDialog("Processing done", "The Export of Charts Data was completed");
-							threadSafeConsoleOutput("Processing Done!\n");
+							threadSafeConsoleOutput("\nProcessing Done!\n");
 						}
 
 						/**
@@ -310,40 +310,35 @@ public class SemChartController {
 			public void handle(ActionEvent e) {
 				if (stopButton.getText().equalsIgnoreCase("Stop")){
 					continueProc = false;
-					stopButton.setText("Unlock the Processor");
 				}
-					
-				else{
-					stopButton.setText("Stop");
-					continueProc = true;
-				}
-					
-				
+
+
+
 			}
 		});
-		
+
 		saveDBSettings.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e) {
 				if (! hostIp.getText().equalsIgnoreCase("") 
 						&& ! mysqlUser.getText().equals("") 
 						&& ! mysqlPassword.getText().equals("")
 						&& ! databaseName.getText().equals("")) {
-					
+
 					setSettings("hostIp", hostIp.getText());
 					setSettings("mysqlUser", mysqlUser.getText());
 					setSettings("mysqlPassword", mysqlPassword.getText());
 					setSettings("databaseName", databaseName.getText());
-					
+
 					WindowLoader.showAlertDialog("Settings saved", "The Database settings are saved. "
 							+ "Please restart the Software to let it take effects");
-					
+
 				}
-				
+
 				else {
 					WindowLoader.showAlertDialog("Invalid Values", "Please enter valid values");
 				}
-					
-				
+
+
 			}
 		});
 	}
@@ -413,15 +408,15 @@ public class SemChartController {
 
 
 				String queryForEffDate = "SELECT DISTINCT eff_date_2 from charts where rqrmnt = '" + reqNum + "'";
-				
+
 				DBConnector db = DBConnector.getInstance();
-				
+
 				ResultSet rs = db.queryExecutor(queryForEffDate, false);
-				
+
 				while (rs.next()){
-					
+
 					CourseChartQueries c = new CourseChartQueries(reqNum, rs.getString(1));
-					
+
 					String s = c.toString();
 
 					bw.write(s);
@@ -429,10 +424,8 @@ public class SemChartController {
 				}
 
 				rs.close();
-				
-				bw.close();
 
-				threadSafeConsoleOutput("\n\n" + (new Date()).toString() + " : Finished Processing !\n");
+				bw.close();
 
 				threadSafeConsoleOutput("\n\n" + (new Date()).toString() + " : Exported the Chart Data into " 
 						+ file.getAbsolutePath() + ".txt\n");
@@ -492,8 +485,6 @@ public class SemChartController {
 				reqNos.add(reqNo);
 			}
 
-
-
 			batchProcessChartsHelper(reqNos, f_Out);
 		}
 		else {
@@ -510,11 +501,11 @@ public class SemChartController {
 
 		FileWriter fw = null;
 		BufferedWriter bw = null;
-		
+
 		File f_separate = null;
 		FileWriter fw_s = null;
 		BufferedWriter bw_s = null;
-		
+
 		try {
 			fw = new FileWriter(f);
 			bw = new BufferedWriter(fw);
@@ -527,44 +518,67 @@ public class SemChartController {
 
 			if (continueProc)	{
 				CourseChartQueries c = null;
-				try {
-					c = new CourseChartQueries(reqNos.get(j));
-				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				String s = c.toString();
 
-				try {
 
-					if (separateFiles.isSelected()) {
-						f_separate = new File(destFolder.getText() + "\\" + c.getRequirementNo() + ".txt");
-						if (!f_separate.exists()) {
-							f_separate.createNewFile();
+				String queryForEffDate = "SELECT DISTINCT eff_date_2 from charts where rqrmnt = '" + reqNos.get(j) + "'";
+
+				DBConnector db = DBConnector.getInstance();
+
+				ResultSet rs = db.queryExecutor(queryForEffDate, false);
+				
+				int i = 0;
+				try {
+					while(rs.next()) {
+						try {
+							c = new CourseChartQueries(reqNos.get(j), rs.getString(1));
+						} catch (Exception e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
 						}
-						fw_s = new FileWriter(f_separate);
-						bw_s = new BufferedWriter(fw_s);
-						bw_s.write(s);
-						bw_s.write("\f");
-						bw_s.close();
-						fw_s.close();
-						threadSafeConsoleOutput("\n" + (new Date()).toString() 
-								+ " : Wrote " + reqNos.get(j).toString() + " to " + f_separate.getAbsolutePath() + "\n");
-					}
+						String s = c.toString();
 
-					else {
-						bw.write(s);
-						bw.write("\f");
+						try {
+
+							if (separateFiles.isSelected()) {
+								f_separate = new File(destFolder.getText() + "\\" + c.getRequirementNo() + ".txt");
+								if (i == 0) {
+									f_separate.createNewFile();
+								}
+								
+								fw_s = new FileWriter(f_separate, true);
+								bw_s = new BufferedWriter(fw_s);
+								bw_s.write(s);
+								bw_s.write("\f");
+								bw_s.close();
+								fw_s.close();
+								threadSafeConsoleOutput("\n" + (new Date()).toString() 
+										+ " : Wrote " + reqNos.get(j).toString() + " to " + f_separate.getAbsolutePath() + "\n");
+							}
+
+							else {
+								bw.write(s);
+								bw.write("\f");
+
+								threadSafeConsoleOutput("\n" + (new Date()).toString() 
+										+ " : Wrote " + reqNos.get(j).toString() + " to " + f.getAbsolutePath() + "\n");
+							}
+						} catch (IOException e) {
+
+							e.printStackTrace();
+						}
 						
-						threadSafeConsoleOutput("\n" + (new Date()).toString() 
-								+ " : Wrote " + reqNos.get(j).toString() + " to " + f.getAbsolutePath() + "\n");
+						i++;
 					}
-				} catch (IOException e) {
-
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
+			}
 
+			else {
+				continueProc = true;
+				break;
 			}
 
 		}

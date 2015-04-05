@@ -51,6 +51,11 @@ public class AcadCounselBoard {
 
 	}
 
+	
+	public EligibilitySheetQueries getELSheet(){
+		return this.elSheet;
+	}
+	
 	//	private ArrayList<Course> eGradeList;
 	private ArrayList<String> reasonList = new ArrayList<String>();
 
@@ -219,17 +224,45 @@ public class AcadCounselBoard {
 
 	public String printACB() {
 		String s = "";
-		s = "ID: " +studentId + "\tNAME: " +elSheet.getStudentName()+ "\n" + "REQ. GROUP: " +elSheet.getChart().getRequirementGroup()
-				+ "\tREQ. NO: "+ elSheet.getRequirementNo() + "\tREQ. DESCRIPTION: " +elSheet.getChart().getRequirementDescription()
-				+ "\nCGPA: " +elSheet.getCgpa()
-				+"\n\n";
-
-		for(String sr : reasonList){
-			s = s + "\n";
-			s = s + sr;
+		
+		
+		String name = elSheet.getStudentName();
+		while (name.length() < 25){
+			name = name + " ";
 		}
+		
+		String idNo = elSheet.getStudentId();
+		while (idNo.length() < 14){
+			idNo = idNo + " ";
+		}
+		
+		String systemId = elSheet.getSystemId();
+		while (systemId.length() < 14){
+			systemId = systemId + " ";
+		}
+		
+		String cgpa = elSheet.getCgpa();
+		while (cgpa.length() < 14){
+			cgpa = cgpa + " ";
+		}
+		
+		s = systemId + idNo + name + cgpa;
 
-		s = s + "\n-------------------------------------------------------------------------\n";
+		if (this.iseGradeCondition())
+			s = s + "YES                ";
+		else
+			s = s + "NO                 ";
+		if (this.getCgpaConstraint())
+			s = s + "YES                ";
+		else
+			s = s + "NO                 ";  
+		if (this.isCourseNumCondition())
+			s = s + "YES     ";
+		else
+			s = s + "NO      ";
+		  
+		s = s + "\n";
+		
 		return s;
 	}
 

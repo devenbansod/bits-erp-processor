@@ -54,7 +54,7 @@ public class StudentReqsController {
 
 	public StudentReqsController()	{
 
-		
+
 
 	}
 
@@ -63,6 +63,7 @@ public class StudentReqsController {
 	 * after the fxml file has been loaded. Called after constructor
 	 */
 
+	@SuppressWarnings("restriction")
 	@FXML
 	private void initialize() {
 		destFolder.setText(getSettings("destFolderRep"));
@@ -92,12 +93,12 @@ public class StudentReqsController {
 			public void handle(ActionEvent e) {
 				if (IdNoFilter.getText().equals(""))
 					IdNoFilter.setText("%");
-				
-				threadSafeConsoleOutputRep("Processing .... Please wait .....\nGenerating ACB Report\n");
+
+				threadSafeConsoleOutputRep("\nProcessing .... Please wait .....\nGenerating ACB Report\n");
 				Thread thread = new Thread(){
 					public void run(){				
 						DBConnector db = DBConnector.getInstance();
-						
+
 						String query = "SeLECT * FROM students where campus_id like '" + IdNoFilter.getText() + "'";
 						Date d = new Date();
 						String formattedDate = convertToProperString(d.toString());
@@ -113,12 +114,19 @@ public class StudentReqsController {
 						}
 						ResultSet rs = db.queryExecutor(query, false);
 						try {
+
+							bw.write("SYSTEM ID 	  "
+									+ "STUDENT ID 	NAME 					 CGPA	 "
+									+ "TWO OR MORE E's 	CGPA LESS THAN 4.5 	NOT CLEARED 2/3RD RULE");
+
 							while(rs.next() && continueProc){
 								AcadCounselBoard a = new AcadCounselBoard(rs.getString(2), 
 										Integer.parseInt(inpSemNum.getText()));
 								if (a.getIsAcb()) {
 
 									bw.write(a.printACB());
+									
+									bw.write("\n");
 									threadSafeConsoleOutputRep("\n" + (new Date()).toString() 
 											+ " : Wrote " + rs.getString(2) + "\n");
 								}
@@ -149,12 +157,12 @@ public class StudentReqsController {
 			public void handle(ActionEvent e) {
 				if (IdNoFilter.getText().equals(""))
 					IdNoFilter.setText("%");
-				
+
 				threadSafeConsoleOutputRep("\nProcessing .... Please wait .....\nGenerating BL Report\n");
 				Thread thread = new Thread(){
 					public void run(){				
 						DBConnector db = DBConnector.getInstance();
-						
+
 						String query = "SeLECT * FROM students where campus_id like '" + IdNoFilter.getText() + "'";
 						Date d = new Date();
 						String formattedDate = convertToProperString(d.toString());
@@ -170,17 +178,25 @@ public class StudentReqsController {
 						}
 						ResultSet rs = db.queryExecutor(query, false);
 						try {
-							while(rs.next() && continueProc){
-								AcadCounselBoard a = new AcadCounselBoard(rs.getString(2), 
-										Integer.parseInt(inpSemNum.getText()));
-								if (a.isBackLog()) {
+							while(rs.next() ){
 
-									bw.write(a.printBackLog());
-									threadSafeConsoleOutputRep("\n" + (new Date()).toString() 
-											+ " : Wrote " + rs.getString(2) + "\n");
+								if (continueProc) {
+									AcadCounselBoard a = new AcadCounselBoard(rs.getString(2), 
+											Integer.parseInt(inpSemNum.getText()));
+									if (a.isBackLog()) {
+
+										bw.write(a.printBackLog());
+										threadSafeConsoleOutputRep("\n" + (new Date()).toString() 
+												+ " : Wrote " + rs.getString(2) + "\n");
+									}
+									else {
+										threadSafeConsoleOutputRep("\n..");
+									}
 								}
+
 								else {
-									threadSafeConsoleOutputRep("\n..");
+									continueProc = true;
+									break;
 								}
 							}
 							bw.close();
@@ -199,21 +215,21 @@ public class StudentReqsController {
 				thread.start();
 			}
 		});
-		
-		
+
+
 
 		generateGRButton.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e) {
 				if (IdNoFilter.getText().equals(""))
 					IdNoFilter.setText("%");
-				
+
 				threadSafeConsoleOutputRep("\nProcessing .... Please wait .....\nGenerating 'Graduated Students' Report\n");
 				Thread thread = new Thread(){
 					public void run(){				
 						DBConnector db = DBConnector.getInstance();
 						if (IdNoFilter.getText() == "")
 							IdNoFilter.setText("%");
-						
+
 						String query = "SeLECT * FROM students where campus_id like '" + IdNoFilter.getText() + "'";
 						Date d = new Date();
 						String formattedDate = convertToProperString(d.toString());
@@ -221,7 +237,7 @@ public class StudentReqsController {
 						final File f_Out_not = new File(destFolder.getText() + "\\NOT_Likely_GR_" + formattedDate + ".csv");
 						FileWriter fw = null;
 						BufferedWriter bw = null;
-						
+
 						FileWriter fw_Not = null;
 						BufferedWriter bw_not = null;
 						try {
@@ -235,23 +251,31 @@ public class StudentReqsController {
 						}
 						ResultSet rs = db.queryExecutor(query, false);
 						try {
-							while(rs.next() && continueProc){
-								GraduationRequirements g = new GraduationRequirements(rs.getString(2));
-								if (g.getGraduationStatus().equalsIgnoreCase("G")) {
+							while(rs.next()){
 
-									bw.write(g.getELSheet().getSystemId() + ", " + 
-											g.getELSheet().getStudentId() + ", " + 
-											g.getELSheet().getStudentName() + ",\n");
-									threadSafeConsoleOutputRep("\n" + (new Date()).toString() 
-											+ " : Wrote " + rs.getString(2) + "\n");
+								if (continueProc) {
+									GraduationRequirements g = new GraduationRequirements(rs.getString(2));
+									if (g.getGraduationStatus().equalsIgnoreCase("G")) {
+
+										bw.write(g.getELSheet().getSystemId() + ", " + 
+												g.getELSheet().getStudentId() + ", " + 
+												g.getELSheet().getStudentName() + ",\n");
+										threadSafeConsoleOutputRep("\n" + (new Date()).toString() 
+												+ " : Wrote " + rs.getString(2) + "\n");
+									}
+									else if (g.getGraduationStatus().equalsIgnoreCase("I") 
+											&& g.getGraduationStatus().equalsIgnoreCase("L")){
+										bw_not.write(g.getELSheet().getSystemId() + ", " + 
+												g.getELSheet().getStudentId() + ", " + 
+												g.getELSheet().getStudentName() + ",\n");
+
+										threadSafeConsoleOutputRep("\n..");
+									}
 								}
-								else if (g.getGraduationStatus().equalsIgnoreCase("I") 
-										&& g.getGraduationStatus().equalsIgnoreCase("L")){
-									bw_not.write(g.getELSheet().getSystemId() + ", " + 
-											g.getELSheet().getStudentId() + ", " + 
-											g.getELSheet().getStudentName() + ",\n");
 
-									threadSafeConsoleOutputRep("\n..");
+								else {
+									continueProc = true;
+									break;
 								}
 							}
 							bw.close();
@@ -270,21 +294,21 @@ public class StudentReqsController {
 				thread.start();
 			}
 		});
-		
-		
+
+
 		generateLikelyGRButton.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e) {
 				if (IdNoFilter.getText().equals(""))
 					IdNoFilter.setText("%");
-				
-				threadSafeConsoleOutputRep("Processing .... Please wait .....\nGenerating 'Likely Graduate' Report\n");
+
+				threadSafeConsoleOutputRep("\nProcessing .... Please wait .....\nGenerating 'Likely Graduate' Report\n");
 				Thread thread = new Thread(){
 					public void run(){				
 						DBConnector db = DBConnector.getInstance();
-						
+
 						if (IdNoFilter.getText() == "")
 							IdNoFilter.setText("%");
-						
+
 						String query = "SeLECT * FROM students where campus_id like '" + IdNoFilter.getText() + "'";
 						Date d = new Date();
 						String formattedDate = convertToProperString(d.toString());
@@ -305,25 +329,32 @@ public class StudentReqsController {
 						}
 						ResultSet rs = db.queryExecutor(query, false);
 						try {
-							while(rs.next() && continueProc){
-								GraduationRequirements g = new GraduationRequirements(rs.getString(2));
-								if (g.getGraduationStatus().equalsIgnoreCase("L")) {
+							while(rs.next()){
 
-									bw.write(g.getELSheet().getSystemId() + ", " + 
-											g.getELSheet().getStudentId() + ", " + 
-											g.getELSheet().getStudentName() + ",\n");
-									threadSafeConsoleOutputRep("\n" + (new Date()).toString() 
-											+ " : Wrote " + rs.getString(2) + "\n");
-								}
-								else if (g.getGraduationStatus().equalsIgnoreCase("I")){
-									bw_not.write(g.getELSheet().getSystemId() + ", " + 
-											g.getELSheet().getStudentId() + ", " + 
-											g.getELSheet().getStudentName() + ",\n");
+								if (continueProc){ 
+									GraduationRequirements g = new GraduationRequirements(rs.getString(2));
+									if (g.getGraduationStatus().equalsIgnoreCase("L")) {
 
-									threadSafeConsoleOutputRep("\n..");
+										bw.write(g.getELSheet().getSystemId() + ", " + 
+												g.getELSheet().getStudentId() + ", " + 
+												g.getELSheet().getStudentName() + ",\n");
+										threadSafeConsoleOutputRep("\n" + (new Date()).toString() 
+												+ " : Wrote " + rs.getString(2) + "\n");
+									}
+									else if (g.getGraduationStatus().equalsIgnoreCase("I")){
+										bw_not.write(g.getELSheet().getSystemId() + ", " + 
+												g.getELSheet().getStudentId() + ", " + 
+												g.getELSheet().getStudentName() + ",\n");
+
+										threadSafeConsoleOutputRep("\n..");
+									}
+									else {
+										threadSafeConsoleOutputRep("\n..");
+									}
 								}
 								else {
-									threadSafeConsoleOutputRep("\n..");
+									continueProc = true;
+									break;
 								}
 							}
 							bw.close();
@@ -332,7 +363,7 @@ public class StudentReqsController {
 							fw.close();
 							fw_Not.close();
 						} catch (SQLException e1) {
-							
+
 							e1.printStackTrace();
 						} catch (IOException e1) {
 
@@ -344,21 +375,12 @@ public class StudentReqsController {
 				thread.start();
 			}
 		});
-		
+
 		// Terminate any currently executing loops
 		stopButton.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e) {
-				if (stopButton.getText().equalsIgnoreCase("Stop")){
 					continueProc = false;
-					stopButton.setText("Unlock the Processor");
-				}
-					
-				else{
-					stopButton.setText("Stop");
-					continueProc = true;
-				}
-					
-				
+
 			}
 		});
 	}
@@ -384,9 +406,6 @@ public class StudentReqsController {
 			}
 		});
 	}
-	
-
-
 
 	private void setSettings(String key, String newValue){
 		Preferences prefs = Preferences.userNodeForPackage(WindowLoader.class);

@@ -127,7 +127,7 @@ public class ELSheetController {
 
 					if (idNum.getText().length() == 12){
 
-						threadSafeConsoleOutput("Processing, Please wait.........");
+						threadSafeConsoleOutput("\nProcessing, Please wait.........");
 						loadWaitAnim();
 						Thread temp = new Thread(){
 							public void run(){
@@ -140,7 +140,7 @@ public class ELSheetController {
 
 					else if (idNum.getText().length() != 12 && idNum.getText().contains("%")) {
 
-						threadSafeConsoleOutput("Processing, Please wait.........");
+						threadSafeConsoleOutput("\nProcessing, Please wait.........");
 						loadWaitAnim();
 						Thread temp = new Thread(){
 							public void run(){
@@ -196,7 +196,7 @@ public class ELSheetController {
 					public void run(){
 						batchProcessELSheets(sourceIdNosCSV.getText());
 						WindowLoader.showAlertDialog("Process Completed", "The process has been completed.");
-						threadSafeConsoleOutput("Processing Done!");		
+						threadSafeConsoleOutput("\nProcessing Done!");		
 					}
 				};
 				thread.start();
@@ -255,7 +255,7 @@ public class ELSheetController {
 		reloadButton.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e) {
 
-				threadSafeConsoleOutput("Processing, Please wait.........");
+				threadSafeConsoleOutput("\nProcessing, Please wait.........");
 				loadWaitAnim();
 				Thread thread = new Thread(){
 					public void run(){
@@ -313,7 +313,7 @@ public class ELSheetController {
 		String formattedDate = convertToProperString(d.toString());
 		final File f_Out = new File(destFolder.getText() + "\\EL_SHEETS_" + formattedDate + ".txt");
 
-		threadSafeConsoleOutput("Processing, Please wait.........");
+		threadSafeConsoleOutput("\nProcessing, Please wait.........");
 
 
 		if( f.isFile() && f2.isDirectory()) {
@@ -348,7 +348,7 @@ public class ELSheetController {
 		else {
 			threadSafeConsoleOutput("Invalid directory specified!");
 		}
-		threadSafeConsoleOutput("Finished!..........");
+		threadSafeConsoleOutput("\nFinished!..........");
 
 		loadHomeAnim();
 
@@ -454,6 +454,24 @@ public class ELSheetController {
 				EligibilitySheetQueries e = new EligibilitySheetQueries(idNum, Integer.parseInt(inpSemNum.getText()));
 				String s = e.toString();
 
+				CourseChartQueries ch = e.getChart();
+				if(ch.getStream2()==null ) {
+					if(e.getStudentName().indexOf("PS")>0) {
+						if(ch.getSemsInChart().size()<9)
+						WindowLoader.showAlertDialog("Chart has lesser semesters than expected", 
+								"Students does not have 8+1(PS) sems");
+					}
+					else {	if(ch.getSemsInChart().size()<8)
+						WindowLoader.showAlertDialog("Chart has lesser semesters than expected", 
+								"Students does not have 8 sems");
+					}
+					
+				}
+				else {	if(ch.getSemsInChart().size()<10)
+					WindowLoader.showAlertDialog("Chart has lesser semesters than expected", 
+							"Students does not have 10 sems");
+				}
+				
 				FileWriter fw = new FileWriter(file.getAbsoluteFile());
 				BufferedWriter bw = new BufferedWriter(fw);
 				bw.write(s);
@@ -462,8 +480,6 @@ public class ELSheetController {
 				if (e.getCalculatedCGPA() != Double.parseDouble(e.getCgpa())){
 					threadSafeConsoleOutput("\n*** ERROR *** : Calculated and ERP CGPA Mismatch");
 				}
-				
-				threadSafeConsoleOutput("\n\n" + (new Date()).toString() + " : Finished Processing !\n");
 
 				threadSafeConsoleOutput("\n\n" + (new Date()).toString() + " : Exported the EL Sheet Data into " 
 						+ file.getAbsolutePath() + "\n");
